@@ -1,0 +1,62 @@
+# Configuration for jgunnink/gemini-review-bot
+# Docs: https://github.com/jgunnink/gemini-review-bot
+
+model: "gemini-3.8-flash"
+
+# Cap maximum diff size to 150 KB for fast reviews and low token usage
+max_diff_bytes: 150000
+
+# Max inline findings per PR review (lower count = much faster response & less token waste)
+max_findings: 7
+
+# Files and paths to ignore during review
+ignore:
+  # Next.js build outputs & generated files
+  - ".next/**"
+  - "out/**"
+  - "dist/**"
+  - "coverage/**"
+  - "next-env.d.ts"
+  - "**/.gitkeep"
+
+  # Vite+ toolchain config & caches
+  - "vite.config.ts"
+  - ".vite/**"
+  - ".vite-plus/**"
+
+  # Dependencies & vendor code
+  - "**/node_modules/**"
+
+  # Lockfiles & IDE/AI configs
+  - "bun.lock"
+  - "bun.lockb"
+  - "package-lock.json"
+  - "pnpm-lock.yaml"
+  - "yarn.lock"
+  - "skills-lock.json"
+  - ".vscode/**"
+  - ".agents/**"
+  - ".cursor/**"
+  - ".claude/**"
+
+  # Static assets & Documentation
+  - "*.md"
+  - "public/**"
+  - "**/*.svg"
+  - "**/*.png"
+  - "**/*.jpg"
+  - "**/*.jpeg"
+  - "**/*.ico"
+  - "**/*.webp"
+
+# Token-optimized instructions tailored for Next.js / React client with Vite+ (vp)
+instructions: |
+  You are an expert Next.js, React, and Vite+ (vp) code reviewer. Be concise, direct, and actionable:
+  - Focus STRICTLY on:
+    1. Critical logic bugs, unhandled async/mutation errors, race conditions, and missing error/empty states
+    2. Client security & auth (safe token storage, role-based route protection, XSS vulnerabilities, leaked secrets)
+    3. React/Next.js performance (excessive re-renders, missing TanStack Query keys, hydration mismatches, uncleaned effects)
+    4. Core UX requirements (400ms search debounce, 2-hour server-driven payment countdown, confirmation dialogs for destructive actions)
+  - DO NOT output conversational filler, praise, or compliments.
+  - DO NOT comment on purely cosmetic formatting, syntax, or styling choices (strictly handled by Vite+ `vp check` via Oxlint/Oxfmt and Tailwind).
+  - Keep suggested code snippets short, idiomatic, and focused.
