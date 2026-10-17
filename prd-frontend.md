@@ -20,29 +20,30 @@ an organizer dashboard.
 
 ## 2. Client stack
 
-| Layer   | Technology                                             |
-| ------- | ------------------------------------------------------ |
-| App     | Vite + React + Tailwind CSS (TypeScript recommended)   |
-| Routing | React Router — public + role-protected route layout    |
-| Data    | TanStack Query + Axios (server-state cache, mutations) |
-| Forms   | React Hook Form + Zod                                  |
-| Hosting | Vercel / Netlify / Render Static (decide with team)    |
+| Layer     | Technology                                                                   |
+| --------- | ---------------------------------------------------------------------------- |
+| App       | Next.js 16 (App Router) + React 19 + Tailwind CSS 4 + shadcn/ui (TypeScript) |
+| Toolchain | VitePlus + Bun (package manager)                                             |
+| Routing   | Next.js App Router — public + role-protected route groups/layouts            |
+| Data      | TanStack Query + Axios (server-state cache, mutations)                       |
+| Forms     | React Hook Form + Zod                                                        |
+| Hosting   | Vercel (decide with team)                                                    |
 
-Env (client): `VITE_API_BASE_URL`. `.env` at repo root; commit `.env.example`.
+Env (client): `BASE_URL` (or `NEXT_PUBLIC_API_BASE_URL`). `.env.local` at repo root; commit `.env.example`.
 
 **Decided 2026-10-15:** no branding/design guidelines for MVP — clean,
 responsive UI only.
 
 ## 3. Routes & access
 
-Public: landing (`/`), event list + detail (`/events`, `/events/:id`),
+Public: landing (`/`), event list + detail (`/events`, `/events/[id]`),
 signin/signup, forgot/reset password.
 
 Protected (role guards + redirect):
 
-- Customer: `/checkout`, `/transactions`, `/transactions/:id`,
+- Customer: `/checkout`, `/transactions`, `/transactions/[id]`,
   `/profile`, `/rewards`.
-- Organizer: `/organizer`, `/organizer/events`, `/organizer/events/:id/edit`,
+- Organizer: `/organizer`, `/organizer/events`, `/organizer/events/[id]/edit`,
   `/organizer/transactions`, `/organizer/dashboard`.
 
 Guards improve UX only — the server re-checks every action.
