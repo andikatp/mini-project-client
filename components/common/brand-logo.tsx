@@ -2,12 +2,16 @@ import Link from "next/link";
 import { Ticket } from "lucide-react";
 
 interface BrandLogoProps {
-  className?: string;
-  size?: "sm" | "default" | "lg";
-  inverted?: boolean;
+  readonly className?: string;
+  readonly size?: "sm" | "default" | "lg";
+  readonly inverted?: boolean;
 }
 
-export function BrandLogo({ className = "", size = "default", inverted = false }: BrandLogoProps) {
+export function BrandLogo({
+  className = "",
+  size = "default",
+  inverted = false,
+}: Readonly<BrandLogoProps>) {
   const sizeClasses = {
     sm: "text-lg",
     default: "text-2xl",

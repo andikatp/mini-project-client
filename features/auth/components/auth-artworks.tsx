@@ -1,15 +1,15 @@
 import Image from "next/image";
 
 interface ArtworkProps {
-  className?: string;
+  readonly className?: string;
 }
 
 interface BaseArtworkProps extends ArtworkProps {
-  svgSrc: string;
-  bgGlowClass: string;
-  title: string;
-  description: string;
-  alt: string;
+  readonly svgSrc: string;
+  readonly bgGlowClass: string;
+  readonly title: string;
+  readonly description: string;
+  readonly alt: string;
 }
 
 function BaseArtwork({
@@ -19,7 +19,7 @@ function BaseArtwork({
   title,
   description,
   alt,
-}: BaseArtworkProps) {
+}: Readonly<BaseArtworkProps>) {
   return (
     <div className={`relative flex flex-col items-center justify-center ${className}`}>
       <div className="relative w-full max-w-[340px] aspect-4/3 flex items-center justify-center">
@@ -42,7 +42,7 @@ function BaseArtwork({
   );
 }
 
-export function CustomerLoginArtwork(props: ArtworkProps) {
+export function CustomerLoginArtwork(props: Readonly<ArtworkProps>) {
   return (
     <BaseArtwork
       {...props}
@@ -55,7 +55,7 @@ export function CustomerLoginArtwork(props: ArtworkProps) {
   );
 }
 
-export function OrganizerLoginArtwork(props: ArtworkProps) {
+export function OrganizerLoginArtwork(props: Readonly<ArtworkProps>) {
   return (
     <BaseArtwork
       {...props}
@@ -68,7 +68,7 @@ export function OrganizerLoginArtwork(props: ArtworkProps) {
   );
 }
 
-export function RegisterArtwork(props: ArtworkProps) {
+export function RegisterArtwork(props: Readonly<ArtworkProps>) {
   return (
     <BaseArtwork
       {...props}
@@ -81,7 +81,7 @@ export function RegisterArtwork(props: ArtworkProps) {
   );
 }
 
-export function VerifyEmailArtwork(props: ArtworkProps) {
+export function VerifyEmailArtwork(props: Readonly<ArtworkProps>) {
   return (
     <BaseArtwork
       {...props}
@@ -94,7 +94,7 @@ export function VerifyEmailArtwork(props: ArtworkProps) {
   );
 }
 
-export function ForgotPasswordArtwork(props: ArtworkProps) {
+export function ForgotPasswordArtwork(props: Readonly<ArtworkProps>) {
   return (
     <BaseArtwork
       {...props}
@@ -107,7 +107,7 @@ export function ForgotPasswordArtwork(props: ArtworkProps) {
   );
 }
 
-export function ResetPasswordArtwork(props: ArtworkProps) {
+export function ResetPasswordArtwork(props: Readonly<ArtworkProps>) {
   return (
     <BaseArtwork
       {...props}
@@ -120,7 +120,7 @@ export function ResetPasswordArtwork(props: ArtworkProps) {
   );
 }
 
-export function ChangePasswordArtwork(props: ArtworkProps) {
+export function ChangePasswordArtwork(props: Readonly<ArtworkProps>) {
   return (
     <BaseArtwork
       {...props}

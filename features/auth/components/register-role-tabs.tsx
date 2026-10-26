@@ -2,9 +2,9 @@ import type { UserRole } from "../types";
 import { Building2, User as UserIcon } from "lucide-react";
 
 interface RegisterRoleTabsProps {
-  role: UserRole;
-  onSelectRole: (role: UserRole) => void;
-  disabled?: boolean;
+  readonly role: UserRole;
+  readonly onSelectRole: (role: UserRole) => void;
+  readonly disabled?: boolean;
 }
 
 export function RegisterRoleTabs({ role, onSelectRole, disabled }: RegisterRoleTabsProps) {

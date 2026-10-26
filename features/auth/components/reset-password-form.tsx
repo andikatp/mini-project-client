@@ -1,21 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { AlertCircle, ArrowLeft, CheckCircle2, Eye, EyeOff, KeyRound, Loader2 } from "lucide-react";
-import { useResetPassword } from "../hooks/use-reset-password";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupButton,
-  InputGroupInput,
-} from "@/components/ui/input-group";
+import { AlertCircle, ArrowLeft, CheckCircle2, KeyRound, Loader2 } from "lucide-react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import React, { useState } from "react";
+import { useResetPassword } from "../hooks/use-reset-password";
+import { PasswordInputGroup } from "./password-input-group";
 
 export function ResetPasswordForm() {
   const searchParams = useSearchParams();
@@ -24,7 +19,6 @@ export function ResetPasswordForm() {
   const [token, setToken] = useState(initialToken);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
 
   const { resetPassword, isLoading, errorMsg, successMsg } = useResetPassword();
 
@@ -90,42 +84,26 @@ export function ResetPasswordForm() {
 
             <Field data-invalid={!!errorMsg && password.length < 6}>
               <FieldLabel htmlFor="reset-new-password">Kata Sandi Baru</FieldLabel>
-              <InputGroup>
-                <InputGroupInput
-                  id="reset-new-password"
-                  type={showPassword ? "text" : "password"}
-                  autoComplete="new-password"
-                  placeholder="Min. 6 karakter"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  disabled={isLoading}
-                  required
-                  aria-invalid={!!errorMsg && password.length < 6}
-                />
-                <InputGroupAddon align="inline-end">
-                  <InputGroupButton
-                    type="button"
-                    size="icon-xs"
-                    onClick={() => setShowPassword(!showPassword)}
-                    aria-label={showPassword ? "Sembunyikan kata sandi" : "Tampilkan kata sandi"}
-                  >
-                    {showPassword ? <EyeOff /> : <Eye />}
-                  </InputGroupButton>
-                </InputGroupAddon>
-              </InputGroup>
+              <PasswordInputGroup
+                id="reset-new-password"
+                autoComplete="new-password"
+                placeholder="Min. 6 karakter"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={isLoading}
+                aria-invalid={!!errorMsg && password.length < 6}
+              />
             </Field>
 
             <Field data-invalid={!!errorMsg && password !== confirmPassword}>
               <FieldLabel htmlFor="reset-confirm-password">Konfirmasi Kata Sandi Baru</FieldLabel>
-              <Input
+              <PasswordInputGroup
                 id="reset-confirm-password"
-                type={showPassword ? "text" : "password"}
                 autoComplete="new-password"
                 placeholder="Ulangi kata sandi baru"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 disabled={isLoading}
-                required
                 aria-invalid={!!errorMsg && password !== confirmPassword}
               />
             </Field>

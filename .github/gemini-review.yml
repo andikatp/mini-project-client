@@ -3,8 +3,8 @@
 
 model: "gemini-3.8-flash"
 
-# Cap maximum diff size to 150 KB for fast reviews and low token usage
-max_diff_bytes: 150000
+# Cap maximum diff size to 500 KB for complete feature PR reviews
+max_diff_bytes: 350000
 
 # Max inline findings per PR review (lower count = much faster response & less token waste)
 max_findings: 7
@@ -36,11 +36,13 @@ ignore:
   - "skills-lock.json"
   - ".vscode/**"
   - ".agents/**"
+  - "**/.agents/**"
   - ".cursor/**"
   - ".claude/**"
 
   # Static assets & Documentation
   - "*.md"
+  - "**/*.md"
   - "public/**"
   - "**/*.svg"
   - "**/*.png"

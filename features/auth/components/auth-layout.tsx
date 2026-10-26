@@ -1,10 +1,10 @@
 import React from "react";
 
 interface AuthLayoutProps {
-  artwork: React.ReactNode;
-  children: React.ReactNode;
-  title?: string;
-  subtitle?: React.ReactNode;
+  readonly artwork: React.ReactNode;
+  readonly children: React.ReactNode;
+  readonly title?: string;
+  readonly subtitle?: React.ReactNode;
 }
 
 export function AuthLayout({ artwork, children, title, subtitle }: AuthLayoutProps) {

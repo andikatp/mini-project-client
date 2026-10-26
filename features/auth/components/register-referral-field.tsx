@@ -3,9 +3,9 @@ import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
 interface RegisterReferralFieldProps {
-  value: string;
-  onChange: (value: string) => void;
-  disabled?: boolean;
+  readonly value: string;
+  readonly onChange: (value: string) => void;
+  readonly disabled?: boolean;
 }
 
 export function RegisterReferralField({ value, onChange, disabled }: RegisterReferralFieldProps) {
