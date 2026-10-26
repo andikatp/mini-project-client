@@ -1,0 +1,68 @@
+<svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Confetti & stars -->
+  <circle cx="90" cy="50" r="3" fill="#60A5FA" />
+  <path d="M70 120L74 124L70 128L66 124Z" fill="#FBBF24" />
+  <path d="M330 60L334 64L330 68L326 64Z" fill="#F472B6" />
+  <circle cx="340" cy="110" r="3" fill="#38BDF8" />
+  <circle cx="110" cy="90" r="2.5" fill="#A78BFA" />
+
+  <!-- Door Frame & Door (Light Blue Portal) -->
+  <rect x="145" y="50" width="110" height="210" rx="55" fill="#E0F2FE" stroke="#38BDF8" stroke-width="3" />
+  <path d="M145 105C145 74.6243 169.624 50 200 50L180 60C155 70 135 95 135 125V260L145 260V105Z" fill="#BAE6FD" />
+  <path d="M135 120C135 85 160 62 185 55L140 75C125 90 120 115 120 140V260H135V120Z" fill="#7DD3FC" opacity="0.6" />
+  <rect x="145" y="100" width="60" height="160" rx="12" fill="#60A5FA" opacity="0.15" />
+  <rect x="140" y="155" width="12" height="6" rx="3" fill="#0284C7" />
+
+  <!-- Party Bunting inside the door -->
+  <path d="M170 85Q200 95 235 85" stroke="#94A3B8" stroke-width="1.5" stroke-dasharray="2 2" />
+  <polygon points="180,89 190,89 185,100" fill="#F43F5E" />
+  <polygon points="195,92 205,92 200,103" fill="#FBBF24" />
+  <polygon points="210,90 220,90 215,101" fill="#10B981" />
+
+  <!-- Character 1: Deep Blue Ticket Monster with Sunglasses -->
+  <g transform="translate(10, 10)">
+    <path d="M100 240V260M115 240V260" stroke="#1E3A8A" stroke-width="4" stroke-linecap="round" />
+    <rect x="94" y="258" width="12" height="5" rx="2.5" fill="#1E3A8A" />
+    <rect x="113" y="258" width="12" height="5" rx="2.5" fill="#1E3A8A" />
+    <rect x="75" y="155" width="62" height="85" rx="12" fill="#1D4ED8" stroke="#1E3A8A" stroke-width="3" />
+    <path d="M75 190A8 8 0 0 1 75 206" fill="#F8FAFC" />
+    <path d="M137 190A8 8 0 0 0 137 206" fill="#F8FAFC" />
+    <path d="M75 185C60 180 50 160 50 150" stroke="#1E3A8A" stroke-width="4" stroke-linecap="round" />
+    <path d="M137 190C150 190 158 185 165 178" stroke="#1E3A8A" stroke-width="4" stroke-linecap="round" />
+    <rect x="83" y="176" width="20" height="15" rx="4" fill="#0F172A" />
+    <rect x="107" y="176" width="20" height="15" rx="4" fill="#0F172A" />
+    <line x1="103" y1="183" x2="107" y2="183" stroke="#0F172A" stroke-width="3" />
+    <path d="M86 179L99 188" stroke="#FBBF24" stroke-width="2" stroke-linecap="round" />
+    <path d="M110 179L123 188" stroke="#FBBF24" stroke-width="2" stroke-linecap="round" />
+    <path d="M99 205Q105 212 112 205" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" />
+  </g>
+
+  <!-- Character 2: Peeking Yellow Tall Ticket -->
+  <g>
+    <rect x="200" y="110" width="36" height="65" rx="8" fill="#FBBF24" stroke="#D97706" stroke-width="2.5" />
+    <circle cx="211" cy="126" r="3.5" fill="#0F172A" />
+    <circle cx="225" cy="126" r="3.5" fill="#0F172A" />
+    <circle cx="212" cy="125" r="1" fill="#FFFFFF" />
+    <circle cx="226" cy="125" r="1" fill="#FFFFFF" />
+    <path d="M214 136Q218 141 222 136" stroke="#0F172A" stroke-width="2" stroke-linecap="round" />
+  </g>
+
+  <!-- Character 3: Orange Happy Ticket -->
+  <g>
+    <path d="M215 240V258M230 240V258" stroke="#C2410C" stroke-width="3.5" stroke-linecap="round" />
+    <rect x="205" y="170" width="45" height="70" rx="10" fill="#FB923C" stroke="#C2410C" stroke-width="2.5" />
+    <path d="M216 190Q220 184 224 190" stroke="#0F172A" stroke-width="2.5" stroke-linecap="round" />
+    <path d="M231 190Q235 184 239 190" stroke="#0F172A" stroke-width="2.5" stroke-linecap="round" />
+    <circle cx="227.5" cy="202" r="4.5" fill="#991B1B" />
+  </g>
+
+  <!-- Character 4: Pink Ticket peeking right -->
+  <g>
+    <rect x="235" y="140" width="40" height="60" rx="9" fill="#F472B6" stroke="#BE185D" stroke-width="2.5" />
+    <circle cx="248" cy="158" r="3.5" fill="#0F172A" />
+    <circle cx="262" cy="158" r="3.5" fill="#0F172A" />
+    <circle cx="244" cy="164" r="2" fill="#FDA4AF" />
+    <circle cx="266" cy="164" r="2" fill="#FDA4AF" />
+    <path d="M252 166Q255 170 258 166" stroke="#0F172A" stroke-width="2" stroke-linecap="round" />
+  </g>
+</svg>
