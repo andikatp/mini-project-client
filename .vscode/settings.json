@@ -1,5 +1,5 @@
 {
-  "npm.scriptRunner": "vp",
+  "npm.scriptRunner": "bun",
   "editor.defaultFormatter": "oxc.oxc-vscode",
   "[javascript]": {
     "editor.defaultFormatter": "oxc.oxc-vscode"
@@ -19,5 +19,7 @@
   "editor.formatOnSaveMode": "file",
   "editor.codeActionsOnSave": {
     "source.fixAll.oxc": "explicit"
-  }
+  },
+  "css.lint.unknownAtRules": "ignore",
+  "tailwindCSS.lint.cssConflict": "ignore"
 }

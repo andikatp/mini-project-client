@@ -1,6 +1,12 @@
+import path from "node:path";
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./"),
+    },
+  },
   fmt: {},
   lint: {
     plugins: ["oxc", "typescript", "unicorn", "nextjs"],
@@ -10,7 +16,7 @@ export default defineConfig({
     env: {
       builtin: true,
     },
-    ignorePatterns: [".next/**", "out/**", "build/**", "next-env.d.ts"],
+    ignorePatterns: [".next/**", "out/**", "build/**", "next-env.d.ts", ".agents/**"],
     rules: {
       "no-array-constructor": "error",
       "no-unused-expressions": "error",
