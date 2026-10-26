@@ -4,7 +4,7 @@
 model: "gemini-3.8-flash"
 
 # Cap maximum diff size to 500 KB for complete feature PR reviews
-max_diff_bytes: 350000
+max_diff_bytes: 20000
 
 # Max inline findings per PR review (lower count = much faster response & less token waste)
 max_findings: 7
@@ -18,6 +18,9 @@ ignore:
   - "coverage/**"
   - "next-env.d.ts"
   - "**/.gitkeep"
+  - "**/components/ui/**"
+  - "**/tests/**"
+  - "**/assets/**"
 
   # Vite+ toolchain config & caches
   - "vite.config.ts"
