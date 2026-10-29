@@ -5,23 +5,32 @@ import { authApi } from "../api/auth-api";
 export function useVerifyEmail() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [isResending, setIsResending] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [isVerified, setIsVerified] = useState(false);
 
-  const verify = async (token: string) => {
+  const verify = async (email: string, otp: string) => {
     setErrorMsg(null);
     setSuccessMsg(null);
 
-    if (!token.trim()) {
-      setErrorMsg("Harap masukkan token verifikasi akun Anda.");
+    if (!email.trim()) {
+      setErrorMsg("Email akun wajib diisi.");
+      return false;
+    }
+
+    if (!otp.trim() || otp.trim().length !== 6 || !/^\d{6}$/.test(otp.trim())) {
+      setErrorMsg("Harap masukkan 6 digit angka kode OTP.");
       return false;
     }
 
     setIsLoading(true);
 
     try {
-      const response = await authApi.verifyEmail({ token: token.trim() });
+      const response = await authApi.verifyEmail({
+        email: email.trim(),
+        otp: otp.trim(),
+      });
 
       setSuccessMsg(
         response.message || "Email Anda berhasil diverifikasi! Mengalihkan ke halaman masuk...",
@@ -37,7 +46,7 @@ export function useVerifyEmail() {
       const message =
         err instanceof Error
           ? err.message
-          : "Gagal memverifikasi email. Token tidak valid atau sudah kedaluwarsa.";
+          : "Gagal memverifikasi email. Kode OTP tidak valid atau sudah kedaluwarsa.";
       setErrorMsg(message);
       return false;
     } finally {
@@ -45,17 +54,30 @@ export function useVerifyEmail() {
     }
   };
 
-  const resendVerification = (email?: string) => {
+  const resendVerification = async (email?: string) => {
     setErrorMsg(null);
     setSuccessMsg(null);
 
     if (!email?.trim()) {
-      setErrorMsg("Email tidak ditemukan. Silakan login kembali untuk mengirim ulang verifikasi.");
+      setErrorMsg("Email tidak ditemukan. Silakan masukkan email terlebih dahulu.");
       return false;
     }
 
-    setSuccessMsg("Tautan verifikasi baru telah dikirimkan ke email Anda.");
-    return true;
+    setIsResending(true);
+    try {
+      const response = await authApi.resendVerification({ email: email.trim() });
+      setSuccessMsg(
+        response.message || "Kode OTP verifikasi baru telah dikirimkan ke email Anda.",
+      );
+      return true;
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Gagal mengirim ulang kode OTP. Coba lagi.";
+      setErrorMsg(message);
+      return false;
+    } finally {
+      setIsResending(false);
+    }
   };
 
   const clearMessages = () => {
@@ -67,6 +89,7 @@ export function useVerifyEmail() {
     verify,
     resendVerification,
     isLoading,
+    isResending,
     errorMsg,
     successMsg,
     isVerified,

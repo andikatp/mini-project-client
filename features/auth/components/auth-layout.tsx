@@ -12,11 +12,11 @@ export function AuthLayout({ artwork, children, title, subtitle }: AuthLayoutPro
     <div className="min-h-screen flex flex-col bg-background font-sans selection:bg-blue-100 selection:text-blue-900">
       {/* Main Container */}
       <main className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8">
-        <div className="w-full max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
+        <div className="w-full max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 items-center">
           {/* Left Column: Artwork & Catchy Copy (Hidden on mobile to eliminate scrolling) */}
           <section
             aria-label="Informasi Fitur"
-            className="hidden lg:flex lg:col-span-6 flex-col items-center justify-center py-4"
+            className="hidden lg:flex flex-col items-center justify-center w-full"
           >
             {artwork}
           </section>
@@ -24,9 +24,9 @@ export function AuthLayout({ artwork, children, title, subtitle }: AuthLayoutPro
           {/* Right Column: Form Container Card */}
           <section
             aria-label="Formulir Otentikasi"
-            className="w-full lg:col-span-6 flex flex-col items-center lg:items-start justify-center"
+            className="w-full flex flex-col items-center justify-center"
           >
-            <div className="w-full max-w-md mx-auto lg:mx-0">
+            <div className="w-full max-w-md">
               {title && (
                 <div className="mb-6 text-center lg:text-left">
                   <h1 className="text-2xl font-bold tracking-tight text-foreground">{title}</h1>

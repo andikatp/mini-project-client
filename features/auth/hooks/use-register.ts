@@ -40,7 +40,7 @@ export function useRegister() {
 
       setSuccessMsg(
         response.message ||
-          "Pendaftaran berhasil! Tautan verifikasi telah dikirimkan ke email Anda.",
+          "Pendaftaran berhasil! Kode OTP verifikasi 6-digit telah dikirimkan ke email Anda.",
       );
 
       setTimeout(() => {

@@ -156,24 +156,39 @@ describe("authApi (Infrastructure / HTTP Layer)", () => {
     expect(lastFetchOptions?.method).toBe("POST");
   });
 
-  it("should send correct payload for verifyEmail", async () => {
+  it("should send correct payload for verifyEmail with OTP", async () => {
     mockSuccessFetch({
       status: "success",
       message: "Email verified",
     });
 
-    await authApi.verifyEmail({ token: "verify-token-xyz" });
+    await authApi.verifyEmail({ email: "verify@example.com", otp: "123456" });
     expect(lastFetchUrl).toContain("/auth/verify-email");
     expect(lastFetchOptions?.method).toBe("POST");
     expect(JSON.parse(lastFetchOptions?.body as string)).toEqual({
-      token: "verify-token-xyz",
+      email: "verify@example.com",
+      otp: "123456",
+    });
+  });
+
+  it("should send correct payload for resendVerification", async () => {
+    mockSuccessFetch({
+      status: "success",
+      message: "Verification OTP resent",
+    });
+
+    await authApi.resendVerification({ email: "verify@example.com" });
+    expect(lastFetchUrl).toContain("/auth/resend-verification");
+    expect(lastFetchOptions?.method).toBe("POST");
+    expect(JSON.parse(lastFetchOptions?.body as string)).toEqual({
+      email: "verify@example.com",
     });
   });
 
   it("should send correct payload for forgotPassword", async () => {
     mockSuccessFetch({
       status: "success",
-      message: "Reset link sent",
+      message: "Reset code sent",
     });
 
     await authApi.forgotPassword({ email: "forgot@example.com" });
@@ -184,21 +199,41 @@ describe("authApi (Infrastructure / HTTP Layer)", () => {
     });
   });
 
-  it("should send correct payload for resetPassword", async () => {
+  it("should send correct payload for verifyResetPassword", async () => {
+    mockSuccessFetch({
+      status: "success",
+      message: "OTP valid",
+      data: { resetToken: "tok_12345" },
+    });
+
+    const res = await authApi.verifyResetPassword({
+      email: "forgot@example.com",
+      otp: "123456",
+    });
+    expect(lastFetchUrl).toContain("/auth/verify-reset-password");
+    expect(lastFetchOptions?.method).toBe("POST");
+    expect(JSON.parse(lastFetchOptions?.body as string)).toEqual({
+      email: "forgot@example.com",
+      otp: "123456",
+    });
+    expect(res.data?.resetToken).toBe("tok_12345");
+  });
+
+  it("should send correct payload for resetPassword with resetToken", async () => {
     mockSuccessFetch({
       status: "success",
       message: "Password reset",
     });
 
     await authApi.resetPassword({
-      token: "reset-tok",
+      resetToken: "tok_12345",
       password: "new-super-password",
     });
 
     expect(lastFetchUrl).toContain("/auth/reset-password");
     expect(lastFetchOptions?.method).toBe("POST");
     expect(JSON.parse(lastFetchOptions?.body as string)).toEqual({
-      token: "reset-tok",
+      resetToken: "tok_12345",
       password: "new-super-password",
     });
   });

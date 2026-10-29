@@ -23,7 +23,7 @@ export function useForgotPassword() {
 
       setSuccessMsg(
         response.message ||
-          "Jika email Anda terdaftar, Anda akan segera menerima tautan pemulihan kata sandi.",
+          "Jika email Anda terdaftar, kode OTP 6-digit pemulihan kata sandi telah dikirimkan ke email Anda.",
       );
       setIsSubmitted(true);
       return true;

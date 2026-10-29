@@ -4,9 +4,12 @@ import type {
   ForgotPasswordInput,
   LoginResponseData,
   RegisterInput,
+  ResendVerificationInput,
   ResetPasswordInput,
   User,
   VerifyEmailInput,
+  VerifyResetPasswordInput,
+  VerifyResetPasswordResponseData,
 } from "../types";
 
 async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
@@ -80,7 +83,17 @@ export const authApi = {
   async verifyEmail(input: VerifyEmailInput): Promise<ApiResponse<null>> {
     return apiRequest<null>("/auth/verify-email", {
       method: "POST",
-      body: JSON.stringify({ token: input.token.trim() }),
+      body: JSON.stringify({
+        email: input.email.trim(),
+        otp: input.otp.trim(),
+      }),
+    });
+  },
+
+  async resendVerification(input: ResendVerificationInput): Promise<ApiResponse<null>> {
+    return apiRequest<null>("/auth/resend-verification", {
+      method: "POST",
+      body: JSON.stringify({ email: input.email.trim() }),
     });
   },
 
@@ -91,12 +104,26 @@ export const authApi = {
     });
   },
 
+  async verifyResetPassword(
+    input: VerifyResetPasswordInput,
+  ): Promise<ApiResponse<VerifyResetPasswordResponseData>> {
+    return apiRequest<VerifyResetPasswordResponseData>("/auth/verify-reset-password", {
+      method: "POST",
+      body: JSON.stringify({
+        email: input.email.trim(),
+        otp: input.otp.trim(),
+      }),
+    });
+  },
+
   async resetPassword(input: ResetPasswordInput): Promise<ApiResponse<null>> {
     return apiRequest<null>("/auth/reset-password", {
       method: "POST",
       body: JSON.stringify({
-        token: input.token.trim(),
         password: input.password,
+        ...(input.resetToken ? { resetToken: input.resetToken } : {}),
+        ...(input.email ? { email: input.email.trim() } : {}),
+        ...(input.otp ? { otp: input.otp.trim() } : {}),
       }),
     });
   },

@@ -4,28 +4,38 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import { AlertCircle, ArrowLeft, CheckCircle2, KeyRound, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useResetPassword } from "../hooks/use-reset-password";
 import { PasswordInputGroup } from "./password-input-group";
 
 export function ResetPasswordForm() {
   const searchParams = useSearchParams();
-  const initialToken = searchParams.get("token") || "";
-
-  const [token, setToken] = useState(initialToken);
+  const [token, setToken] = useState<string>("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  useEffect(() => {
+    const queryToken = searchParams.get("token");
+    if (queryToken) {
+      setToken(queryToken);
+    } else if (typeof window !== "undefined") {
+      const storedToken = sessionStorage.getItem("reset_password_token");
+      if (storedToken) {
+        setToken(storedToken);
+      }
+    }
+  }, [searchParams]);
 
   const { resetPassword, isLoading, errorMsg, successMsg } = useResetPassword();
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!token) return;
     await resetPassword({
-      token: token.trim(),
+      resetToken: token,
       password,
       confirmPassword,
     });
@@ -40,9 +50,7 @@ export function ResetPasswordForm() {
             Aman
           </span>
         </div>
-        <CardDescription>
-          Buat kata sandi baru untuk akun Anda dan konfirmasi perubahannya.
-        </CardDescription>
+        <CardDescription>Masukkan kata sandi baru untuk akun Anda.</CardDescription>
       </CardHeader>
 
       <CardContent>
@@ -62,71 +70,77 @@ export function ResetPasswordForm() {
           </Alert>
         )}
 
-        <form onSubmit={handleSubmit} noValidate>
-          <FieldGroup className="gap-4">
-            <Field data-invalid={!!errorMsg && !token}>
-              <FieldLabel htmlFor="reset-token">Token Reset</FieldLabel>
-              <Input
-                id="reset-token"
-                type="text"
-                autoComplete="off"
-                placeholder="Token dari email tautan reset"
-                value={token}
-                onChange={(e) => setToken(e.target.value)}
-                disabled={isLoading}
-                required
-                aria-invalid={!!errorMsg && !token}
-              />
-              <FieldDescription>
-                Terisi otomatis jika membuka tautan dari pesan email pemulihan.
-              </FieldDescription>
-            </Field>
-
-            <Field data-invalid={!!errorMsg && password.length < 6}>
-              <FieldLabel htmlFor="reset-new-password">Kata Sandi Baru</FieldLabel>
-              <PasswordInputGroup
-                id="reset-new-password"
-                autoComplete="new-password"
-                placeholder="Min. 6 karakter"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                disabled={isLoading}
-                aria-invalid={!!errorMsg && password.length < 6}
-              />
-            </Field>
-
-            <Field data-invalid={!!errorMsg && password !== confirmPassword}>
-              <FieldLabel htmlFor="reset-confirm-password">Konfirmasi Kata Sandi Baru</FieldLabel>
-              <PasswordInputGroup
-                id="reset-confirm-password"
-                autoComplete="new-password"
-                placeholder="Ulangi kata sandi baru"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                disabled={isLoading}
-                aria-invalid={!!errorMsg && password !== confirmPassword}
-              />
-            </Field>
-
-            <Button
-              type="submit"
-              disabled={isLoading}
-              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 shadow-sm transition-all mt-2"
+        {!token ? (
+          <div className="space-y-4 py-2">
+            <Alert variant="destructive">
+              <AlertCircle />
+              <AlertTitle>Sesi Pemulihan Tidak Ditemukan</AlertTitle>
+              <AlertDescription>
+                Token verifikasi tidak ditemukan atau sudah kedaluwarsa. Silakan mulai kembali dari
+                halaman lupa kata sandi.
+              </AlertDescription>
+            </Alert>
+            <Link
+              href="/forgot-password"
+              className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 text-sm shadow-sm transition-all"
             >
-              {isLoading ? (
-                <>
-                  <Loader2 className="animate-spin" data-icon="inline-start" />
-                  Menyimpan Perubahan...
-                </>
-              ) : (
-                <>
-                  <KeyRound data-icon="inline-start" />
-                  Simpan Kata Sandi Baru
-                </>
-              )}
-            </Button>
-          </FieldGroup>
-        </form>
+              Mulai Ulang Pemulihan Kata Sandi
+            </Link>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} noValidate>
+            <FieldGroup className="gap-4">
+              <Field data-invalid={!!errorMsg && password.length < 6}>
+                <FieldLabel htmlFor="reset-new-password">Kata Sandi Baru</FieldLabel>
+                <PasswordInputGroup
+                  id="reset-new-password"
+                  autoComplete="new-password"
+                  placeholder="Min. 6 karakter"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={isLoading || !!successMsg}
+                  aria-invalid={!!errorMsg && password.length < 6}
+                />
+                <FieldDescription>
+                  Gunakan minimal 6 karakter kombinasi huruf dan angka.
+                </FieldDescription>
+              </Field>
+
+              <Field data-invalid={!!errorMsg && password !== confirmPassword}>
+                <FieldLabel htmlFor="reset-confirm-password">Konfirmasi Kata Sandi Baru</FieldLabel>
+                <PasswordInputGroup
+                  id="reset-confirm-password"
+                  autoComplete="new-password"
+                  placeholder="Ulangi kata sandi baru"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  disabled={isLoading || !!successMsg}
+                  aria-invalid={!!errorMsg && password !== confirmPassword}
+                />
+              </Field>
+
+              <Button
+                type="submit"
+                disabled={
+                  isLoading || !!successMsg || password.length < 6 || password !== confirmPassword
+                }
+                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 shadow-sm transition-all mt-2"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="animate-spin" data-icon="inline-start" />
+                    Menyimpan Perubahan...
+                  </>
+                ) : (
+                  <>
+                    <KeyRound data-icon="inline-start" />
+                    Simpan Kata Sandi Baru
+                  </>
+                )}
+              </Button>
+            </FieldGroup>
+          </form>
+        )}
 
         <div className="mt-6 pt-4 border-t border-border text-center text-sm">
           <Link
