@@ -2,18 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { TrendingUp } from "lucide-react";
-import {
-  Line,
-  LineChart,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-} from "recharts";
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-} from "@/components/ui/chart";
+import { Line, LineChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import { ChartConfig, ChartContainer, ChartTooltip } from "@/components/ui/chart";
 import { CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { DashboardCard } from "@/components/common/dashboard-card";
 import {
@@ -25,10 +15,7 @@ import {
 } from "@/components/ui/select";
 
 // Timeseries dummy data reflecting event ticket sales and revenue
-const timeseriesData: Record<
-  string,
-  { label: string; revenue: number; tickets: number }[]
-> = {
+const timeseriesData: Record<string, { label: string; revenue: number; tickets: number }[]> = {
   day: [
     { label: "00:00", revenue: 450000, tickets: 3 },
     { label: "04:00", revenue: 150000, tickets: 1 },
@@ -97,30 +84,32 @@ function useAnimatedNumber(target: number, duration = 400) {
   return display;
 }
 
-function CustomTooltipContent({
-  active,
-  payload,
-  label,
-}: {
-  active?: boolean;
-  payload?: { name?: string; value?: number; color?: string; dataKey?: string }[];
-  label?: string;
-}) {
+interface CustomTooltipProps {
+  readonly active?: boolean;
+  readonly payload?: {
+    name?: string;
+    value?: number;
+    color?: string;
+    dataKey?: string;
+  }[];
+  readonly label?: string;
+}
+
+function CustomTooltipContent({ active, payload, label }: CustomTooltipProps) {
   if (!active || !payload?.length) return null;
   return (
     <div className="grid min-w-36 items-start gap-1.5 rounded-lg border border-border bg-background p-2.5 text-xs shadow-lg">
       <div className="font-semibold text-foreground">{label}</div>
       <div className="grid gap-1">
-        {payload.map((item, index) => {
+        {payload.map((item) => {
           const isRevenue = item.dataKey === "revenue";
           const formatted = isRevenue
             ? `Rp ${(item.value ?? 0).toLocaleString("id-ID")}`
             : `${item.value} tiket`;
+          const itemKey = `${item.dataKey ?? item.name ?? "val"}`;
           return (
-            <div key={index} className="flex items-center justify-between gap-3">
-              <span className="text-muted-foreground">
-                {isRevenue ? "Revenue" : "Tickets"}
-              </span>
+            <div key={itemKey} className="flex items-center justify-between gap-3">
+              <span className="text-muted-foreground">{isRevenue ? "Revenue" : "Tickets"}</span>
               <span className="font-semibold text-foreground">{formatted}</span>
             </div>
           );
@@ -195,15 +184,8 @@ export default function TotalSales() {
         </div>
 
         <ChartContainer config={chartConfig} className="h-[230px]! w-full">
-          <LineChart
-            data={chartData}
-            margin={{ top: 8, right: 10, bottom: 0, left: 10 }}
-          >
-            <CartesianGrid
-              vertical={false}
-              stroke="var(--border)"
-              strokeDasharray="4 4"
-            />
+          <LineChart data={chartData} margin={{ top: 8, right: 10, bottom: 0, left: 10 }}>
+            <CartesianGrid vertical={false} stroke="var(--border)" strokeDasharray="4 4" />
             <XAxis
               dataKey="label"
               tickLine={false}

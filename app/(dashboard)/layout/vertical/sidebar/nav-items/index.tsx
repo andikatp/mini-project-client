@@ -8,10 +8,10 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 
 interface NavItemProps {
-  item: ChildItem;
-  hasChildren: boolean;
-  className?: string;
-  isActive?: boolean;
+  readonly item: ChildItem;
+  readonly hasChildren: boolean;
+  readonly className?: string;
+  readonly isActive?: boolean;
 }
 
 export default function NavItem({ item, hasChildren, className, isActive }: NavItemProps) {

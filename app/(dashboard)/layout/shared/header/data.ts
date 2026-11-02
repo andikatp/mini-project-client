@@ -6,19 +6,18 @@ import {
   House,
   User,
   Settings,
-  Receipt,
   Keyboard,
 } from "lucide-react";
 
 //Apps Links Type & Data
-interface appsLinkType {
+interface AppsLinkType {
   href: string;
   title: string;
   subtext: string;
   avatar: string;
 }
 
-const appsLink: appsLinkType[] = [
+const appsLink: AppsLinkType[] = [
   {
     href: "/apps/chats",
     title: "Chat Application",
@@ -256,7 +255,7 @@ const Notification: NotificationType[] = [
   },
 ];
 
-interface profileType {
+interface ProfileType {
   avatar: LucideIcon;
   title: string;
   href: string;
@@ -265,7 +264,7 @@ interface profileType {
   external?: boolean;
 }
 
-const profileDD: profileType[] = [
+const profileDD: ProfileType[] = [
   {
     avatar: House,
     title: "Home",

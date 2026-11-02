@@ -8,8 +8,8 @@ import { useSidebar } from "@/components/ui/sidebar";
 import { MenuItem, ChildItem } from "../sidebaritems";
 
 interface NavCollapseProps {
-  menu: MenuItem[];
-  className?: string;
+  readonly menu: MenuItem[];
+  readonly className?: string;
 }
 
 export default function NavCollapse({ menu, className }: NavCollapseProps) {
@@ -25,10 +25,9 @@ export default function NavCollapse({ menu, className }: NavCollapseProps) {
 
   return (
     <>
-      {menu.map((section, index) => (
-        <div key={index}>
+      {menu.map((section) => (
+        <div key={section.heading ?? "section"}>
           {/* Heading */}
-
           <span
             className={cn(
               "text-xs uppercase block font-semibold text-muted-foreground mb-2 transition-all duration-200",
@@ -49,20 +48,20 @@ export default function NavCollapse({ menu, className }: NavCollapseProps) {
             )}
           </span>
 
-          {section.items?.map((item: ChildItem, index) => {
+          {section.items?.map((item: ChildItem) => {
             const hasChildren = Array.isArray(item.items) && item.items.length > 0;
             const active = isActiveRoute(item);
+            const itemKey = item.id ? String(item.id) : item.name;
 
             // 👉 No children → direct link
             if (!hasChildren)
               return (
                 <Link
-                  key={index}
+                  key={itemKey}
                   href={item.url || "#"}
                   target={item.external ? "_blank" : undefined}
                   className={cn(
-                    "flex items-center gap-3  rounded-md transition-all duration-200 ease-in-out ",
-
+                    "flex items-center gap-3 rounded-md transition-all duration-200 ease-in-out",
                     className,
                   )}
                 >
@@ -72,7 +71,7 @@ export default function NavCollapse({ menu, className }: NavCollapseProps) {
 
             // 👉 With children → collapsible
             return (
-              <details key={index} className="group/nav" open={active || item.isActive}>
+              <details key={itemKey} className="group/nav" open={active || item.isActive}>
                 <summary
                   className={cn(
                     "cursor-pointer rounded-md flex items-center transition-all duration-200 ease-in-out",
@@ -81,18 +80,18 @@ export default function NavCollapse({ menu, className }: NavCollapseProps) {
                   <NavItem item={item} hasChildren={true} className={className} isActive={active} />
                 </summary>
 
-                <div className="pl-3  ml-5  border-l border-border">
-                  {item.items?.map((sub: ChildItem, index) =>
-                    sub.items ? (
-                      <NavCollapse key={index} menu={[{ items: [sub] }]} className={className} />
+                <div className="pl-3 ml-5 border-l border-border">
+                  {item.items?.map((sub: ChildItem) => {
+                    const subKey = sub.id ? String(sub.id) : sub.name;
+                    return sub.items ? (
+                      <NavCollapse key={subKey} menu={[{ items: [sub] }]} className={className} />
                     ) : (
                       <Link
-                        key={index}
+                        key={subKey}
                         href={sub.url || "#"}
                         target={sub.external ? "_blank" : undefined}
                         className={cn(
                           "block rounded-md transition-all duration-200 ease-in-out",
-
                           className,
                         )}
                       >
@@ -106,8 +105,8 @@ export default function NavCollapse({ menu, className }: NavCollapseProps) {
                           isActive={pathname === sub.url}
                         />
                       </Link>
-                    ),
-                  )}
+                    );
+                  })}
                 </div>
               </details>
             );

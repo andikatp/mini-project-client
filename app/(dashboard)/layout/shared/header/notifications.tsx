@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+"use client";
 
+import React, { useState } from "react";
 import Link from "next/link";
 import * as NotificationData from "./data";
 import SimpleBar from "simplebar-react";
@@ -15,15 +16,29 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const Notifications = ({ className }: { className?: string }) => {
-  const [notifications, setNotifications] = useState(NotificationData.Notification);
+interface NotificationItem {
+  id: string;
+  title: string;
+  icon: React.ElementType;
+  subtitle: string;
+  time: string;
+  isRead?: boolean;
+}
+
+const initialNotifications: NotificationItem[] = NotificationData.Notification.map((n, idx) => ({
+  ...n,
+  id: `notif-${idx}-${n.title}`,
+}));
+
+const Notifications = ({ className }: { readonly className?: string }) => {
+  const [notifications, setNotifications] = useState(initialNotifications);
 
   const unreadCount = notifications.filter((item) => !item.isRead).length;
 
-  const handleMarkAsRead = (index: number) => {
-    const updatedNotifications = [...notifications];
-    updatedNotifications[index] = { ...updatedNotifications[index], isRead: true };
-    setNotifications(updatedNotifications);
+  const handleMarkAsRead = (id: string) => {
+    setNotifications((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, isRead: true } : item)),
+    );
   };
 
   return (
@@ -55,39 +70,44 @@ const Notifications = ({ className }: { className?: string }) => {
           {/* List */}
           <SimpleBar className="max-h-80 mt-3">
             <div className="flex flex-col">
-              {notifications.map((item, index) => (
-                <div
-                  key={index}
-                  onClick={() => handleMarkAsRead(index)}
-                  className="px-6 py-3 flex justify-between items-center hover:bg-primary/5 cursor-pointer"
-                >
-                  <div className="flex items-center w-full">
-                    <div className="h-11 w-11 shrink-0 rounded-xl flex justify-center border border-border items-center">
-                      <item.icon height={20} />
-                    </div>
+              {notifications.map((item) => {
+                const IconComponent = item.icon;
+                return (
+                  <button
+                    type="button"
+                    key={item.id}
+                    aria-label={`Notification: ${item.title}`}
+                    onClick={() => handleMarkAsRead(item.id)}
+                    className="w-full text-left px-6 py-3 flex justify-between items-center hover:bg-primary/5 cursor-pointer border-0 bg-transparent"
+                  >
+                    <div className="flex items-center w-full">
+                      <div className="h-11 w-11 shrink-0 rounded-xl flex justify-center border border-border items-center">
+                        <IconComponent height={20} />
+                      </div>
 
-                    <div className="ps-4 flex justify-between w-full">
-                      <div className="w-3/4 text-start">
-                        <h5
-                          className={cn(
-                            "mb-1 text-sm font-normal",
-                            !item.isRead && "font-semibold",
-                          )}
-                        >
-                          {item.title}
-                        </h5>
-                        <div className="text-xs text-muted-foreground line-clamp-1">
-                          {item.subtitle}
+                      <div className="ps-4 flex justify-between w-full">
+                        <div className="w-3/4 text-start">
+                          <h5
+                            className={cn(
+                              "mb-1 text-sm font-normal",
+                              !item.isRead && "font-semibold",
+                            )}
+                          >
+                            {item.title}
+                          </h5>
+                          <div className="text-xs text-muted-foreground line-clamp-1">
+                            {item.subtitle}
+                          </div>
+                        </div>
+
+                        <div className="text-xs self-start pt-1.5 dark:text-muted-foreground">
+                          {item.time}
                         </div>
                       </div>
-
-                      <div className="text-xs self-start pt-1.5 dark:text-muted-foreground">
-                        {item.time}
-                      </div>
                     </div>
-                  </div>
-                </div>
-              ))}
+                  </button>
+                );
+              })}
             </div>
           </SimpleBar>
 

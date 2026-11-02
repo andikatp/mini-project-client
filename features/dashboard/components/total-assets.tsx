@@ -48,10 +48,7 @@ export default function TotalAssets() {
           {metrics.map((item) => {
             const Icon = item.icon;
             return (
-              <div
-                key={item.id}
-                className="flex flex-col justify-between p-5 bg-background"
-              >
+              <div key={item.id} className="flex flex-col justify-between p-5 bg-background">
                 <div className="flex items-center justify-between">
                   <div className="border border-border rounded-lg p-2 bg-muted/30">
                     <Icon size={16} className="text-primary" />
@@ -61,12 +58,8 @@ export default function TotalAssets() {
                   </span>
                 </div>
                 <div className="mt-3">
-                  <h6 className="text-xl font-bold tracking-tight text-foreground">
-                    {item.value}
-                  </h6>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    {item.title}
-                  </p>
+                  <h6 className="text-xl font-bold tracking-tight text-foreground">{item.value}</h6>
+                  <p className="text-xs text-muted-foreground mt-0.5">{item.title}</p>
                 </div>
               </div>
             );

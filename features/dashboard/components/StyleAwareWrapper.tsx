@@ -1,13 +1,13 @@
 "use client";
 
 interface Props {
-  children: React.ReactNode;
-  lyraClassName: string;
-  defaultClassName?: string;
+  readonly children: React.ReactNode;
+  readonly lyraClassName?: string;
+  readonly defaultClassName?: string;
 }
 
-const StyleAwareWrapper = ({ children, lyraClassName }: Props) => {
-  return <div className={lyraClassName}>{children}</div>;
+const StyleAwareWrapper = ({ children, lyraClassName, defaultClassName }: Props) => {
+  return <div className={lyraClassName ?? defaultClassName}>{children}</div>;
 };
 
 export default StyleAwareWrapper;

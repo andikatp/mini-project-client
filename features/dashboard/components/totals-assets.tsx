@@ -8,7 +8,12 @@ import { PieChart as PieIcon } from "lucide-react";
 // Sesuai PRD Bagian 5: 6 status transaksi
 const statusDistribution = [
   { name: "DONE", count: 280, color: "#10b981", label: "Done" },
-  { name: "WAITING_FOR_ADMIN_CONFIRMATION", count: 45, color: "#3b82f6", label: "Waiting Organizer" },
+  {
+    name: "WAITING_FOR_ADMIN_CONFIRMATION",
+    count: 45,
+    color: "#3b82f6",
+    label: "Waiting Organizer",
+  },
   { name: "WAITING_FOR_PAYMENT", count: 32, color: "#f59e0b", label: "Waiting Payment" },
   { name: "REJECTED", count: 18, color: "#ef4444", label: "Rejected" },
   { name: "EXPIRED", count: 22, color: "#9ca3af", label: "Expired" },
@@ -39,8 +44,8 @@ export default function TotalsAssets() {
                 paddingAngle={3}
                 dataKey="count"
               >
-                {statusDistribution.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
+                {statusDistribution.map((entry) => (
+                  <Cell key={`cell-${entry.name}`} fill={entry.color} />
                 ))}
               </Pie>
             </PieChart>

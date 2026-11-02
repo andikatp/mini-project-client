@@ -13,31 +13,35 @@ type SearchableItem = {
   path: string;
 };
 
+function searchItems(
+  items: (MenuItem | ChildItem)[],
+  q: string,
+  parentPath = "",
+): SearchableItem[] {
+  let results: SearchableItem[] = [];
+
+  items.forEach((item) => {
+    const itemName = item.name ?? "";
+    const currentPath = parentPath ? `${parentPath} → ${itemName}` : itemName;
+
+    if (item.name && item.url && item.name.toLowerCase().includes(q.toLowerCase())) {
+      results.push({
+        name: item.name,
+        url: item.url,
+        path: currentPath,
+      });
+    }
+
+    if (item.items) {
+      results = [...results, ...searchItems(item.items, q, currentPath)];
+    }
+  });
+
+  return results;
+}
+
 function Search() {
   const [query, setQuery] = useState("");
-
-  const searchItems = (items: (MenuItem | ChildItem)[], q: string, parentPath = ""): SearchableItem[] => {
-    let results: SearchableItem[] = [];
-
-    items.forEach((item) => {
-      const itemName = item.name ?? "";
-      const currentPath = parentPath ? `${parentPath} → ${itemName}` : itemName;
-
-      if (item.name && item.url && item.name.toLowerCase().includes(q.toLowerCase())) {
-        results.push({
-          name: item.name,
-          url: item.url,
-          path: currentPath,
-        });
-      }
-
-      if (item.items) {
-        results = [...results, ...searchItems(item.items, q, currentPath)];
-      }
-    });
-
-    return results;
-  };
 
   const results = useMemo(() => {
     if (!query.trim()) return [];
@@ -66,9 +70,9 @@ function Search() {
       >
         <SimpleBar className="h-72 p-4 custom-scroll">
           {results.length ? (
-            results.map((item, i) => (
+            results.map((item) => (
               <Link
-                key={i}
+                key={item.path}
                 href={item.url}
                 onClick={() => setQuery("")}
                 className="p-2 mb-1.5 last:mb-0 flex items-center bg-input/30 gap-2 text-sm font-medium rounded-md hover:bg-primary/5 hover:text-primary w-full overflow-hidden"

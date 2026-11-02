@@ -178,12 +178,8 @@ export default function ProjectsOrders() {
                     <TableRow key={trx.id} className="border-border hover:bg-muted/40">
                       <TableCell className="pl-4 py-3">
                         <div className="flex flex-col">
-                          <span className="font-semibold text-foreground text-sm">
-                            {trx.id}
-                          </span>
-                          <span className="text-xs text-muted-foreground">
-                            {trx.eventName}
-                          </span>
+                          <span className="font-semibold text-foreground text-sm">{trx.id}</span>
+                          <span className="text-xs text-muted-foreground">{trx.eventName}</span>
                         </div>
                       </TableCell>
 
@@ -192,9 +188,7 @@ export default function ProjectsOrders() {
                           <span className="font-medium text-foreground text-sm">
                             {trx.customerName}
                           </span>
-                          <span className="text-xs text-muted-foreground">
-                            {trx.customerEmail}
-                          </span>
+                          <span className="text-xs text-muted-foreground">{trx.customerEmail}</span>
                         </div>
                       </TableCell>
 

@@ -8,30 +8,21 @@ type SearchType = {
 };
 
 const searchSugg: SearchType[] = [
-  { title: "Support", href: "https://shadcndashboard.dev/support" },
-  { title: "License", href: "https://shadcndashboard.dev/license" },
+  { title: "Terms & Conditions", href: "#" },
+  { title: "Privacy Policy", href: "#" },
 ];
 
 export default function Footer() {
   return (
     <div className="flex md:flex-row flex-col items-center justify-between gap-3 text-center">
       <p className="text-sm text-muted-foreground">
-        © 2026 by{" "}
-        <Link
-          href="https://shadcndashboard.dev/"
-          target="_blank"
-          className="hover:text-primary text-muted-foreground"
-        >
-          shadcndashboard
-        </Link>
-        , creating a better web for you.
+        © 2026 EventMgmt Platform. All rights reserved.
       </p>
 
       <div className="flex gap-4">
-        {searchSugg.map((item, index) => (
+        {searchSugg.map((item) => (
           <Link
-            key={index}
-            target="_blank"
+            key={item.title}
             href={item.href}
             className="text-sm hover:text-primary text-muted-foreground"
           >

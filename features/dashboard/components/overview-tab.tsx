@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { useAuthStore } from "@/features/auth/context/auth-store";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,9 +15,19 @@ import { CalendarDays, RefreshCcw, Download } from "lucide-react";
 export type TimeGrouping = "day" | "month" | "year";
 
 interface OverviewTabProps {
-  grouping?: TimeGrouping;
-  onGroupingChange?: (grouping: TimeGrouping) => void;
-  onRefresh?: () => void;
+  readonly grouping?: TimeGrouping;
+  readonly onGroupingChange?: (grouping: TimeGrouping) => void;
+  readonly onRefresh?: () => void;
+}
+
+const emptySubscribe = () => () => {};
+
+function getGreetingText() {
+  const hour = new Date().getHours();
+  if (hour >= 5 && hour < 12) return "Good Morning";
+  if (hour >= 12 && hour < 17) return "Good Afternoon";
+  if (hour >= 17 && hour < 21) return "Good Evening";
+  return "Good Night";
 }
 
 export default function OverviewTab({
@@ -26,20 +36,9 @@ export default function OverviewTab({
   onRefresh,
 }: OverviewTabProps) {
   const user = useAuthStore((s) => s.user);
-  const [greeting, setGreeting] = useState("Welcome");
 
-  useEffect(() => {
-    const hour = new Date().getHours();
-    if (hour >= 5 && hour < 12) {
-      setGreeting("Good Morning");
-    } else if (hour >= 12 && hour < 17) {
-      setGreeting("Good Afternoon");
-    } else if (hour >= 17 && hour < 21) {
-      setGreeting("Good Evening");
-    } else {
-      setGreeting("Good Night");
-    }
-  }, []);
+  // Safely resolve greeting on client without triggering unstable prerender warning
+  const greeting = useSyncExternalStore(emptySubscribe, getGreetingText, () => "Welcome");
 
   return (
     <div className="flex items-center flex-wrap lg:flex-nowrap lg:gap-0 gap-4 justify-between">
@@ -62,10 +61,7 @@ export default function OverviewTab({
           <RefreshCcw size={16} />
         </Button>
 
-        <Select
-          value={grouping}
-          onValueChange={(val) => onGroupingChange?.(val as TimeGrouping)}
-        >
+        <Select value={grouping} onValueChange={(val) => onGroupingChange?.(val as TimeGrouping)}>
           <SelectTrigger className="w-fit h-auto! text-foreground cursor-pointer gap-2">
             <CalendarDays size={16} />
             <SelectValue placeholder="Group by" />
