@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { Component, Search as SearchIcon } from "lucide-react";
-import SimpleBar from "simplebar-react";
-import { getSidebarItems, MenuItem, ChildItem } from "../../vertical/sidebar/sidebaritems";
-import Link from "next/link";
 import { Input } from "@/components/ui/input";
+import { Component, Search as SearchIcon } from "lucide-react";
+import Link from "next/link";
+import { useMemo, useState } from "react";
+import SimpleBar from "simplebar-react";
+import { ChildItem, getSidebarItems, MenuItem } from "../../vertical/sidebar/sidebaritems";
 
 type SearchableItem = {
   name: string;
@@ -64,7 +64,7 @@ function Search() {
         />
       </div>
       <div
-        className={`absolute w-full bg-card rounded-md top-11 z-10 start-0 shadow-md border border-border ${
+        className={`absolute w-full bg-card rounded-md top-11 z-10 inset-s-0 shadow-md border border-border ${
           query ? "block" : "hidden"
         }`}
       >
