@@ -10,24 +10,24 @@ Move this file into the client repo root `docs/` when it is created._
 EventMgmt is a two-sided event platform: attendees discover events, buy
 tickets, upload payment proof, use referral rewards, and review attended
 events. Organizers create/promote events, review transactions, and monitor
-an organizer dashboard.
+performance from a shared, role-based dashboard.
 
-| Owner              | Frontend scope                                                        |
-| ------------------ | --------------------------------------------------------------------- |
-| Kelvin (Feature 1) | Discovery & search, event CRUD UI, checkout & proof upload, review UI |
-| Andika (Feature 2) | Auth pages, profile, referral UI, organizer dashboard & charts        |
-| Shared             | API contract, route guards, design consistency                        |
+| Owner              | Frontend scope                                                          |
+| ------------------ | ----------------------------------------------------------------------- |
+| Kelvin (Feature 1) | Discovery & search, event CRUD UI, checkout & proof upload, review UI   |
+| Andika (Feature 2) | Auth pages, profile, referral UI, role-based dashboard content & charts |
+| Shared             | API contract, route guards, shared dashboard shell, design consistency  |
 
 ## 2. Client stack
 
-| Layer     | Technology                                                                   |
-| --------- | ---------------------------------------------------------------------------- |
-| App       | Next.js 16 (App Router) + React 19 + Tailwind CSS 4 + shadcn/ui (TypeScript) |
-| Toolchain | VitePlus + Bun (package manager)                                             |
-| Routing   | Next.js App Router — public + role-protected route groups/layouts            |
-| Data      | TanStack Query + Axios (server-state cache, mutations)                       |
-| Forms     | React Hook Form + Zod                                                        |
-| Hosting   | Vercel (decide with team)                                                    |
+| Layer     | Technology                                                                                                          |
+| --------- | ------------------------------------------------------------------------------------------------------------------- |
+| App       | Next.js 16 (App Router) + React 19 + Tailwind CSS 4 + shadcn/ui (TypeScript)                                        |
+| Toolchain | VitePlus + Bun (package manager)                                                                                    |
+| Routing   | Next.js App Router — public routes + one authenticated dashboard shell, role-based menus and role-protected layouts |
+| Data      | TanStack Query + Axios (server-state cache, mutations)                                                              |
+| Forms     | React Hook Form + Zod                                                                                               |
+| Hosting   | Vercel (decide with team)                                                                                           |
 
 Env (client): `BASE_URL` (or `NEXT_PUBLIC_API_BASE_URL`). `.env.local` at repo root; commit `.env.example`.
 
@@ -41,10 +41,26 @@ signin/signup, forgot/reset password.
 
 Protected (role guards + redirect):
 
+- Shared (any signed-in role): `/dashboard`, `/profile`.
 - Customer: `/checkout`, `/transactions`, `/transactions/[id]`,
-  `/profile`, `/rewards`.
-- Organizer: `/organizer`, `/organizer/events`, `/organizer/events/[id]/edit`,
-  `/organizer/transactions`, `/organizer/dashboard`.
+  `/rewards`.
+- Organizer: `/organizer/events`, `/organizer/events/[id]/edit`,
+  `/organizer/transactions`.
+
+Dashboard routing rules:
+
+- `/dashboard` is the organizer's post-login landing page; customers are
+  redirected to the home page (`/`) after sign-in. The page itself serves
+  both roles: the server session selects the customer or organizer
+  dashboard content, and the role must never be taken from a query
+  parameter or client-only state.
+- `/organizer` and `/organizer/dashboard` are not separate pages: both
+  redirect to `/dashboard`.
+- Authenticated customer and organizer pages share one dashboard shell
+  (sidebar + topbar). Sidebar menu items are generated from the session
+  role.
+- Wrong-role access to a role-specific route is blocked and redirected to
+  `/dashboard`.
 
 Guards improve UX only — the server re-checks every action.
 
@@ -64,6 +80,9 @@ Guards improve UX only — the server re-checks every action.
 
 - Register (role choice CUSTOMER/EVENT_ORGANIZER + optional referral code
   field), sign in/out, session restore.
+- After successful sign-in, CUSTOMER redirects to the home page (`/`) and
+  EVENT_ORGANIZER redirects to `/dashboard`; the dashboard content is
+  selected from the actual role in the server session.
 - Forgot/reset password flow; change password; edit name + avatar upload
   (validate type/size client-side, server re-validates).
 - Show the user's immutable referral code on the profile/rewards page.
@@ -105,14 +124,26 @@ Guards improve UX only — the server re-checks every action.
   approval" until approved.
 - Organizer profile shows average rating + review count.
 
-### 4.7 Organizer dashboard (Andika)
+### 4.7 Dashboard (shared shell, role-based content)
 
-- Summary cards + charts (transaction count, revenue, tickets sold, status
-  distribution) with day/month/year grouping, from
+- `/dashboard` uses one shell (sidebar + topbar) for both roles. The
+  sidebar menu is generated from the session role:
+  - Customer: Dashboard (`/dashboard`), Events (`/events`), My Transactions
+    (`/transactions`), Rewards (`/rewards`), Profile (`/profile`).
+  - Organizer: Dashboard (`/dashboard`), My Events (`/organizer/events`),
+    Transactions (`/organizer/transactions`), Profile (`/profile`).
+- Customer overview (simple, no analytics): upcoming tickets, recent
+  transactions, points balance, and available coupons, composed from the
+  existing transaction and rewards data.
+- Organizer overview: summary cards + charts (transaction count, revenue,
+  tickets sold, status distribution) with day/month/year grouping, from
   `GET /organizer/dashboard/summary|timeseries`.
-- Transaction inbox: filter by event/status, view payment proof image,
-  **accept/reject with confirmation dialog** (reject requires a reason).
+- Organizer transaction inbox (`/organizer/transactions`): filter by
+  event/status, view payment proof image, **accept/reject with
+  confirmation dialog** (reject requires a reason).
 - Attendee list per event: name, ticket quantity, total paid.
+- No separate `/organizer/dashboard` page is built; that path redirects to
+  `/dashboard`.
 
 ## 5. Transaction statuses — what the UI shows
 
@@ -149,9 +180,18 @@ a transaction detail should refresh after upload/accept/reject.
 4. Stacking allowed: voucher + coupon + points in one checkout.
 5. No design/branding guidelines for MVP — clean, responsive UI only.
 
+**Decided 2026-10-28:** one shared `/dashboard` for both roles — the server
+session selects the sidebar menu and the dashboard content. Post-login
+redirects stay role-based: customers to the home page, organizers to
+`/dashboard`. Role-specific work routes stay namespaced where their
+meaning differs.
+
 ## 8. MVP demo checklist (frontend)
 
 - Protected URLs redirect when signed out; wrong-role pages blocked.
+- After sign-in, organizers land on `/dashboard` and customers on the home
+  page; inside the dashboard shell each role sees only its own sidebar menu
+  and content; `/organizer/dashboard` redirects to `/dashboard`.
 - Discovery, checkout, and dashboard at three viewport sizes.
 - Network panel: search fires once per ~400 ms pause.
 - Dialogs on: cancel event, accept proof, reject proof, cancel transaction.
