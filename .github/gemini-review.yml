@@ -1,7 +1,7 @@
 # Configuration for jgunnink/gemini-review-bot
 # Docs: https://github.com/jgunnink/gemini-review-bot
 
-model: "gemini-3.8-flash"
+model: "gemini-3.5-flash-lite"
 
 # Cap maximum diff size to 500 KB for complete feature PR reviews
 max_diff_bytes: 20000

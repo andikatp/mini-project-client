@@ -1,7 +1,7 @@
-import type { Metadata } from "next";
-import { AuthLayout } from "@/features/auth/components/auth-layout";
 import { ChangePasswordArtwork } from "@/features/auth/components/auth-artworks";
+import { AuthLayout } from "@/features/auth/components/auth-layout";
 import { ChangePasswordForm } from "@/features/auth/components/change-password-form";
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Ganti Kata Sandi | EventMgmt",
