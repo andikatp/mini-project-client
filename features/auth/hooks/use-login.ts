@@ -35,7 +35,7 @@ export function useLogin() {
       const role = user?.role;
       setTimeout(() => {
         if (role === "EVENT_ORGANIZER") {
-          router.push("/organizer/dashboard");
+          router.push("/dashboard");
         } else {
           router.push("/");
         }

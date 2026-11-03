@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetClose, SheetContent, SheetFooter, SheetTrigger } from "@/components/ui/sheet";
@@ -11,8 +12,10 @@ import { useRouter } from "next/navigation";
 export default function ProfileSheet() {
   const router = useRouter();
   const { user, logout } = useAuthStore();
+  const [open, setOpen] = useState(false);
 
   const handleLogout = async () => {
+    setOpen(false);
     await logout();
     router.push("/login");
   };
@@ -20,7 +23,7 @@ export default function ProfileSheet() {
   const initial = user?.name ? user.name.charAt(0).toUpperCase() : "U";
 
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       {/* Trigger Button */}
       <SheetTrigger className="cursor-pointer hover:bg-primary/5 flex items-center justify-center rounded-full h-10 w-10">
         <Avatar className="h-8 w-8">
@@ -67,7 +70,8 @@ export default function ProfileSheet() {
             <li>
               <Link
                 href="/profile"
-                className="flex items-center gap-3 py-2 px-3 rounded-md hover:bg-primary/5 text-muted-foreground hover:text-primary transition-colors"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-3 py-2 px-3 rounded-md hover:bg-primary/5 text-muted-foreground hover:text-primary transition-colors cursor-pointer"
               >
                 <UserCircle width={20} height={20} />
                 <span className="text-sm font-medium">My Profile</span>
