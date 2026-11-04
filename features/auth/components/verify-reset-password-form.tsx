@@ -17,16 +17,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useVerifyResetPassword } from "../hooks/use-verify-reset-password";
+import { maskEmail } from "../utils/mask-email";
 import { OtpInputSection } from "./otp-input-section";
-
-function maskEmail(email: string): string {
-  if (!email || !email.includes("@")) return email;
-  const [local, domain] = email.split("@");
-  if (local.length <= 3) {
-    return `${local[0]}***@${domain}`;
-  }
-  return `${local.slice(0, 3)}***@${domain}`;
-}
 
 export function VerifyResetPasswordForm() {
   const router = useRouter();
