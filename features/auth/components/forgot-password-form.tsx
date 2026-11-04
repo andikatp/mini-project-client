@@ -18,10 +18,15 @@ export function ForgotPasswordForm() {
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!email.trim()) return;
-    const success = await requestReset(email.trim());
+    const cleanEmail = email.trim();
+    if (!cleanEmail) return;
+
+    const success = await requestReset(cleanEmail);
     if (success) {
-      router.push(`/verify-reset-password?email=${encodeURIComponent(email.trim())}`);
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem("reset_email", cleanEmail);
+      }
+      router.push("/verify-reset-password");
     }
   };
 
@@ -92,6 +97,7 @@ export function ForgotPasswordForm() {
         <div className="mt-6 pt-4 border-t border-border text-center text-sm">
           <Link
             href="/login"
+            prefetch={false}
             className="inline-flex items-center gap-1.5 font-semibold text-blue-600 hover:underline"
           >
             <ArrowLeft className="size-4" />

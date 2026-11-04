@@ -66,9 +66,7 @@ export function useVerifyEmail() {
     setIsResending(true);
     try {
       const response = await authApi.resendVerification({ email: email.trim() });
-      setSuccessMsg(
-        response.message || "Kode OTP verifikasi baru telah dikirimkan ke email Anda.",
-      );
+      setSuccessMsg(response.message || "Kode OTP verifikasi baru telah dikirimkan ke email Anda.");
       return true;
     } catch (err: unknown) {
       const message =

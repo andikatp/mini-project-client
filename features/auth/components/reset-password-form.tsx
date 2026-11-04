@@ -7,27 +7,22 @@ import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui
 import { AlertCircle, ArrowLeft, CheckCircle2, KeyRound, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useResetPassword } from "../hooks/use-reset-password";
 import { PasswordInputGroup } from "./password-input-group";
 
 export function ResetPasswordForm() {
   const searchParams = useSearchParams();
-  const [token, setToken] = useState<string>("");
+  const [token] = useState<string>(() => {
+    const queryToken = searchParams.get("token");
+    if (queryToken) return queryToken;
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem("reset_password_token") || "";
+    }
+    return "";
+  });
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
-  useEffect(() => {
-    const queryToken = searchParams.get("token");
-    if (queryToken) {
-      setToken(queryToken);
-    } else if (typeof window !== "undefined") {
-      const storedToken = sessionStorage.getItem("reset_password_token");
-      if (storedToken) {
-        setToken(storedToken);
-      }
-    }
-  }, [searchParams]);
 
   const { resetPassword, isLoading, errorMsg, successMsg } = useResetPassword();
 

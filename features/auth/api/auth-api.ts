@@ -5,11 +5,12 @@ import type {
   ForgotPasswordInput,
   LoginResponseData,
   RegisterInput,
+  ResendVerificationInput,
   ResetPasswordInput,
   User,
   VerifyEmailInput,
   VerifyResetPasswordInput,
-  VerifyResetPasswordResponseData
+  VerifyResetPasswordResponseData,
 } from "../types";
 
 export const authApi = {
@@ -45,25 +46,12 @@ export const authApi = {
     });
   },
 
+  /**
+   * Verify email with 6-digit OTP code (POST /auth/verify-email)
+   */
   async verifyEmail(input: VerifyEmailInput): Promise<ApiResponse<null>> {
     return apiClient<null>("/auth/verify-email", {
       method: HttpMethod.POST,
-      body: JSON.stringify({ token: input.token.trim() }),
-    });
-  },
-
-  async forgotPassword(input: ForgotPasswordInput): Promise<ApiResponse<null>> {
-    return apiClient<null>("/auth/forgot-password", {
-      method: HttpMethod.POST,
-      body: JSON.stringify({ email: input.email.trim() }),
-    });
-  },
-
-  async verifyResetPassword(
-    input: VerifyResetPasswordInput,
-  ): Promise<ApiResponse<VerifyResetPasswordResponseData>> {
-    return apiRequest<VerifyResetPasswordResponseData>("/auth/verify-reset-password", {
-      method: "POST",
       body: JSON.stringify({
         email: input.email.trim(),
         otp: input.otp.trim(),
@@ -71,12 +59,52 @@ export const authApi = {
     });
   },
 
+  /**
+   * Resend fresh 6-digit verification code to email (POST /auth/resend-verification)
+   */
+  async resendVerification(input: ResendVerificationInput): Promise<ApiResponse<null>> {
+    return apiClient<null>("/auth/resend-verification", {
+      method: HttpMethod.POST,
+      body: JSON.stringify({
+        email: input.email.trim(),
+      }),
+    });
+  },
+
+  /**
+   * Request 6-digit OTP code for password reset (POST /auth/forgot-password)
+   */
+  async forgotPassword(input: ForgotPasswordInput): Promise<ApiResponse<null>> {
+    return apiClient<null>("/auth/forgot-password", {
+      method: HttpMethod.POST,
+      body: JSON.stringify({ email: input.email.trim() }),
+    });
+  },
+
+  /**
+   * Verify 6-digit OTP code for password reset and receive one-time reset token (POST /auth/verify-reset-password)
+   */
+  async verifyResetPassword(
+    input: VerifyResetPasswordInput,
+  ): Promise<ApiResponse<VerifyResetPasswordResponseData>> {
+    return apiClient<VerifyResetPasswordResponseData>("/auth/verify-reset-password", {
+      method: HttpMethod.POST,
+      body: JSON.stringify({
+        email: input.email.trim(),
+        otp: input.otp.trim(),
+      }),
+    });
+  },
+
+  /**
+   * Reset user password using one-time reset token (POST /auth/reset-password)
+   */
   async resetPassword(input: ResetPasswordInput): Promise<ApiResponse<null>> {
     return apiClient<null>("/auth/reset-password", {
       method: HttpMethod.POST,
       body: JSON.stringify({
+        resetToken: input.resetToken.trim(),
         password: input.password,
-        ...(input.resetToken ? { resetToken: input.resetToken } : {}),
         ...(input.email ? { email: input.email.trim() } : {}),
         ...(input.otp ? { otp: input.otp.trim() } : {}),
       }),

@@ -51,9 +51,7 @@ export function useVerifyResetPassword() {
       return token;
     } catch (err: unknown) {
       const message =
-        err instanceof Error
-          ? err.message
-          : "Kode OTP tidak valid atau telah kedaluwarsa.";
+        err instanceof Error ? err.message : "Kode OTP tidak valid atau telah kedaluwarsa.";
       setErrorMsg(message);
       return null;
     } finally {
@@ -74,15 +72,11 @@ export function useVerifyResetPassword() {
 
     try {
       const response = await authApi.forgotPassword({ email: email.trim() });
-      setSuccessMsg(
-        response.message || "Kode OTP baru telah dikirimkan ke email Anda.",
-      );
+      setSuccessMsg(response.message || "Kode OTP baru telah dikirimkan ke email Anda.");
       return true;
     } catch (err: unknown) {
       const message =
-        err instanceof Error
-          ? err.message
-          : "Gagal mengirim ulang kode OTP. Silakan coba lagi.";
+        err instanceof Error ? err.message : "Gagal mengirim ulang kode OTP. Silakan coba lagi.";
       setErrorMsg(message);
       return false;
     } finally {
@@ -105,4 +99,3 @@ export function useVerifyResetPassword() {
     clearMessages,
   };
 }
-

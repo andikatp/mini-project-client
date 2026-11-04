@@ -3,25 +3,60 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
-import { AlertCircle, CheckCircle2, Clock, Loader2, RefreshCw, ShieldCheck } from "lucide-react";
-import { useSearchParams } from "next/navigation";
+import {
+  AlertCircle,
+  ArrowLeft,
+  CheckCircle2,
+  Clock,
+  Edit2,
+  Loader2,
+  RefreshCw,
+  ShieldCheck,
+} from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useVerifyResetPassword } from "../hooks/use-verify-reset-password";
 
-export function VerifyResetPasswordForm() {
-  const searchParams = useSearchParams();
-  const initialEmail = searchParams.get("email") || "";
+/**
+ * Mask email for privacy (e.g. ahmad.subardjo@gmail.com -> ahm***@gmail.com)
+ */
+function maskEmail(email: string): string {
+  if (!email || !email.includes("@")) return email;
+  const [local, domain] = email.split("@");
+  if (local.length <= 3) {
+    return `${local[0]}***@${domain}`;
+  }
+  return `${local.slice(0, 3)}***@${domain}`;
+}
 
-  const [email, setEmail] = useState(initialEmail);
+export function VerifyResetPasswordForm() {
+  const router = useRouter();
+
+  // Hanya izinkan jika user datang dari flow submit forgot-password (ada di sessionStorage)
+  const [email] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem("reset_email") || "";
+    }
+    return "";
+  });
+
   const [otp, setOtp] = useState("");
   const [resendCooldown, setResendCooldown] = useState(0);
 
   const { verifyOtp, resendOtp, isLoading, isResending, errorMsg, successMsg } =
     useVerifyResetPassword();
 
+  // Guard: If no email found in query or session, route back to forgot-password
+  useEffect(() => {
+    if (!email) {
+      router.replace("/forgot-password");
+    }
+  }, [email, router]);
+
+  // Handle resend countdown
   useEffect(() => {
     if (resendCooldown <= 0) return;
     const interval = setInterval(() => {
@@ -29,6 +64,13 @@ export function VerifyResetPasswordForm() {
     }, 1000);
     return () => clearInterval(interval);
   }, [resendCooldown]);
+
+  // UX Improvement: Auto-verify immediately once user finishes typing 6 digits
+  useEffect(() => {
+    if (otp.length === 6 && email && !isLoading) {
+      void verifyOtp(email.trim(), otp.trim());
+    }
+  }, [otp, email, isLoading, verifyOtp]);
 
   const handleResend = async () => {
     if (!email.trim() || resendCooldown > 0 || isResending) return;
@@ -44,6 +86,10 @@ export function VerifyResetPasswordForm() {
     await verifyOtp(email.trim(), otp.trim());
   };
 
+  if (!email) {
+    return null;
+  }
+
   return (
     <Card className="w-full bg-card border-border shadow-sm">
       <CardHeader className="space-y-1">
@@ -54,14 +100,8 @@ export function VerifyResetPasswordForm() {
           </span>
         </div>
         <CardDescription>
-          {email ? (
-            <span>
-              Masukkan 6 digit kode pemulihan yang dikirimkan ke{" "}
-              <strong className="text-foreground">{email}</strong>.
-            </span>
-          ) : (
-            "Masukkan alamat email Anda dan 6 digit kode OTP yang diterima."
-          )}
+          Masukkan 6 digit kode pemulihan yang dikirimkan ke{" "}
+          <strong className="text-foreground">{maskEmail(email)}</strong>.
         </CardDescription>
       </CardHeader>
 
@@ -83,22 +123,7 @@ export function VerifyResetPasswordForm() {
         )}
 
         <form onSubmit={handleSubmit} noValidate>
-          <FieldGroup className="gap-4">
-            {!initialEmail && (
-              <Field data-invalid={!!errorMsg && !email}>
-                <FieldLabel htmlFor="verify-email">Alamat Email</FieldLabel>
-                <Input
-                  id="verify-email"
-                  type="email"
-                  placeholder="nama@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={isLoading}
-                  required
-                />
-              </Field>
-            )}
-
+          <FieldGroup className="gap-6">
             <Field data-invalid={!!errorMsg && otp.length !== 6}>
               <div className="flex items-center justify-between">
                 <FieldLabel htmlFor="reset-verify-otp">Kode OTP (6 Digit)</FieldLabel>
@@ -123,15 +148,12 @@ export function VerifyResetPasswordForm() {
                   </InputOTPGroup>
                 </InputOTP>
               </div>
-              <FieldDescription className="text-center text-xs">
-                Maksimal 5 kali percobaan verifikasi kode OTP.
-              </FieldDescription>
             </Field>
 
             <Button
               type="submit"
               disabled={isLoading || !email.trim() || otp.length !== 6}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 shadow-sm transition-all mt-1"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 shadow-sm transition-all"
             >
               {isLoading ? (
                 <>
@@ -148,26 +170,41 @@ export function VerifyResetPasswordForm() {
           </FieldGroup>
         </form>
 
-        <div className="mt-4 pt-4 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
-          <span>Tidak menerima kode?</span>
+        <div className="mt-5 pt-4 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
+          <Link
+            href="/forgot-password"
+            className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <Edit2 className="size-3" />
+            Ubah Email
+          </Link>
+
           <Button
             type="button"
             variant="ghost"
             size="xs"
             disabled={resendCooldown > 0 || isResending || !email.trim()}
             onClick={handleResend}
-            className="text-blue-600 hover:bg-muted"
+            className="text-blue-600 hover:bg-muted font-medium"
           >
-            <RefreshCw
-              className={isResending || resendCooldown > 0 ? "animate-spin" : ""}
-              data-icon="inline-start"
-            />
+            <RefreshCw className={isResending ? "animate-spin" : ""} data-icon="inline-start" />
             {resendCooldown > 0
               ? `Kirim Ulang (${resendCooldown}s)`
               : isResending
                 ? "Mengirim..."
                 : "Kirim Ulang OTP"}
           </Button>
+        </div>
+
+        <div className="mt-4 pt-3 border-t border-border text-center text-sm">
+          <Link
+            href="/login"
+            prefetch={false}
+            className="inline-flex items-center gap-1.5 font-semibold text-blue-600 hover:underline"
+          >
+            <ArrowLeft className="size-4" />
+            Kembali ke Halaman Masuk
+          </Link>
         </div>
       </CardContent>
     </Card>

@@ -3,7 +3,7 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import {
@@ -20,11 +20,30 @@ import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useVerifyEmail } from "../hooks/use-verify-email";
 
+/**
+ * Mask email for privacy (e.g. ahmad.subardjo@gmail.com -> ahm***@gmail.com)
+ */
+function maskEmail(email: string): string {
+  if (!email || !email.includes("@")) return email;
+  const [local, domain] = email.split("@");
+  if (local.length <= 3) {
+    return `${local[0]}***@${domain}`;
+  }
+  return `${local.slice(0, 3)}***@${domain}`;
+}
+
 export function VerifyEmailForm() {
   const searchParams = useSearchParams();
   const initialEmail = searchParams.get("email") || "";
 
-  const [email, setEmail] = useState(initialEmail);
+  const [email, setEmail] = useState<string>(() => {
+    if (initialEmail) return initialEmail;
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem("registered_email") || "";
+    }
+    return "";
+  });
+
   const [otp, setOtp] = useState("");
   const [resendCooldown, setResendCooldown] = useState(0);
 
@@ -40,9 +59,16 @@ export function VerifyEmailForm() {
     return () => clearInterval(interval);
   }, [resendCooldown]);
 
+  // UX Improvement: Auto-verify once 6-digit OTP is typed
+  useEffect(() => {
+    if (otp.length === 6 && email && !isLoading && !isVerified) {
+      void verify(email.trim(), otp.trim());
+    }
+  }, [otp, email, isLoading, isVerified, verify]);
+
   const handleResend = async () => {
-    if (!email) return;
-    const success = await resendVerification(email);
+    if (!email.trim() || resendCooldown > 0 || isResending || isVerified) return;
+    const success = await resendVerification(email.trim());
     if (success) {
       setResendCooldown(60);
     }
@@ -50,14 +76,17 @@ export function VerifyEmailForm() {
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await verify(email, otp);
+    if (!email.trim() || otp.length !== 6) return;
+    await verify(email.trim(), otp.trim());
   };
 
   return (
     <Card className="w-full bg-card border-border shadow-sm">
       <CardHeader className="space-y-1">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-xl font-bold tracking-tight">Verifikasi Kode OTP</CardTitle>
+          <CardTitle className="text-xl font-bold tracking-tight">
+            Verifikasi Alamat Email
+          </CardTitle>
           <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-600 border border-sky-500/20">
             Aktivasi
           </span>
@@ -65,8 +94,8 @@ export function VerifyEmailForm() {
         <CardDescription>
           {email ? (
             <span>
-              Masukkan 6 digit kode verifikasi yang telah dikirimkan ke{" "}
-              <strong className="text-foreground">{email}</strong>.
+              Masukkan 6 digit kode OTP yang telah dikirimkan ke{" "}
+              <strong className="text-foreground">{maskEmail(email)}</strong>.
             </span>
           ) : (
             "Masukkan alamat email Anda dan 6 digit kode OTP yang diterima."
@@ -92,8 +121,8 @@ export function VerifyEmailForm() {
         )}
 
         <form onSubmit={handleSubmit} noValidate>
-          <FieldGroup className="gap-4">
-            {!initialEmail && (
+          <FieldGroup className="gap-6">
+            {!email && (
               <Field data-invalid={!!errorMsg && !email}>
                 <FieldLabel htmlFor="verify-email">Alamat Email</FieldLabel>
                 <Input
@@ -132,15 +161,12 @@ export function VerifyEmailForm() {
                   </InputOTPGroup>
                 </InputOTP>
               </div>
-              <FieldDescription className="text-center text-xs">
-                Maksimal 5 kali percobaan verifikasi kode.
-              </FieldDescription>
             </Field>
 
             <Button
               type="submit"
               disabled={isLoading || isVerified || !email.trim() || otp.length !== 6}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 shadow-sm transition-all mt-1"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 shadow-sm transition-all"
             >
               {isLoading ? (
                 <>
@@ -157,7 +183,7 @@ export function VerifyEmailForm() {
           </FieldGroup>
         </form>
 
-        <div className="mt-4 pt-4 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
+        <div className="mt-5 pt-4 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
           <span>Tidak menerima kode?</span>
           <Button
             type="button"
@@ -165,12 +191,9 @@ export function VerifyEmailForm() {
             size="xs"
             disabled={resendCooldown > 0 || isResending || isVerified || !email.trim()}
             onClick={handleResend}
-            className="text-blue-600 hover:bg-muted"
+            className="text-blue-600 hover:bg-muted font-medium"
           >
-            <RefreshCw
-              className={isResending || resendCooldown > 0 ? "animate-spin" : ""}
-              data-icon="inline-start"
-            />
+            <RefreshCw className={isResending ? "animate-spin" : ""} data-icon="inline-start" />
             {resendCooldown > 0
               ? `Kirim Ulang (${resendCooldown}s)`
               : isResending
@@ -179,10 +202,11 @@ export function VerifyEmailForm() {
           </Button>
         </div>
 
-        <div className="mt-6 pt-4 border-t border-border text-center text-sm text-muted-foreground">
+        <div className="mt-4 pt-3 border-t border-border text-center text-sm text-muted-foreground">
           Sudah berhasil diverifikasi?{" "}
           <Link
             href="/login"
+            prefetch={false}
             className="font-semibold text-blue-600 hover:underline inline-flex items-center gap-1"
           >
             Lanjut ke Halaman Masuk

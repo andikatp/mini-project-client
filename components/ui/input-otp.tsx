@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { OTPInput, OTPInputContext } from "input-otp";
-import { Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 function InputOTP({
@@ -15,10 +14,7 @@ function InputOTP({
   return (
     <OTPInput
       data-slot="input-otp"
-      containerClassName={cn(
-        "flex items-center gap-2 has-disabled:opacity-50",
-        containerClassName,
-      )}
+      containerClassName={cn("flex items-center gap-2 has-disabled:opacity-50", containerClassName)}
       spellCheck={false}
       className={cn("disabled:cursor-not-allowed", className)}
       {...props}
@@ -68,18 +64,14 @@ function InputOTPSlot({
   );
 }
 
-function InputOTPSeparator({ ...props }: React.ComponentProps<"div">) {
+function InputOTPSeparator({ className, ...props }: React.ComponentProps<"hr">) {
   return (
-    <div
+    <hr
       data-slot="input-otp-separator"
-      className="flex items-center text-muted-foreground"
-      role="separator"
+      className={cn("flex items-center text-muted-foreground border-none w-2", className)}
       {...props}
-    >
-      <Minus className="size-4" />
-    </div>
+    />
   );
 }
 
 export { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator };
-

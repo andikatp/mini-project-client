@@ -44,6 +44,9 @@ export function useRegister() {
       );
 
       setTimeout(() => {
+        if (typeof window !== "undefined") {
+          sessionStorage.setItem("registered_email", input.email.trim());
+        }
         router.push(`/verify-email?email=${encodeURIComponent(input.email.trim())}`);
       }, 1500);
 
