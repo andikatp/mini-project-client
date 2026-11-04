@@ -1,4 +1,2 @@
 export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_BASE_URL ||
-  "https://mini-project-server-i490.onrender.com/api/v1";
-
+  process.env.NEXT_PUBLIC_BASE_URL || "https://mini-project-server-i490.onrender.com/api/v1";

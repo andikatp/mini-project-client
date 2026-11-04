@@ -5,13 +5,24 @@ import { profileApi } from "../api/profile-api";
 import type { UpdateProfileInput, UserProfile } from "../types";
 
 export function useUserProfile() {
-  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const { user: authUser, setSession } = useAuthStore();
+  const [profile, setProfile] = useState<UserProfile | null>(() => {
+    if (!authUser) return null;
+    return {
+      id: authUser.id,
+      name: authUser.name,
+      email: authUser.email,
+      role: authUser.role,
+      avatarUrl: authUser.avatarUrl,
+      referralCode: authUser.referralCode,
+      emailVerifiedAt: authUser.isEmailVerified ? (authUser.createdAt ?? null) : null,
+      createdAt: authUser.createdAt,
+    };
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const { user: authUser, setSession } = useAuthStore();
 
   const syncUserSession = useCallback(
     (userData: UserProfile) => {
@@ -49,7 +60,7 @@ export function useUserProfile() {
           role: authUser.role,
           avatarUrl: authUser.avatarUrl,
           referralCode: authUser.referralCode,
-          emailVerifiedAt: authUser.isEmailVerified ? new Date().toISOString() : null,
+          emailVerifiedAt: authUser.isEmailVerified ? (authUser.createdAt ?? null) : null,
           createdAt: authUser.createdAt,
         });
       }
@@ -106,24 +117,35 @@ export function useUserProfile() {
   };
 
   useEffect(() => {
-    fetchProfile();
-  }, [fetchProfile]);
+    let ignore = false;
+
+    async function load() {
+      try {
+        const res = await profileApi.getUserProfile();
+        if (!ignore && res.data?.user) {
+          syncUserSession(res.data.user);
+        }
+      } catch (err: unknown) {
+        if (!ignore) {
+          const msg = err instanceof Error ? err.message : "Gagal memuat profil pengguna";
+          setError(msg);
+        }
+      } finally {
+        if (!ignore) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    void load();
+
+    return () => {
+      ignore = true;
+    };
+  }, [syncUserSession]);
 
   return {
-    profile:
-      profile ||
-      (authUser
-        ? {
-            id: authUser.id,
-            name: authUser.name,
-            email: authUser.email,
-            role: authUser.role,
-            avatarUrl: authUser.avatarUrl,
-            referralCode: authUser.referralCode,
-            emailVerifiedAt: authUser.isEmailVerified ? new Date().toISOString() : null,
-            createdAt: authUser.createdAt,
-          }
-        : null),
+    profile,
     isLoading,
     isUpdating,
     isUploadingAvatar,

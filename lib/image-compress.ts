@@ -9,12 +9,7 @@ export async function compressClientImage(
   file: File,
   options: ImageCompressOptions = {},
 ): Promise<File> {
-  const {
-    maxWidth = 1080,
-    maxHeight = 1080,
-    quality = 0.8,
-    mimeType = "image/webp",
-  } = options;
+  const { maxWidth = 1080, maxHeight = 1080, quality = 0.8, mimeType = "image/webp" } = options;
 
   return new Promise((resolve, reject) => {
     // If not an image, return original
@@ -31,16 +26,12 @@ export async function compressClientImage(
         let width = img.width;
         let height = img.height;
 
-        if (width > height) {
-          if (width > maxWidth) {
-            height = Math.round((height * maxWidth) / width);
-            width = maxWidth;
-          }
-        } else {
-          if (height > maxHeight) {
-            width = Math.round((width * maxHeight) / height);
-            height = maxHeight;
-          }
+        if (width > height && width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        } else if (width <= height && height > maxHeight) {
+          width = Math.round((width * maxHeight) / height);
+          height = maxHeight;
         }
 
         const canvas = document.createElement("canvas");
@@ -84,4 +75,3 @@ export async function compressClientImage(
     reader.readAsDataURL(file);
   });
 }
-

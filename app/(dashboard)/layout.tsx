@@ -16,7 +16,7 @@ export default function DashboardProtectedLayout({
   children: React.ReactNode;
 }>) {
   const router = useRouter();
-  const { user, isInitialized, fetchCurrentUser } = useAuthStore();
+  const { user, fetchCurrentUser } = useAuthStore();
   const [isVerifying, setIsVerifying] = useState(!user);
 
   useEffect(() => {
@@ -39,7 +39,7 @@ export default function DashboardProtectedLayout({
       }
     }
 
-    checkAndSyncAuth();
+    void checkAndSyncAuth();
 
     return () => {
       isMounted = false;

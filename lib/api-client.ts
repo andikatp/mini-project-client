@@ -26,14 +26,61 @@ export interface ApiClientOptions extends Omit<RequestInit, "method"> {
   timeoutMs?: number;
 }
 
+function handleUnauthorized(message?: string): never {
+  if (
+    typeof window !== "undefined" &&
+    !window.location.pathname.startsWith("/login") &&
+    !window.location.pathname.startsWith("/register") &&
+    !window.location.pathname.startsWith("/verify-email") &&
+    !window.location.pathname.startsWith("/forgot-password") &&
+    !window.location.pathname.startsWith("/reset-password")
+  ) {
+    localStorage.removeItem("eventmgmt_auth_session");
+    window.location.href = "/login";
+  }
+  throw new Error(message || "Sesi Anda telah berakhir. Silakan masuk kembali.");
+}
+
+async function executeFetch<T>(
+  url: string,
+  fetchOptions: RequestInit,
+  timeoutMs: number,
+): Promise<ApiResponse<T>> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const res = await fetch(url, {
+      ...fetchOptions,
+      credentials: "include",
+      signal: controller.signal,
+    });
+
+    const data: ApiResponse<T> = await res.json().catch(() => ({
+      status: "error" as const,
+      message: res.statusText || "Terjadi kesalahan pada server",
+    }));
+
+    if (res.status === 401) {
+      handleUnauthorized(data.message);
+    }
+
+    if (!res.ok || data.status === "error") {
+      throw new Error(data.message || `Request gagal dengan status ${res.status}`);
+    }
+
+    return data;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+function isRetryableError(err: unknown): boolean {
+  return (err instanceof DOMException && err.name === "AbortError") || err instanceof TypeError;
+}
+
 /**
  * Unified HTTP client for API requests.
- * Features:
- * - Automatic base URL configuration
- * - Automatic JSON content-type (unless FormData) & credentials: "include" for HttpOnly session cookie
- * - Auto-handling for 401 Unauthorized (session cleanup & redirect to /login)
- * - Auto-retry mechanism for transient network dropouts / cold-start timeouts
- * - Request timeout via AbortController
  */
 export async function apiClient<T>(
   endpoint: string,
@@ -47,58 +94,15 @@ export async function apiClient<T>(
     headers.set("Content-Type", "application/json");
   }
 
-  let attempt = 0;
-  while (attempt <= retries) {
-    attempt++;
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  fetchOptions.headers = headers;
 
+  const runWithRetry = async (attempt: number): Promise<ApiResponse<T>> => {
     try {
-      const res = await fetch(url, {
-        ...fetchOptions,
-        headers,
-        credentials: "include",
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
-
-      const data: ApiResponse<T> = await res.json().catch(() => ({
-        status: "error" as const,
-        message: res.statusText || "Terjadi kesalahan pada server",
-      }));
-
-      // Handle 401 Unauthorized (expired or invalid session cookie)
-      if (res.status === 401) {
-        if (
-          typeof window !== "undefined" &&
-          !window.location.pathname.startsWith("/login") &&
-          !window.location.pathname.startsWith("/register") &&
-          !window.location.pathname.startsWith("/verify-email") &&
-          !window.location.pathname.startsWith("/forgot-password") &&
-          !window.location.pathname.startsWith("/reset-password")
-        ) {
-          localStorage.removeItem("eventmgmt_auth_session");
-          window.location.href = "/login";
-        }
-        throw new Error(data.message || "Sesi Anda telah berakhir. Silakan masuk kembali.");
-      }
-
-      if (!res.ok || data.status === "error") {
-        throw new Error(data.message || `Request gagal dengan status ${res.status}`);
-      }
-
-      return data;
+      return await executeFetch<T>(url, fetchOptions, timeoutMs);
     } catch (err: unknown) {
-      clearTimeout(timeoutId);
-
-      const isTimeout = err instanceof DOMException && err.name === "AbortError";
-      const isNetworkError = err instanceof TypeError; 
-
-      // Retry only on transient network failures or timeouts
-      if ((isTimeout || isNetworkError) && attempt <= retries) {
-        await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
-        continue;
+      if (isRetryableError(err) && attempt < retries) {
+        await new Promise((resolve) => setTimeout(resolve, 1000 * (attempt + 1)));
+        return runWithRetry(attempt + 1);
       }
 
       if (err instanceof Error) {
@@ -106,7 +110,7 @@ export async function apiClient<T>(
       }
       throw new Error("Gagal terhubung ke server");
     }
-  }
+  };
 
-  throw new Error("Gagal terhubung ke server setelah beberapa percobaan.");
+  return runWithRetry(0);
 }

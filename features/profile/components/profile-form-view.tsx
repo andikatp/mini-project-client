@@ -24,7 +24,7 @@ import {
   User as UserIcon,
 } from "lucide-react";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 export default function ProfileFormView() {
   const {
@@ -38,17 +38,12 @@ export default function ProfileFormView() {
     uploadAvatar,
   } = useUserProfile();
 
-  const [name, setName] = useState("");
+  const [customName, setCustomName] = useState<string | null>(null);
+  const name = customName ?? profile?.name ?? "";
   const [copied, setCopied] = useState(false);
   const [profileMsg, setProfileMsg] = useState<{ type: "success" | "error"; text: string } | null>(
     null,
   );
-
-  useEffect(() => {
-    if (profile) {
-      setName(profile.name ?? "");
-    }
-  }, [profile]);
 
   const initial = profile?.name ? profile.name.charAt(0).toUpperCase() : "U";
   const referralCode = profile?.referralCode ?? "REF-2026-DISC";
@@ -197,15 +192,13 @@ export default function ProfileFormView() {
           <div className="flex flex-col items-center sm:items-start text-center sm:text-left gap-1.5 flex-1">
             <div className="flex items-center gap-3 flex-wrap justify-center sm:justify-start">
               <h2 className="text-2xl font-bold tracking-tight text-foreground">
-                {isLoading ? "Memuat..." : profile?.name ?? "User"}
+                {isLoading ? "Memuat..." : (profile?.name ?? "User")}
               </h2>
               <Badge
                 variant="secondary"
                 className="bg-primary/10 text-primary font-medium px-2.5 py-0.5 rounded-full"
               >
-                {profile?.role === "EVENT_ORGANIZER"
-                  ? "Event Organizer"
-                  : "Customer / Attendee"}
+                {profile?.role === "EVENT_ORGANIZER" ? "Event Organizer" : "Customer / Attendee"}
               </Badge>
             </div>
 
@@ -256,7 +249,7 @@ export default function ProfileFormView() {
                     id="fullname"
                     type="text"
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(e) => setCustomName(e.target.value)}
                     placeholder="Enter your name"
                     required
                     disabled={isUpdating}
@@ -309,11 +302,7 @@ export default function ProfileFormView() {
                     onClick={handleCopyReferral}
                     className="flex items-center gap-1.5 px-3 cursor-pointer"
                   >
-                    {copied ? (
-                      <Check size={14} className="text-emerald-600" />
-                    ) : (
-                      <Copy size={14} />
-                    )}
+                    {copied ? <Check size={14} className="text-emerald-600" /> : <Copy size={14} />}
                     <span className="text-xs">{copied ? "Copied" : "Copy"}</span>
                   </Button>
                 </div>
@@ -376,9 +365,7 @@ export default function ProfileFormView() {
                   <Lock size={20} />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <h4 className="text-sm font-semibold text-foreground">
-                    Password Management
-                  </h4>
+                  <h4 className="text-sm font-semibold text-foreground">Password Management</h4>
                   <p className="text-xs text-muted-foreground leading-relaxed">
                     Perbarui kata sandi akun Anda secara berkala melalui halaman khusus ganti kata
                     sandi demi menjaga keamanan data dan transaksi Anda.
@@ -398,9 +385,7 @@ export default function ProfileFormView() {
                         size={16}
                         className="text-muted-foreground group-hover:text-primary transition-colors"
                       />
-                      <span className="text-sm font-medium">
-                        Buka Halaman Ganti Kata Sandi
-                      </span>
+                      <span className="text-sm font-medium">Buka Halaman Ganti Kata Sandi</span>
                     </div>
                     <ArrowRight
                       size={16}

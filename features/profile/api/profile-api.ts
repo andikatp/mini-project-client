@@ -8,7 +8,7 @@ export const profileApi = {
       method: HttpMethod.GET,
     });
   },
-  
+
   async updateProfile(input: UpdateProfileInput): Promise<ApiResponse<{ user: UserProfile }>> {
     return apiClient<{ user: UserProfile }>("/users/me", {
       method: HttpMethod.PATCH,
@@ -16,7 +16,10 @@ export const profileApi = {
     });
   },
 
-  async uploadImage(file: File, folder = "mini-project/avatars"): Promise<ApiResponse<UploadImageResponse>> {
+  async uploadImage(
+    file: File,
+    folder = "mini-project/avatars",
+  ): Promise<ApiResponse<UploadImageResponse>> {
     const formData = new FormData();
     formData.append("image", file);
     formData.append("folder", folder);
