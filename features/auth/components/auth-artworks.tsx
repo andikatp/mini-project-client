@@ -21,21 +21,23 @@ function BaseArtwork({
   alt,
 }: Readonly<BaseArtworkProps>) {
   return (
-    <div className={`relative flex flex-col items-center justify-center ${className}`}>
-      <div className="relative w-full max-w-[340px] aspect-4/3 flex items-center justify-center">
-        <div className={`absolute inset-4 rounded-3xl ${bgGlowClass} -z-10`} />
+    <div
+      className={`relative flex flex-col items-center justify-center w-full max-w-md ${className}`}
+    >
+      <div className="relative w-full max-w-[350px] h-[230px] sm:h-[240px] flex items-center justify-center">
+        <div className={`absolute inset-0 rounded-3xl ${bgGlowClass} -z-10`} />
         <Image
           src={svgSrc}
           alt={alt}
-          width={400}
-          height={300}
+          width={360}
+          height={250}
           priority
-          className="w-full h-full object-contain drop-shadow-sm select-none"
+          className="w-full h-full object-contain drop-shadow-sm select-none p-2"
         />
       </div>
 
-      <div className="mt-4 text-center max-w-sm px-2">
-        <h2 className="text-xl font-bold tracking-tight text-foreground">{title}</h2>
+      <div className="mt-5 text-center max-w-[360px] px-2">
+        <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">{title}</h2>
         <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{description}</p>
       </div>
     </div>
@@ -89,7 +91,20 @@ export function VerifyEmailArtwork(props: Readonly<ArtworkProps>) {
       bgGlowClass="bg-sky-500/10"
       alt="Verify Email Illustration"
       title="Periksa kotak masuk email kamu"
-      description="Tautan konfirmasi telah dikirimkan. Verifikasi email untuk mengamankan akun dan menikmati seluruh fitur."
+      description="Kode OTP verifikasi telah dikirimkan. Verifikasi email untuk mengamankan akun dan menikmati seluruh fitur."
+    />
+  );
+}
+
+export function VerifyResetPasswordArtwork(props: Readonly<ArtworkProps>) {
+  return (
+    <BaseArtwork
+      {...props}
+      svgSrc="/images/auth/verify-email.svg"
+      bgGlowClass="bg-amber-500/10"
+      alt="Verify Reset Password Illustration"
+      title="Periksa kotak masuk email kamu"
+      description="Masukkan 6 digit kode OTP pemulihan kata sandi yang telah dikirimkan ke email kamu."
     />
   );
 }
@@ -102,7 +117,7 @@ export function ForgotPasswordArtwork(props: Readonly<ArtworkProps>) {
       bgGlowClass="bg-amber-500/10"
       alt="Forgot Password Illustration"
       title="Lupa kata sandi? Kami siap bantu"
-      description="Jangan khawatir, masukkan email kamu dan kami akan mengirimkan tautan aman untuk membuat kata sandi baru."
+      description="Jangan khawatir, masukkan email kamu dan kami akan mengirimkan kode OTP untuk membuat kata sandi baru."
     />
   );
 }

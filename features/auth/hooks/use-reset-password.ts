@@ -13,8 +13,8 @@ export function useResetPassword() {
     setErrorMsg(null);
     setSuccessMsg(null);
 
-    if (!input.token.trim()) {
-      setErrorMsg("Token pemulihan kata sandi tidak ditemukan atau tidak valid.");
+    if (!input.resetToken && (!input.email || !input.otp)) {
+      setErrorMsg("Sesi atau token pemulihan tidak ditemukan. Harap ulangi proses pemulihan.");
       return false;
     }
 
@@ -37,6 +37,11 @@ export function useResetPassword() {
         response.message || "Kata sandi berhasil diatur ulang! Mengalihkan ke halaman masuk...",
       );
 
+      // Clean up token from sessionStorage
+      if (typeof window !== "undefined") {
+        sessionStorage.removeItem("reset_password_token");
+      }
+
       setTimeout(() => {
         router.push("/login");
       }, 2000);
@@ -46,7 +51,7 @@ export function useResetPassword() {
       const message =
         err instanceof Error
           ? err.message
-          : "Gagal mengatur ulang kata sandi. Tautan mungkin telah kedaluwarsa.";
+          : "Gagal mengatur ulang kata sandi. Token pemulihan mungkin tidak valid atau sudah kedaluwarsa.";
       setErrorMsg(message);
       return false;
     } finally {

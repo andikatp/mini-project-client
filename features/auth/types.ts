@@ -45,17 +45,34 @@ export interface RegisterInput {
 }
 
 export interface VerifyEmailInput {
-  token: string;
+  email: string;
+  otp: string;
+}
+
+export interface ResendVerificationInput {
+  email: string;
 }
 
 export interface ForgotPasswordInput {
   email: string;
 }
 
+export interface VerifyResetPasswordInput {
+  email: string;
+  otp: string;
+}
+
+export interface VerifyResetPasswordResponseData {
+  resetToken?: string;
+  token?: string;
+}
+
 export interface ResetPasswordInput {
-  token: string;
+  resetToken: string;
   password: string;
   confirmPassword?: string;
+  email?: string;
+  otp?: string;
 }
 
 export interface ChangePasswordInput {

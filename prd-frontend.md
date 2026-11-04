@@ -175,7 +175,7 @@ a transaction detail should refresh after upload/accept/reject.
 ## 7. Decisions (2026-10-15)
 
 1. Payment: manual bank transfer + proof upload. No gateway for MVP.
-2. Email: Nodemailer + Gmail SMTP (backend concern; FE only triggers flows).
+2. Email: Resend (backend concern; FE only triggers flows).
 3. Reviews need organizer approval (PENDING → APPROVED/REJECTED).
 4. Stacking allowed: voucher + coupon + points in one checkout.
 5. No design/branding guidelines for MVP — clean, responsive UI only.
