@@ -6,10 +6,12 @@ export function useVerifyResetPassword() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [isResending, setIsResending] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
   const verifyOtp = async (email: string, otp: string) => {
+    if (isLoading || isSuccess) return null;
     setErrorMsg(null);
     setSuccessMsg(null);
 
@@ -40,6 +42,7 @@ export function useVerifyResetPassword() {
         throw new Error("Token pemulihan tidak diterima dari server.");
       }
 
+      setIsSuccess(true);
       setSuccessMsg("Kode OTP terverifikasi! Mengalihkan...");
 
       // Save token in sessionStorage as fallback
@@ -47,7 +50,7 @@ export function useVerifyResetPassword() {
         sessionStorage.setItem("reset_password_token", token);
       }
 
-      router.push(`/reset-password?token=${encodeURIComponent(token)}`);
+      router.replace(`/reset-password?token=${encodeURIComponent(token)}`);
       return token;
     } catch (err: unknown) {
       const message =
@@ -94,6 +97,7 @@ export function useVerifyResetPassword() {
     resendOtp,
     isLoading,
     isResending,
+    isSuccess,
     errorMsg,
     successMsg,
     clearMessages,

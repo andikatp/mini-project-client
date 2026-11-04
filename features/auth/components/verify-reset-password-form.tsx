@@ -33,7 +33,7 @@ export function VerifyResetPasswordForm() {
   const [otp, setOtp] = useState("");
   const [resendCooldown, setResendCooldown] = useState(0);
 
-  const { verifyOtp, resendOtp, isLoading, isResending, errorMsg, successMsg } =
+  const { verifyOtp, resendOtp, isLoading, isResending, isSuccess, errorMsg, successMsg } =
     useVerifyResetPassword();
 
   useEffect(() => {
@@ -51,10 +51,10 @@ export function VerifyResetPasswordForm() {
   }, [resendCooldown]);
 
   useEffect(() => {
-    if (otp.length === 6 && email && !isLoading) {
+    if (otp.length === 6 && email && !isLoading && !isSuccess) {
       void verifyOtp(email.trim(), otp.trim());
     }
-  }, [otp, email, isLoading, verifyOtp]);
+  }, [otp, email, isLoading, isSuccess, verifyOtp]);
 
   const handleResend = async () => {
     if (!email.trim() || resendCooldown > 0 || isResending) return;
