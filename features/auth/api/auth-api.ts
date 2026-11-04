@@ -1,56 +1,21 @@
+import { apiClient, HttpMethod } from "@/lib/api-client";
 import type {
   ApiResponse,
   ChangePasswordInput,
   ForgotPasswordInput,
   LoginResponseData,
   RegisterInput,
-  ResendVerificationInput,
   ResetPasswordInput,
   User,
   VerifyEmailInput,
   VerifyResetPasswordInput,
-  VerifyResetPasswordResponseData,
+  VerifyResetPasswordResponseData
 } from "../types";
-
-async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
-  const baseUrl =
-    process.env.NEXT_PUBLIC_BASE_URL ||
-    process.env.BASE_URL ||
-    "https://mini-project-server-i490.onrender.com/api/v1";
-  const url = `${baseUrl}${endpoint}`;
-
-  const headers = new Headers(options.headers);
-  if (!headers.has("Content-Type")) {
-    headers.set("Content-Type", "application/json");
-  }
-
-  try {
-    const res = await fetch(url, {
-      ...options,
-      headers,
-      credentials: "include",
-    });
-
-    const data: ApiResponse<T> = await res.json().catch(() => ({
-      status: "error" as const,
-      message: res.statusText || "Terjadi kesalahan pada server",
-    }));
-
-    if (!res.ok || data.status === "error") {
-      throw new Error(data.message || `Request gagal dengan kode ${res.status}`);
-    }
-
-    return data;
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Gagal terhubung ke server";
-    throw new Error(message);
-  }
-}
 
 export const authApi = {
   async register(input: RegisterInput): Promise<ApiResponse<User>> {
-    return apiRequest<User>("/auth/register", {
-      method: "POST",
+    return apiClient<User>("/auth/register", {
+      method: HttpMethod.POST,
       body: JSON.stringify({
         email: input.email.trim(),
         password: input.password,
@@ -62,44 +27,34 @@ export const authApi = {
   },
 
   async login(email: string, password: string): Promise<ApiResponse<LoginResponseData>> {
-    return apiRequest<LoginResponseData>("/auth/login", {
-      method: "POST",
+    return apiClient<LoginResponseData>("/auth/login", {
+      method: HttpMethod.POST,
       body: JSON.stringify({ email: email.trim(), password }),
     });
   },
 
   async logout(): Promise<ApiResponse<null>> {
-    return apiRequest<null>("/auth/logout", {
-      method: "POST",
+    return apiClient<null>("/auth/logout", {
+      method: HttpMethod.POST,
     });
   },
 
   async getMe(): Promise<ApiResponse<{ user: User }>> {
-    return apiRequest<{ user: User }>("/auth/me", {
-      method: "GET",
+    return apiClient<{ user: User }>("/auth/me", {
+      method: HttpMethod.GET,
     });
   },
 
   async verifyEmail(input: VerifyEmailInput): Promise<ApiResponse<null>> {
-    return apiRequest<null>("/auth/verify-email", {
-      method: "POST",
-      body: JSON.stringify({
-        email: input.email.trim(),
-        otp: input.otp.trim(),
-      }),
-    });
-  },
-
-  async resendVerification(input: ResendVerificationInput): Promise<ApiResponse<null>> {
-    return apiRequest<null>("/auth/resend-verification", {
-      method: "POST",
-      body: JSON.stringify({ email: input.email.trim() }),
+    return apiClient<null>("/auth/verify-email", {
+      method: HttpMethod.POST,
+      body: JSON.stringify({ token: input.token.trim() }),
     });
   },
 
   async forgotPassword(input: ForgotPasswordInput): Promise<ApiResponse<null>> {
-    return apiRequest<null>("/auth/forgot-password", {
-      method: "POST",
+    return apiClient<null>("/auth/forgot-password", {
+      method: HttpMethod.POST,
       body: JSON.stringify({ email: input.email.trim() }),
     });
   },
@@ -117,8 +72,8 @@ export const authApi = {
   },
 
   async resetPassword(input: ResetPasswordInput): Promise<ApiResponse<null>> {
-    return apiRequest<null>("/auth/reset-password", {
-      method: "POST",
+    return apiClient<null>("/auth/reset-password", {
+      method: HttpMethod.POST,
       body: JSON.stringify({
         password: input.password,
         ...(input.resetToken ? { resetToken: input.resetToken } : {}),
@@ -129,8 +84,8 @@ export const authApi = {
   },
 
   async changePassword(input: ChangePasswordInput): Promise<ApiResponse<null>> {
-    return apiRequest<null>("/users/me/password", {
-      method: "PATCH",
+    return apiClient<null>("/users/me/password", {
+      method: HttpMethod.PATCH,
       body: JSON.stringify({
         currentPassword: input.currentPassword,
         newPassword: input.newPassword,

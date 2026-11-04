@@ -79,28 +79,12 @@ Guards improve UX only — the server re-checks every action.
 ### 4.2 Auth & profile (Andika)
 
 - Register (role choice CUSTOMER/EVENT_ORGANIZER + optional referral code
-  field), sign in/out, session restore. Registration is gated: it creates
-  an unverified account and emails the 6-digit OTP code via Resend, and
-  NO session exists yet. The user then verifies their email on the OTP
-  page (expires in 10 minutes, max 5 attempts, resend available); a
-  successful verification creates the session and signs the user in.
-  Signing in before verification is refused and routes the user to the
-  verification page with a fresh code. Registering again with the same
-  still-unverified email re-sends the code and continues that account's
-  verification instead of failing as a duplicate.
-- After successful sign-in (or successful email verification, which
-  signs the user in), CUSTOMER redirects to the home page (`/`) and
+  field), sign in/out, session restore.
+- After successful sign-in, CUSTOMER redirects to the home page (`/`) and
   EVENT_ORGANIZER redirects to `/dashboard`; the dashboard content is
   selected from the actual role in the server session.
-- Forgot/reset password flow (3 steps): (1) enter the email to request a
-  6-digit OTP code; (2) on a separate verify page, enter the code only —
-  `POST /auth/verify-reset-password` checks it and returns a one-time reset
-  token; (3) on the
-  set-password page, enter the new password only (no email or code
-  fields) — it is submitted with the reset token from step 2. Email
-  verification stays one step (code form only) because verifying the
-  code is itself the final action. Change password; edit name + avatar
-  upload (validate type/size client-side, server re-validates).
+- Forgot/reset password flow; change password; edit name + avatar upload
+  (validate type/size client-side, server re-validates).
 - Show the user's immutable referral code on the profile/rewards page.
 
 ### 4.3 Event management (Kelvin, organizer)
@@ -201,13 +185,6 @@ session selects the sidebar menu and the dashboard content. Post-login
 redirects stay role-based: customers to the home page, organizers to
 `/dashboard`. Role-specific work routes stay namespaced where their
 meaning differs.
-
-**Decided 2026-10-28 (OTP):** email verification and password reset use
-6-digit OTP codes sent via Resend instead of token links. Codes are
-single-use, expire within 10 minutes, and allow at most 5 verification
-attempts. Password reset is a 3-step flow: request the code, verify it
-on its own page (the server returns a one-time reset token), then set
-the new password on a page with password fields only.
 
 ## 8. MVP demo checklist (frontend)
 
