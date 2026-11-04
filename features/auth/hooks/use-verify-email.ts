@@ -11,6 +11,7 @@ export function useVerifyEmail() {
   const [isVerified, setIsVerified] = useState(false);
 
   const verify = async (email: string, otp: string) => {
+    if (isLoading || isVerified) return false;
     setErrorMsg(null);
     setSuccessMsg(null);
 

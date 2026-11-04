@@ -16,20 +16,29 @@ export default function DashboardProtectedLayout({
   children: React.ReactNode;
 }>) {
   const router = useRouter();
-  const { user, fetchCurrentUser } = useAuthStore();
+  const { user, isInitialized, fetchCurrentUser } = useAuthStore();
   const [isVerifying, setIsVerifying] = useState(!user);
 
   useEffect(() => {
     let isMounted = true;
 
+    if (user) {
+      return;
+    }
+
+    if (isInitialized) {
+      router.replace("/login");
+      return;
+    }
+
     async function checkAndSyncAuth() {
       try {
         const currentUser = await fetchCurrentUser();
-        if (!currentUser && !user) {
+        if (!currentUser && isMounted) {
           router.replace("/login");
         }
       } catch {
-        if (!user) {
+        if (isMounted) {
           router.replace("/login");
         }
       } finally {
@@ -44,7 +53,7 @@ export default function DashboardProtectedLayout({
     return () => {
       isMounted = false;
     };
-  }, [fetchCurrentUser, router, user]);
+  }, [fetchCurrentUser, isInitialized, router, user]);
 
   if (isVerifying && !user) {
     return (
