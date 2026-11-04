@@ -1,49 +1,13 @@
 import { describe, expect, it, beforeEach, afterEach } from "vite-plus/test";
 import { profileApi } from "@/features/profile/api/profile-api";
+import { createMockFetchContext } from "../../helpers/mock-fetch";
 
 describe("profileApi (Infrastructure / HTTP Layer)", () => {
   const originalFetch = globalThis.fetch;
-  let lastFetchUrl = "";
-  let lastFetchOptions: RequestInit | undefined;
-
-  const getUrlString = (url: string | URL | Request): string => {
-    if (typeof url === "string") return url;
-    if ("url" in url) return url.url;
-    return url.href;
-  };
-
-  const mockSuccessFetch = (responseData: unknown, status = 200) => {
-    globalThis.fetch = (async (url: string | URL | Request, options?: RequestInit) => {
-      lastFetchUrl = getUrlString(url);
-      lastFetchOptions = options;
-      return {
-        ok: status >= 200 && status < 300,
-        status,
-        statusText: "OK",
-        json: async () => responseData,
-      } as Response;
-    }) as typeof fetch;
-  };
-
-  const mockErrorFetch = (errorMessage: string, status = 400) => {
-    globalThis.fetch = (async (url: string | URL | Request, options?: RequestInit) => {
-      lastFetchUrl = getUrlString(url);
-      lastFetchOptions = options;
-      return {
-        ok: false,
-        status,
-        statusText: "Bad Request",
-        json: async () => ({
-          status: "error",
-          message: errorMessage,
-        }),
-      } as Response;
-    }) as typeof fetch;
-  };
+  const mockContext = createMockFetchContext();
 
   beforeEach(() => {
-    lastFetchUrl = "";
-    lastFetchOptions = undefined;
+    mockContext.reset();
   });
 
   afterEach(() => {
@@ -51,7 +15,7 @@ describe("profileApi (Infrastructure / HTTP Layer)", () => {
   });
 
   it("should send GET request for getUserProfile", async () => {
-    mockSuccessFetch({
+    mockContext.mockSuccessFetch({
       status: "success",
       message: "Profile fetched successfully",
       data: {
@@ -70,14 +34,14 @@ describe("profileApi (Infrastructure / HTTP Layer)", () => {
 
     const res = await profileApi.getUserProfile();
 
-    expect(lastFetchUrl).toContain("/users/me");
-    expect(lastFetchOptions?.method).toBe("GET");
+    expect(mockContext.getLastUrl()).toContain("/users/me");
+    expect(mockContext.getLastOptions()?.method).toBe("GET");
     expect(res.status).toBe("success");
     expect(res.data?.user.name).toBe("User Profile");
   });
 
   it("should send PATCH request for updateProfile with updated fields", async () => {
-    mockSuccessFetch({
+    mockContext.mockSuccessFetch({
       status: "success",
       message: "Profile updated successfully",
       data: {
@@ -96,42 +60,44 @@ describe("profileApi (Infrastructure / HTTP Layer)", () => {
       avatarUrl: "https://res.cloudinary.com/demo/image/upload/new-avatar.jpg",
     });
 
-    expect(lastFetchUrl).toContain("/users/me");
-    expect(lastFetchOptions?.method).toBe("PATCH");
-    expect(JSON.parse(lastFetchOptions?.body as string)).toEqual({
-      name: "Updated Name",
-      avatarUrl: "https://res.cloudinary.com/demo/image/upload/new-avatar.jpg",
-    });
-    expect(res.status).toBe("success");
+    expect(mockContext.getLastUrl()).toContain("/users/me");
+    expect(mockContext.getLastOptions()?.method).toBe("PATCH");
+    expect(mockContext.getLastOptions()?.body).toBe(
+      JSON.stringify({
+        name: "Updated Name",
+        avatarUrl: "https://res.cloudinary.com/demo/image/upload/new-avatar.jpg",
+      }),
+    );
     expect(res.data?.user.name).toBe("Updated Name");
   });
 
   it("should send POST request with FormData for uploadImage", async () => {
-    mockSuccessFetch({
+    mockContext.mockSuccessFetch({
       status: "success",
       message: "Image uploaded successfully",
       data: {
-        url: "https://res.cloudinary.com/demo/image/upload/avatar.webp",
-        publicId: "mini-project/avatars/avatar_123",
+        url: "https://res.cloudinary.com/demo/image/upload/new-avatar.jpg",
+        publicId: "sample",
         format: "webp",
-        width: 400,
-        height: 400,
+        width: 500,
+        height: 500,
       },
     });
 
-    const fakeFile = new File(["fake-image-bytes"], "avatar.webp", { type: "image/webp" });
-    const res = await profileApi.uploadImage(fakeFile, "mini-project/avatars");
+    const dummyBlob = new Blob(["dummy-image-content"], { type: "image/jpeg" });
+    const dummyFile = new File([dummyBlob], "avatar.jpg", { type: "image/jpeg" });
 
-    expect(lastFetchUrl).toContain("/upload/image");
-    expect(lastFetchOptions?.method).toBe("POST");
-    expect(lastFetchOptions?.body).toBeInstanceOf(FormData);
-    expect(res.status).toBe("success");
-    expect(res.data?.url).toBe("https://res.cloudinary.com/demo/image/upload/avatar.webp");
+    const res = await profileApi.uploadImage(dummyFile);
+
+    expect(mockContext.getLastUrl()).toContain("/upload/image");
+    expect(mockContext.getLastOptions()?.method).toBe("POST");
+    expect(mockContext.getLastOptions()?.body).toBeInstanceOf(FormData);
+    expect(res.data?.url).toBe("https://res.cloudinary.com/demo/image/upload/new-avatar.jpg");
   });
 
   it("should throw server error message when profile request fails", async () => {
-    mockErrorFetch("Pengguna tidak ditemukan", 404);
+    mockContext.mockErrorFetch("Profile not found", 404);
 
-    await expect(profileApi.getUserProfile()).rejects.toThrow("Pengguna tidak ditemukan");
+    await expect(profileApi.getUserProfile()).rejects.toThrow("Profile not found");
   });
 });
