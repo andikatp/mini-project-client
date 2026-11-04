@@ -5,12 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import {
   AlertCircle,
   ArrowRight,
   CheckCircle2,
-  Clock,
   Loader2,
   RefreshCw,
   ShieldCheck,
@@ -19,6 +17,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useVerifyEmail } from "../hooks/use-verify-email";
+import { OtpInputSection } from "./otp-input-section";
 
 /**
  * Mask email for privacy (e.g. ahmad.subardjo@gmail.com -> ahm***@gmail.com)
@@ -137,31 +136,13 @@ export function VerifyEmailForm() {
               </Field>
             )}
 
-            <Field data-invalid={!!errorMsg && otp.length !== 6}>
-              <div className="flex items-center justify-between">
-                <FieldLabel htmlFor="verify-otp">Kode OTP (6 Digit)</FieldLabel>
-                <span className="text-[11px] text-muted-foreground flex items-center gap-1">
-                  <Clock className="size-3" /> Berlaku 10 menit
-                </span>
-              </div>
-              <div className="flex justify-center py-2">
-                <InputOTP
-                  maxLength={6}
-                  value={otp}
-                  onChange={(val) => setOtp(val)}
-                  disabled={isLoading || isVerified}
-                >
-                  <InputOTPGroup>
-                    <InputOTPSlot index={0} />
-                    <InputOTPSlot index={1} />
-                    <InputOTPSlot index={2} />
-                    <InputOTPSlot index={3} />
-                    <InputOTPSlot index={4} />
-                    <InputOTPSlot index={5} />
-                  </InputOTPGroup>
-                </InputOTP>
-              </div>
-            </Field>
+            <OtpInputSection
+              id="verify-email-otp"
+              value={otp}
+              onChange={setOtp}
+              disabled={isLoading || isVerified}
+              hasError={!!errorMsg}
+            />
 
             <Button
               type="submit"

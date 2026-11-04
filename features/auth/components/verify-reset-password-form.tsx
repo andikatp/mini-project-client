@@ -3,13 +3,11 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import { FieldGroup } from "@/components/ui/field";
 import {
   AlertCircle,
   ArrowLeft,
   CheckCircle2,
-  Clock,
   Edit2,
   Loader2,
   RefreshCw,
@@ -19,10 +17,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useVerifyResetPassword } from "../hooks/use-verify-reset-password";
+import { OtpInputSection } from "./otp-input-section";
 
-/**
- * Mask email for privacy (e.g. ahmad.subardjo@gmail.com -> ahm***@gmail.com)
- */
 function maskEmail(email: string): string {
   if (!email || !email.includes("@")) return email;
   const [local, domain] = email.split("@");
@@ -35,7 +31,6 @@ function maskEmail(email: string): string {
 export function VerifyResetPasswordForm() {
   const router = useRouter();
 
-  // Hanya izinkan jika user datang dari flow submit forgot-password (ada di sessionStorage)
   const [email] = useState<string>(() => {
     if (typeof window !== "undefined") {
       return sessionStorage.getItem("reset_email") || "";
@@ -49,14 +44,12 @@ export function VerifyResetPasswordForm() {
   const { verifyOtp, resendOtp, isLoading, isResending, errorMsg, successMsg } =
     useVerifyResetPassword();
 
-  // Guard: If no email found in query or session, route back to forgot-password
   useEffect(() => {
     if (!email) {
       router.replace("/forgot-password");
     }
   }, [email, router]);
 
-  // Handle resend countdown
   useEffect(() => {
     if (resendCooldown <= 0) return;
     const interval = setInterval(() => {
@@ -65,7 +58,6 @@ export function VerifyResetPasswordForm() {
     return () => clearInterval(interval);
   }, [resendCooldown]);
 
-  // UX Improvement: Auto-verify immediately once user finishes typing 6 digits
   useEffect(() => {
     if (otp.length === 6 && email && !isLoading) {
       void verifyOtp(email.trim(), otp.trim());
@@ -124,31 +116,13 @@ export function VerifyResetPasswordForm() {
 
         <form onSubmit={handleSubmit} noValidate>
           <FieldGroup className="gap-6">
-            <Field data-invalid={!!errorMsg && otp.length !== 6}>
-              <div className="flex items-center justify-between">
-                <FieldLabel htmlFor="reset-verify-otp">Kode OTP (6 Digit)</FieldLabel>
-                <span className="text-[11px] text-muted-foreground flex items-center gap-1">
-                  <Clock className="size-3" /> Berlaku 10 menit
-                </span>
-              </div>
-              <div className="flex justify-center py-2">
-                <InputOTP
-                  maxLength={6}
-                  value={otp}
-                  onChange={(val) => setOtp(val)}
-                  disabled={isLoading}
-                >
-                  <InputOTPGroup>
-                    <InputOTPSlot index={0} />
-                    <InputOTPSlot index={1} />
-                    <InputOTPSlot index={2} />
-                    <InputOTPSlot index={3} />
-                    <InputOTPSlot index={4} />
-                    <InputOTPSlot index={5} />
-                  </InputOTPGroup>
-                </InputOTP>
-              </div>
-            </Field>
+            <OtpInputSection
+              id="reset-verify-otp"
+              value={otp}
+              onChange={setOtp}
+              disabled={isLoading}
+              hasError={!!errorMsg}
+            />
 
             <Button
               type="submit"
