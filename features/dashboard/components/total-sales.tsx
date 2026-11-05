@@ -208,7 +208,7 @@ export default function TotalSales() {
               strokeWidth={2}
               dot={{ r: 3, fill: "var(--color-primary)" }}
               activeDot={{ r: 5 }}
-              isAnimationActive
+              isAnimationActive={false}
             />
           </LineChart>
         </ChartContainer>

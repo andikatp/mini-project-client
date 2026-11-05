@@ -32,14 +32,11 @@ export function useLogin() {
 
       setSuccessMsg("Berhasil masuk! Mengalihkan ke beranda...");
 
-      const role = user?.role;
-      setTimeout(() => {
-        if (role === "EVENT_ORGANIZER") {
-          router.push("/dashboard");
-        } else {
-          router.push("/");
-        }
-      }, 1000);
+      if (user?.role === "EVENT_ORGANIZER") {
+        router.push("/dashboard");
+      } else {
+        router.push("/");
+      }
 
       return true;
     } catch (err: unknown) {

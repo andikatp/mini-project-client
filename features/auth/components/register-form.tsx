@@ -93,12 +93,14 @@ export function RegisterForm({ initialRole = "CUSTOMER" }: RegisterFormProps) {
         <form onSubmit={handleSubmit} noValidate>
           <FieldGroup className="gap-4">
             <Field data-invalid={!!errorMsg && !name}>
-              <FieldLabel htmlFor="register-name">Nama Lengkap</FieldLabel>
+              <FieldLabel htmlFor="register-name">Nama</FieldLabel>
               <Input
                 id="register-name"
                 type="text"
                 autoComplete="name"
-                placeholder={role === "CUSTOMER" ? "Nama Anda" : "Nama Perusahaan / Organizer"}
+                placeholder={
+                  role === "CUSTOMER" ? "Nama Lengkap Anda" : "Nama Perusahaan / Organizer"
+                }
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 disabled={isLoading}

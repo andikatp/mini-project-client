@@ -20,7 +20,7 @@ export default function NavItem({ item, hasChildren, className, isActive }: NavI
   return (
     <motion.div
       className={cn(
-        "flex items-center gap-3 w-full group relative group-data-[state=collapsed]:px-2.5 px-3 py-2 my-0.5 transition-all duration-200 rounded-md",
+        "flex items-center gap-3 w-full group relative group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0 px-3 py-2 my-0.5 transition-all duration-200 rounded-md overflow-hidden",
         isActive && "bg-primary text-background font-medium",
         className,
       )}
@@ -40,9 +40,13 @@ export default function NavItem({ item, hasChildren, className, isActive }: NavI
         )}
       </AnimatePresence>
 
-      <span className={"relative flex items-center gap-2 w-full  rounded-md "}>
+      <span
+        className={
+          "relative flex items-center gap-2 w-full rounded-md group-data-[collapsible=icon]:justify-center"
+        }
+      >
         {/* Icon */}
-        {item.icon && <item.icon className={`h-4 w-4 ${item.color ?? ""}`} />}
+        {item.icon && <item.icon className={`h-4 w-4 shrink-0 ${item.color ?? ""}`} />}
 
         {/* Name */}
         <span className="font-medium hide-menu">{item.name}</span>

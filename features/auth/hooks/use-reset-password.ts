@@ -42,9 +42,7 @@ export function useResetPassword() {
         sessionStorage.removeItem("reset_password_token");
       }
 
-      setTimeout(() => {
-        router.push("/login");
-      }, 2000);
+      router.push("/login");
 
       return true;
     } catch (err: unknown) {

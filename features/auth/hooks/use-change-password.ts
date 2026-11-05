@@ -38,9 +38,7 @@ export function useChangePassword() {
           "Kata sandi berhasil diubah! Silakan gunakan kata sandi baru untuk sesi berikutnya.",
       );
 
-      setTimeout(() => {
-        router.push("/profile");
-      }, 2000);
+      router.push("/profile");
 
       return true;
     } catch (err: unknown) {
