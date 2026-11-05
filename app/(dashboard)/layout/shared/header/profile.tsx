@@ -17,7 +17,7 @@ export default function ProfileSheet() {
   const handleLogout = async () => {
     setOpen(false);
     await logout();
-    router.push("/login");
+    router.replace("/");
   };
 
   const initial = user?.name ? user.name.charAt(0).toUpperCase() : "U";

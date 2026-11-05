@@ -1,5 +1,10 @@
 import type { NextConfig } from "next";
 
+const BACKEND_INTERNAL_URL =
+  process.env.BACKEND_API_URL ||
+  process.env.NEXT_PUBLIC_BASE_URL ||
+  "https://mini-project-server-i490.onrender.com/api/v1";
+
 const nextConfig: NextConfig = {
   /* config options here */
   experimental: {
@@ -14,6 +19,14 @@ const nextConfig: NextConfig = {
         as: "*.css",
       },
     },
+  },
+  async rewrites() {
+    return [
+      {
+        source: "/api/backend/:path*",
+        destination: `${BACKEND_INTERNAL_URL}/:path*`,
+      },
+    ];
   },
 };
 
