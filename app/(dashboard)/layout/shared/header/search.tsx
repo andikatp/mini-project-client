@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuthStore } from "@/features/auth/context/auth-store";
 import { Input } from "@/components/ui/input";
 import { Component, Search as SearchIcon } from "lucide-react";
 import Link from "next/link";
@@ -42,12 +43,14 @@ function searchItems(
 
 function Search() {
   const [query, setQuery] = useState("");
+  const { user } = useAuthStore();
 
   const results = useMemo(() => {
     if (!query.trim()) return [];
-    const allMenu = [...getSidebarItems("EVENT_ORGANIZER"), ...getSidebarItems("CUSTOMER")];
-    return searchItems(allMenu, query);
-  }, [query]);
+    const role = user?.role || "CUSTOMER";
+    const userMenu = getSidebarItems(role);
+    return searchItems(userMenu, query);
+  }, [query, user?.role]);
 
   return (
     <div className="relative w-full">

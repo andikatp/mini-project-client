@@ -9,7 +9,7 @@ const FullLogo = () => {
       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold shadow-xs">
         <Calendar className="size-4" />
       </div>
-      <div className="flex flex-col text-left group-data-[state=collapsed]:hidden">
+      <div className="flex flex-col text-left group-data-[collapsible=icon]:hidden">
         <span className="text-base font-bold tracking-tight text-foreground leading-none">
           EventMgmt
         </span>

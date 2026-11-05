@@ -44,17 +44,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       className="sidebar-box **:data-[slot=sidebar-inner]:bg-background **:data-[slot=sidebar-inner]:border **:data-[slot=sidebar-inner]:border-border group-data-[state=collapsed]:hover:shadow-xl"
       side="left"
     >
-      <SidebarHeader className="p-3 group-data-[state=collapsed]:px-2.5 flex flex-row items-center justify-between border-b border-border">
+      <SidebarHeader className="p-3 group-data-[collapsible=icon]:p-2 group-data-[collapsible=icon]:justify-center flex flex-row items-center justify-between border-b border-border">
         <FullLogo />
-        <Badge className="group-data-[state=collapsed]:hidden" variant={"secondary"}>
+        <Badge className="group-data-[collapsible=icon]:hidden" variant={"secondary"}>
           {user?.role === "EVENT_ORGANIZER" ? "Organizer" : "User"}
         </Badge>
       </SidebarHeader>
 
       <SidebarContent>
         <SimpleBar style={{ height: "100%" }}>
-          <SidebarGroup className="flex items-center justify-center group-data-[state=collapsed]:px-2 px-3 py-4">
-            <div className="px-0 group-data-[state=collapsed]:px-0 w-full flex flex-col gap-4">
+          <SidebarGroup className="flex items-center justify-center group-data-[collapsible=icon]:px-1 px-3 py-4">
+            <div className="px-0 group-data-[collapsible=icon]:px-0 w-full flex flex-col gap-4">
               <Suspense fallback={<NavSkeleton />}>
                 <NavCollapse menu={menu} className="text-sm" />
               </Suspense>
@@ -63,7 +63,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SimpleBar>
       </SidebarContent>
 
-      <SidebarFooter className="p-4">
+      <SidebarFooter className="p-4 group-data-[collapsible=icon]:p-2 group-data-[collapsible=icon]:justify-center">
         <div className="hide-menu flex flex-col gap-2">
           <NavUser />
         </div>

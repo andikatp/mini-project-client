@@ -43,12 +43,10 @@ export function useRegister() {
           "Pendaftaran berhasil! Kode OTP verifikasi 6-digit telah dikirimkan ke email Anda.",
       );
 
-      setTimeout(() => {
-        if (typeof window !== "undefined") {
-          sessionStorage.setItem("registered_email", input.email.trim());
-        }
-        router.push(`/verify-email?email=${encodeURIComponent(input.email.trim())}`);
-      }, 1500);
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem("registered_email", input.email.trim());
+      }
+      router.push(`/verify-email?email=${encodeURIComponent(input.email.trim())}`);
 
       return true;
     } catch (err: unknown) {

@@ -38,9 +38,7 @@ export function useVerifyEmail() {
       );
       setIsVerified(true);
 
-      setTimeout(() => {
-        router.push("/login");
-      }, 2000);
+      router.push("/login");
 
       return true;
     } catch (err: unknown) {
