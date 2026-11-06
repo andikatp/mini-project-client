@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { authApi } from "../api/auth-api";
 import type { ChangePasswordInput } from "../types";
@@ -38,7 +38,7 @@ export function useChangePassword() {
           "Kata sandi berhasil diubah! Silakan gunakan kata sandi baru untuk sesi berikutnya.",
       );
 
-      router.push("/profile");
+      router.replace("/profile");
 
       return true;
     } catch (err: unknown) {
@@ -53,10 +53,10 @@ export function useChangePassword() {
     }
   };
 
-  const clearMessages = () => {
+  const clearMessages = useCallback(() => {
     setErrorMsg(null);
     setSuccessMsg(null);
-  };
+  }, []);
 
   return {
     changePassword,

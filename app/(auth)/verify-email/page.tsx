@@ -6,9 +6,9 @@ import { VerifyEmailForm } from "@/features/auth/components/verify-email-form";
 import { Loader2 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Verifikasi Alamat Email | EventMgmt",
+  title: "Verifikasi Alamat Email | Ramein",
   description:
-    "Verifikasi email akun EventMgmt Anda untuk mengaktifkan akun dan mulai membeli tiket atau mengelola event.",
+    "Verifikasi email akun Ramein Anda untuk mengaktifkan akun dan mulai membeli tiket atau mengelola event.",
 };
 
 export default function VerifyEmailPage() {

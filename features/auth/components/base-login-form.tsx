@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { AlertCircle, Building2, CheckCircle2, Loader2, User } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLogin } from "../hooks/use-login";
 import { PasswordInputGroup } from "./password-input-group";
 
@@ -20,7 +20,15 @@ export function BaseLoginForm({ variant }: BaseLoginFormProps) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { login, isLoading, errorMsg, successMsg } = useLogin();
+  const { login, isLoading, errorMsg, successMsg, clearMessages } = useLogin();
+
+  // Reset messages when unmounting or switching variant
+  useEffect(() => {
+    clearMessages();
+    return () => {
+      clearMessages();
+    };
+  }, [variant, clearMessages]);
 
   const isCustomer = variant === "customer";
 
@@ -147,7 +155,10 @@ export function BaseLoginForm({ variant }: BaseLoginFormProps) {
               type="button"
               variant="outline"
               className="w-full border-border text-foreground hover:bg-muted"
-              onClick={() => router.push(config.switchRoute)}
+              onClick={() => {
+                clearMessages();
+                router.push(config.switchRoute);
+              }}
             >
               {isCustomer ? (
                 <Building2 data-icon="inline-start" />

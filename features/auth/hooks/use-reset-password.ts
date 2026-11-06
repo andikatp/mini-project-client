@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { authApi } from "../api/auth-api";
 import type { ResetPasswordInput } from "../types";
@@ -42,7 +42,7 @@ export function useResetPassword() {
         sessionStorage.removeItem("reset_password_token");
       }
 
-      router.push("/login");
+      router.replace("/login");
 
       return true;
     } catch (err: unknown) {
@@ -57,10 +57,10 @@ export function useResetPassword() {
     }
   };
 
-  const clearMessages = () => {
+  const clearMessages = useCallback(() => {
     setErrorMsg(null);
     setSuccessMsg(null);
-  };
+  }, []);
 
   return {
     resetPassword,

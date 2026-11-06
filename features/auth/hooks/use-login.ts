@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useCallback, useState } from "react";
 import { authApi } from "../api/auth-api";
 import { useAuthStore } from "../context/auth-store";
 
@@ -32,11 +32,8 @@ export function useLogin() {
 
       setSuccessMsg("Berhasil masuk! Mengalihkan ke beranda...");
 
-      if (user?.role === "EVENT_ORGANIZER") {
-        router.push("/dashboard");
-      } else {
-        router.push("/");
-      }
+      const destination = user?.role === "EVENT_ORGANIZER" ? "/dashboard" : "/";
+      router.replace(destination);
 
       return true;
     } catch (err: unknown) {
@@ -51,10 +48,10 @@ export function useLogin() {
     }
   };
 
-  const clearMessages = () => {
+  const clearMessages = useCallback(() => {
     setErrorMsg(null);
     setSuccessMsg(null);
-  };
+  }, []);
 
   return {
     login,

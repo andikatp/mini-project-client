@@ -7,8 +7,10 @@ import TotalSales from "@/features/dashboard/components/total-sales";
 import TotalsAssets from "@/features/dashboard/components/totals-assets";
 import { Metadata } from "next";
 
+export const instant = false;
+
 export const metadata: Metadata = {
-  title: "Dashboard - EventMgmt",
+  title: "Dashboard - Ramein",
   description: "Organizer & Customer event analytics dashboard",
 };
 

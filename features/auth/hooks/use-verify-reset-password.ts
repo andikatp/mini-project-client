@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { authApi } from "../api/auth-api";
 
@@ -67,19 +67,18 @@ export function useVerifyResetPassword() {
     setSuccessMsg(null);
 
     if (!email.trim()) {
-      setErrorMsg("Alamat email wajib diisi.");
+      setErrorMsg("Alamat email tidak valid.");
       return false;
     }
 
     setIsResending(true);
-
     try {
       const response = await authApi.forgotPassword({ email: email.trim() });
-      setSuccessMsg(response.message || "Kode OTP baru telah dikirimkan ke email Anda.");
+      setSuccessMsg(response.message || "Kode OTP pemulihan baru telah dikirimkan ke email Anda.");
       return true;
     } catch (err: unknown) {
       const message =
-        err instanceof Error ? err.message : "Gagal mengirim ulang kode OTP. Silakan coba lagi.";
+        err instanceof Error ? err.message : "Gagal mengirim ulang kode OTP pemulihan.";
       setErrorMsg(message);
       return false;
     } finally {
@@ -87,10 +86,10 @@ export function useVerifyResetPassword() {
     }
   };
 
-  const clearMessages = () => {
+  const clearMessages = useCallback(() => {
     setErrorMsg(null);
     setSuccessMsg(null);
-  };
+  }, []);
 
   return {
     verifyOtp,

@@ -4,9 +4,9 @@ import { CustomerLoginArtwork } from "@/features/auth/components/auth-artworks";
 import { CustomerLoginForm } from "@/features/auth/components/customer-login-form";
 
 export const metadata: Metadata = {
-  title: "Masuk ke Akun Customer | EventMgmt",
+  title: "Masuk ke Akun Customer | Ramein",
   description:
-    "Masuk ke akun EventMgmt Anda untuk membeli tiket konser, festival, dan acara favorit Anda dengan mudah dan aman.",
+    "Masuk ke akun Ramein Anda untuk membeli tiket konser, festival, dan acara favorit Anda dengan mudah dan aman.",
 };
 
 export default function CustomerLoginPage() {
