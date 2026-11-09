@@ -46,12 +46,14 @@ export function NavbarUserMenu() {
       >
         {isAuthenticated && user ? (
           <>
-            <DropdownMenuLabel className="px-2 py-1.5">
-              <div className="flex flex-col space-y-0.5">
-                <p className="truncate text-sm font-semibold text-foreground">{user.name}</p>
-                <p className="truncate text-xs text-muted-foreground">{user.email}</p>
-              </div>
-            </DropdownMenuLabel>
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className="px-2 py-1.5">
+                <div className="flex flex-col space-y-0.5">
+                  <p className="truncate text-sm font-semibold text-foreground">{user.name}</p>
+                  <p className="truncate text-xs text-muted-foreground">{user.email}</p>
+                </div>
+              </DropdownMenuLabel>
+            </DropdownMenuGroup>
             <DropdownMenuSeparator className="my-1" />
             <DropdownMenuGroup>
               <DropdownMenuItem

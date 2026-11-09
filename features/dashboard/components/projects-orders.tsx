@@ -1,8 +1,9 @@
 "use client";
 
-import { Receipt, CheckCircle, Clock, AlertCircle } from "lucide-react";
-import { CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { DashboardCard } from "@/components/common/dashboard-card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -11,31 +12,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { AlertCircle, CheckCircle, Clock, ExternalLink, Receipt } from "lucide-react";
 import SimpleBar from "simplebar-react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import type { OrganizerTransaction, TransactionStatus } from "../types";
 
-type TrxStatus =
-  | "DONE"
-  | "WAITING_FOR_ADMIN_CONFIRMATION"
-  | "WAITING_FOR_PAYMENT"
-  | "REJECTED"
-  | "CANCELED"
-  | "EXPIRED";
-
-interface RecentTransaction {
-  id: string;
-  eventName: string;
-  customerName: string;
-  customerEmail: string;
-  ticketQty: number;
-  totalPaid: number;
-  status: TrxStatus;
-  date: string;
+interface ProjectsOrdersProps {
+  transactions: OrganizerTransaction[];
+  isLoading?: boolean;
+  onAccept?: (transactionId: string) => Promise<void>;
+  onReject?: (transactionId: string, reason: string) => Promise<void>;
 }
 
 const statusConfig: Record<
-  TrxStatus,
+  TransactionStatus,
   { label: string; bg: string; text: string; icon: React.ElementType }
 > = {
   DONE: {
@@ -76,151 +65,143 @@ const statusConfig: Record<
   },
 };
 
-const recentTransactions: RecentTransaction[] = [
-  {
-    id: "TRX-2026-081",
-    eventName: "Tech Innovators Summit 2026",
-    customerName: "Budi Santoso",
-    customerEmail: "budi.santoso@example.com",
-    ticketQty: 2,
-    totalPaid: 750000,
-    status: "WAITING_FOR_ADMIN_CONFIRMATION",
-    date: "10 mins ago",
-  },
-  {
-    id: "TRX-2026-080",
-    eventName: "Indie Music Fest Jakarta",
-    customerName: "Siti Rahma",
-    customerEmail: "siti.rahma@example.com",
-    ticketQty: 1,
-    totalPaid: 250000,
-    status: "DONE",
-    date: "25 mins ago",
-  },
-  {
-    id: "TRX-2026-079",
-    eventName: "UI/UX Masterclass Bandung",
-    customerName: "Andi Wijaya",
-    customerEmail: "andi.wijaya@example.com",
-    ticketQty: 3,
-    totalPaid: 1200000,
-    status: "DONE",
-    date: "1 hour ago",
-  },
-  {
-    id: "TRX-2026-078",
-    eventName: "Tech Innovators Summit 2026",
-    customerName: "Dewi Lestari",
-    customerEmail: "dewi.lestari@example.com",
-    ticketQty: 1,
-    totalPaid: 375000,
-    status: "WAITING_FOR_PAYMENT",
-    date: "2 hours ago",
-  },
-  {
-    id: "TRX-2026-077",
-    eventName: "National Startup Pitch 2026",
-    customerName: "Rian Pratama",
-    customerEmail: "rian.pratama@example.com",
-    ticketQty: 1,
-    totalPaid: 500000,
-    status: "REJECTED",
-    date: "4 hours ago",
-  },
-];
-
-export default function ProjectsOrders() {
+export default function ProjectsOrders({
+  transactions,
+  isLoading,
+  onAccept,
+  onReject,
+}: ProjectsOrdersProps) {
   return (
-    <DashboardCard className="flex flex-col gap-0!">
-      <CardHeader className="border-b border-border flex flex-row items-center justify-between">
-        <CardTitle className="flex items-center gap-2 text-sm font-semibold text-foreground">
+    <DashboardCard className="flex flex-col gap-0! pb-0!">
+      <CardHeader className="border-b border-border flex flex-row items-center justify-between pb-3">
+        <div className="flex items-center gap-2">
           <Receipt size={16} className="text-primary" />
-          <span>Recent Transactions & Attendees</span>
-        </CardTitle>
-        <Link href="/organizer/transactions">
-          <Button variant="ghost" size="sm" className="text-xs text-primary hover:text-primary">
-            View All Transactions →
-          </Button>
-        </Link>
+          <CardTitle className="text-sm font-semibold tracking-wide text-foreground">
+            Recent Transactions
+          </CardTitle>
+        </div>
+        <span className="text-xs text-muted-foreground">{transactions.length} latest records</span>
       </CardHeader>
 
-      <CardContent className="px-0!">
-        <SimpleBar>
-          <div className="overflow-x-auto min-w-[700px]">
-            <Table>
-              <TableHeader>
-                <TableRow className="border-border hover:bg-transparent">
-                  <TableHead className="pl-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Trx ID & Event
-                  </TableHead>
-                  <TableHead className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Customer
-                  </TableHead>
-                  <TableHead className="text-xs font-semibold uppercase tracking-wider text-muted-foreground text-center">
-                    Tickets
-                  </TableHead>
-                  <TableHead className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Total Paid
-                  </TableHead>
-                  <TableHead className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Status
-                  </TableHead>
-                  <TableHead className="pr-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground text-right">
-                    Time
-                  </TableHead>
+      <CardContent className="p-0">
+        <SimpleBar style={{ maxHeight: 380 }}>
+          <Table>
+            <TableHeader className="bg-muted/40 sticky top-0 z-10">
+              <TableRow className="hover:bg-transparent">
+                <TableHead className="text-xs font-semibold">Transaction</TableHead>
+                <TableHead className="text-xs font-semibold">Event</TableHead>
+                <TableHead className="text-xs font-semibold">Customer</TableHead>
+                <TableHead className="text-xs font-semibold text-right">Qty</TableHead>
+                <TableHead className="text-xs font-semibold text-right">Total</TableHead>
+                <TableHead className="text-xs font-semibold text-center">Status</TableHead>
+                <TableHead className="text-xs font-semibold text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {isLoading ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="h-28 text-center text-xs text-muted-foreground">
+                    Loading transactions...
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
+              ) : transactions.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="h-28 text-center text-xs text-muted-foreground">
+                    No transactions found
+                  </TableCell>
+                </TableRow>
+              ) : (
+                transactions.map((trx) => {
+                  const cfg = statusConfig[trx.status] ?? statusConfig.DONE;
+                  const Icon = cfg.icon;
+                  const totalTickets = trx.items.reduce((sum, item) => sum + item.quantity, 0);
 
-              <TableBody>
-                {recentTransactions.map((trx) => {
-                  const cfg = statusConfig[trx.status];
                   return (
-                    <TableRow key={trx.id} className="border-border hover:bg-muted/40">
-                      <TableCell className="pl-4 py-3">
-                        <div className="flex flex-col">
-                          <span className="font-semibold text-foreground text-sm">{trx.id}</span>
-                          <span className="text-xs text-muted-foreground">{trx.eventName}</span>
-                        </div>
+                    <TableRow key={trx.id} className="text-xs hover:bg-muted/30">
+                      <TableCell className="font-mono font-medium text-foreground">
+                        {trx.code}
                       </TableCell>
-
-                      <TableCell className="py-3">
+                      <TableCell className="max-w-[140px] truncate" title={trx.event.title}>
+                        {trx.event.title}
+                      </TableCell>
+                      <TableCell>
                         <div className="flex flex-col">
-                          <span className="font-medium text-foreground text-sm">
-                            {trx.customerName}
+                          <span className="font-medium text-foreground truncate">
+                            {trx.customer.name}
                           </span>
-                          <span className="text-xs text-muted-foreground">{trx.customerEmail}</span>
+                          <span className="text-[10px] text-muted-foreground truncate">
+                            {trx.customer.email}
+                          </span>
                         </div>
                       </TableCell>
-
-                      <TableCell className="py-3 text-center">
-                        <span className="inline-flex items-center justify-center font-semibold text-sm">
-                          {trx.ticketQty}
-                        </span>
+                      <TableCell className="text-right font-medium">{totalTickets}</TableCell>
+                      <TableCell className="text-right font-semibold text-foreground">
+                        Rp {trx.totalIdr.toLocaleString("id-ID")}
                       </TableCell>
-
-                      <TableCell className="py-3">
-                        <span className="font-semibold text-foreground text-sm">
-                          Rp {trx.totalPaid.toLocaleString("id-ID")}
-                        </span>
-                      </TableCell>
-
-                      <TableCell className="py-3">
-                        <span
-                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${cfg.bg} ${cfg.text}`}
+                      <TableCell className="text-center">
+                        <Badge
+                          variant="secondary"
+                          className={`${cfg.bg} ${cfg.text} border-0 text-[10px] font-medium px-2 py-0.5 inline-flex items-center gap-1`}
                         >
+                          <Icon size={11} />
                           {cfg.label}
-                        </span>
+                        </Badge>
                       </TableCell>
-
-                      <TableCell className="pr-4 py-3 text-right text-xs text-muted-foreground">
-                        {trx.date}
+                      <TableCell className="text-right">
+                        {trx.status === "WAITING_FOR_ADMIN_CONFIRMATION" && onAccept ? (
+                          <div className="flex items-center justify-end gap-1.5">
+                            {trx.paymentProof?.fileUrl && (
+                              <a
+                                href={trx.paymentProof.fileUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title="View Proof"
+                                className="inline-flex items-center justify-center h-7 w-7 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                              >
+                                <ExternalLink size={13} />
+                              </a>
+                            )}
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="h-6 text-[10px] px-2 text-emerald-600 border-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/30"
+                              onClick={() => {
+                                void onAccept(trx.id);
+                              }}
+                            >
+                              Accept
+                            </Button>
+                            {onReject && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="h-6 text-[10px] px-2 text-rose-600 border-rose-300 hover:bg-rose-50 dark:hover:bg-rose-950/30"
+                                onClick={() => {
+                                  const reason = window.prompt("Reason for rejection:");
+                                  if (reason) {
+                                    void onReject(trx.id, reason);
+                                  }
+                                }}
+                              >
+                                Reject
+                              </Button>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-[10px] text-muted-foreground">
+                            {new Date(trx.createdAt).toLocaleDateString("id-ID", {
+                              day: "numeric",
+                              month: "short",
+                            })}
+                          </span>
+                        )}
                       </TableCell>
                     </TableRow>
                   );
-                })}
-              </TableBody>
-            </Table>
-          </div>
+                })
+              )}
+            </TableBody>
+          </Table>
         </SimpleBar>
       </CardContent>
     </DashboardCard>

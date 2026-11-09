@@ -1,11 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { TrendingUp } from "lucide-react";
-import { Line, LineChart, CartesianGrid, XAxis, YAxis } from "recharts";
-import { ChartConfig, ChartContainer, ChartTooltip } from "@/components/ui/chart";
-import { CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { DashboardCard } from "@/components/common/dashboard-card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChartConfig, ChartContainer, ChartTooltip } from "@/components/ui/chart";
 import {
   Select,
   SelectContent,
@@ -13,39 +10,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-// Timeseries dummy data reflecting event ticket sales and revenue
-const timeseriesData: Record<string, { label: string; revenue: number; tickets: number }[]> = {
-  day: [
-    { label: "00:00", revenue: 450000, tickets: 3 },
-    { label: "04:00", revenue: 150000, tickets: 1 },
-    { label: "08:00", revenue: 1200000, tickets: 8 },
-    { label: "12:00", revenue: 3500000, tickets: 22 },
-    { label: "16:00", revenue: 4200000, tickets: 28 },
-    { label: "20:00", revenue: 2900000, tickets: 19 },
-    { label: "23:59", revenue: 1100000, tickets: 7 },
-  ],
-  month: [
-    { label: "Week 1", revenue: 12500000, tickets: 82 },
-    { label: "Week 2", revenue: 18400000, tickets: 120 },
-    { label: "Week 3", revenue: 24200000, tickets: 158 },
-    { label: "Week 4", revenue: 31800000, tickets: 210 },
-  ],
-  year: [
-    { label: "Jan", revenue: 15000000, tickets: 98 },
-    { label: "Feb", revenue: 22000000, tickets: 145 },
-    { label: "Mar", revenue: 28000000, tickets: 180 },
-    { label: "Apr", revenue: 35000000, tickets: 230 },
-    { label: "May", revenue: 42000000, tickets: 275 },
-    { label: "Jun", revenue: 38000000, tickets: 250 },
-    { label: "Jul", revenue: 49000000, tickets: 320 },
-    { label: "Aug", revenue: 53000000, tickets: 350 },
-    { label: "Sep", revenue: 61000000, tickets: 400 },
-    { label: "Oct", revenue: 58000000, tickets: 380 },
-    { label: "Nov", revenue: 67000000, tickets: 440 },
-    { label: "Dec", revenue: 75000000, tickets: 500 },
-  ],
-};
+import { useEffect, useRef, useState } from "react";
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
+import type { DashboardTimeseriesPoint, Granularity } from "../types";
 
 const chartConfig = {
   revenue: { label: "Revenue (IDR)", color: "var(--color-primary)" },
@@ -98,120 +65,176 @@ interface CustomTooltipProps {
 function CustomTooltipContent({ active, payload, label }: CustomTooltipProps) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="grid min-w-36 items-start gap-1.5 rounded-lg border border-border bg-background p-2.5 text-xs shadow-lg">
-      <div className="font-semibold text-foreground">{label}</div>
-      <div className="grid gap-1">
-        {payload.map((item) => {
-          const isRevenue = item.dataKey === "revenue";
-          const formatted = isRevenue
-            ? `Rp ${(item.value ?? 0).toLocaleString("id-ID")}`
-            : `${item.value} tiket`;
-          const itemKey = `${item.dataKey ?? item.name ?? "val"}`;
-          return (
-            <div key={itemKey} className="flex items-center justify-between gap-3">
-              <span className="text-muted-foreground">{isRevenue ? "Revenue" : "Tickets"}</span>
-              <span className="font-semibold text-foreground">{formatted}</span>
-            </div>
-          );
-        })}
-      </div>
+    <div className="rounded-lg border border-border/50 bg-background px-3 py-2 text-xs shadow-xl">
+      <p className="font-medium text-foreground mb-1">{label}</p>
+      {payload.map((entry) => {
+        const isRevenue = entry.dataKey === "revenue";
+        const formatted = isRevenue
+          ? `Rp ${(entry.value ?? 0).toLocaleString("id-ID")}`
+          : `${entry.value ?? 0} tickets`;
+        return (
+          <div key={entry.dataKey} className="flex items-center gap-2 py-0.5">
+            <span
+              className="h-2 w-2 rounded-full shrink-0"
+              style={{ backgroundColor: entry.color }}
+            />
+            <span className="text-muted-foreground">
+              {entry.dataKey === "revenue" ? "Revenue" : "Tickets"}:
+            </span>
+            <span className="font-semibold text-foreground ml-auto">{formatted}</span>
+          </div>
+        );
+      })}
     </div>
   );
 }
 
-export default function TotalSales() {
-  const [grouping, setGrouping] = useState<"day" | "month" | "year">("month");
-  const chartData = timeseriesData[grouping];
+interface TotalSalesProps {
+  timeseries: DashboardTimeseriesPoint[];
+  granularity: Granularity;
+  onGranularityChange: (g: Granularity) => void;
+  isLoading?: boolean;
+}
 
-  const totalRevenue = chartData.reduce((acc, curr) => acc + curr.revenue, 0);
-  const totalTickets = chartData.reduce((acc, curr) => acc + curr.tickets, 0);
-  const animatedRevenue = useAnimatedNumber(totalRevenue);
+export default function TotalSales({
+  timeseries,
+  granularity,
+  onGranularityChange,
+  isLoading,
+}: TotalSalesProps) {
+  const chartData = timeseries.map((pt) => ({
+    label: pt.label,
+    revenue: pt.revenueIdr,
+    tickets: pt.ticketsSold,
+  }));
+
+  const totalPeriodRevenue = chartData.reduce((acc, curr) => acc + curr.revenue, 0);
+  const totalPeriodTickets = chartData.reduce((acc, curr) => acc + curr.tickets, 0);
+
+  const animatedRevenue = useAnimatedNumber(totalPeriodRevenue);
+  const animatedTickets = useAnimatedNumber(totalPeriodTickets);
 
   return (
-    <DashboardCard className="flex flex-col gap-0!">
-      <CardHeader className="border-b border-border">
-        <CardTitle className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <TrendingUp size={16} className="text-primary" />
-            <span>Revenue & Ticket Timeseries</span>
-          </div>
-          <Select
-            value={grouping}
-            onValueChange={(v) => v && setGrouping(v as "day" | "month" | "year")}
-          >
-            <SelectTrigger className="h-8! w-fit text-xs font-medium cursor-pointer gap-1 px-2.5">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="day" className="cursor-pointer text-xs">
-                Hourly (Today)
-              </SelectItem>
-              <SelectItem value="month" className="cursor-pointer text-xs">
-                Weekly (This Month)
-              </SelectItem>
-              <SelectItem value="year" className="cursor-pointer text-xs">
-                Monthly (This Year)
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </CardTitle>
+    <DashboardCard className="flex flex-col gap-0! pb-0!">
+      <CardHeader className="border-b border-border flex flex-row items-center justify-between pb-3">
+        <div>
+          <CardTitle className="text-sm font-semibold tracking-wide text-foreground">
+            Sales & Revenue Analytics
+          </CardTitle>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Time-based ticket revenue and sales volume
+          </p>
+        </div>
+        <Select
+          value={granularity}
+          onValueChange={(val) => onGranularityChange(val as Granularity)}
+        >
+          <SelectTrigger className="w-[120px] h-8 text-xs">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="day" className="text-xs">
+              Daily
+            </SelectItem>
+            <SelectItem value="month" className="text-xs">
+              Monthly
+            </SelectItem>
+            <SelectItem value="year" className="text-xs">
+              Yearly
+            </SelectItem>
+          </SelectContent>
+        </Select>
       </CardHeader>
 
-      <CardContent className="p-5 flex flex-col gap-6">
-        <div className="flex items-start justify-between gap-4 flex-wrap">
-          <div className="flex flex-col gap-0.5">
-            <span className="text-xs font-normal text-muted-foreground uppercase tracking-wide">
-              Total Revenue
+      <CardContent className="p-5 flex flex-col gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-baseline gap-3">
+            <span className="text-2xl font-bold tracking-tight text-foreground">
+              {isLoading ? "..." : `Rp ${animatedRevenue.toLocaleString("id-ID")}`}
             </span>
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-2xl font-bold tracking-tight text-foreground">
-                Rp {animatedRevenue.toLocaleString("id-ID")}
-              </span>
-              <span className="text-xs font-medium text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-full">
-                +18.4%
-              </span>
-            </div>
+            <span className="text-sm text-muted-foreground">
+              ({isLoading ? "..." : animatedTickets.toLocaleString("id-ID")} tickets)
+            </span>
           </div>
 
-          <div className="flex flex-col gap-0.5 text-right">
-            <span className="text-xs font-normal text-muted-foreground uppercase tracking-wide">
-              Tickets Sold
-            </span>
-            <span className="text-lg font-bold text-foreground">
-              {totalTickets.toLocaleString("id-ID")} tickets
-            </span>
+          <div className="flex items-center gap-4 text-xs">
+            <div className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-primary" />
+              <span className="text-muted-foreground">Revenue</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span
+                className="w-2.5 h-2.5 rounded-full"
+                style={{
+                  backgroundColor: "color-mix(in srgb, var(--primary) 50%, transparent)",
+                }}
+              />
+              <span className="text-muted-foreground">Tickets Sold</span>
+            </div>
           </div>
         </div>
 
-        <ChartContainer config={chartConfig} className="h-[230px]! w-full">
-          <LineChart data={chartData} margin={{ top: 8, right: 10, bottom: 0, left: 10 }}>
-            <CartesianGrid vertical={false} stroke="var(--border)" strokeDasharray="4 4" />
-            <XAxis
-              dataKey="label"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={10}
-              tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
-            />
-            <YAxis
-              tickLine={false}
-              axisLine={false}
-              tickMargin={6}
-              tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
-              tickFormatter={(v) => `${(v / 1000000).toFixed(0)}M`}
-            />
-            <ChartTooltip content={<CustomTooltipContent />} />
-            <Line
-              dataKey="revenue"
-              type="monotone"
-              stroke="var(--color-primary)"
-              strokeWidth={2}
-              dot={{ r: 3, fill: "var(--color-primary)" }}
-              activeDot={{ r: 5 }}
-              isAnimationActive={false}
-            />
-          </LineChart>
-        </ChartContainer>
+        <div className="h-[240px] w-full">
+          {chartData.length === 0 ? (
+            <div className="h-full flex items-center justify-center text-sm text-muted-foreground">
+              No sales data recorded for this period
+            </div>
+          ) : (
+            <ChartContainer config={chartConfig} className="h-full w-full">
+              <LineChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
+                <XAxis
+                  dataKey="label"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  stroke="var(--muted-foreground)"
+                  fontSize={11}
+                />
+                <YAxis
+                  yAxisId="revenue"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  stroke="var(--muted-foreground)"
+                  fontSize={11}
+                  tickFormatter={(val) =>
+                    val >= 1_000_000 ? `${(val / 1_000_000).toFixed(0)}M` : `${val}`
+                  }
+                />
+                <YAxis
+                  yAxisId="tickets"
+                  orientation="right"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  stroke="var(--muted-foreground)"
+                  fontSize={11}
+                  hide
+                />
+                <ChartTooltip content={<CustomTooltipContent />} />
+                <Line
+                  yAxisId="revenue"
+                  type="monotone"
+                  dataKey="revenue"
+                  stroke="var(--primary)"
+                  strokeWidth={2}
+                  dot={{ r: 3, fill: "var(--primary)" }}
+                  activeDot={{ r: 5 }}
+                />
+                <Line
+                  yAxisId="tickets"
+                  type="monotone"
+                  dataKey="tickets"
+                  stroke="color-mix(in srgb, var(--primary) 50%, transparent)"
+                  strokeWidth={2}
+                  strokeDasharray="4 4"
+                  dot={{ r: 2 }}
+                />
+              </LineChart>
+            </ChartContainer>
+          )}
+        </div>
       </CardContent>
     </DashboardCard>
   );

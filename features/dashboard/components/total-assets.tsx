@@ -1,41 +1,60 @@
 "use client";
 
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DashboardCard } from "@/components/common/dashboard-card";
-import { Banknote, Ticket, Receipt, CalendarCheck } from "lucide-react";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Banknote, CalendarCheck, Receipt, Ticket } from "lucide-react";
+import type { OrganizerDashboardSummary } from "../types";
 
-const metrics = [
-  {
-    id: "Revenue",
-    title: "Total Revenue",
-    value: "Rp 86.9M",
-    change: "+18.2%",
-    icon: Banknote,
-  },
-  {
-    id: "Tickets",
-    title: "Tickets Sold",
-    value: "570",
-    change: "+24.5%",
-    icon: Ticket,
-  },
-  {
-    id: "Transactions",
-    title: "Transactions",
-    value: "412",
-    change: "+12.0%",
-    icon: Receipt,
-  },
-  {
-    id: "Events",
-    title: "Active Events",
-    value: "6",
-    change: "2 upcoming",
-    icon: CalendarCheck,
-  },
-];
+interface TotalAssetsProps {
+  summary: OrganizerDashboardSummary | null;
+  isLoading?: boolean;
+}
 
-export default function TotalAssets() {
+function formatCurrency(amount: number) {
+  if (amount >= 1_000_000_000) {
+    return `Rp ${(amount / 1_000_000_000).toFixed(1)}B`;
+  }
+  if (amount >= 1_000_000) {
+    return `Rp ${(amount / 1_000_000).toFixed(1)}M`;
+  }
+  if (amount >= 1_000) {
+    return `Rp ${(amount / 1_000).toFixed(0)}K`;
+  }
+  return `Rp ${amount.toLocaleString("id-ID")}`;
+}
+
+export default function TotalAssets({ summary, isLoading }: TotalAssetsProps) {
+  const metrics = [
+    {
+      id: "Revenue",
+      title: "Total Revenue",
+      value: summary ? formatCurrency(summary.totalRevenueIdr) : "Rp 0",
+      change: `${summary?.totalTransactionsCount ?? 0} paid`,
+      icon: Banknote,
+    },
+    {
+      id: "Tickets",
+      title: "Tickets Sold",
+      value: summary ? summary.totalTicketsSold.toLocaleString("id-ID") : "0",
+      change: `${summary?.events.reduce((acc, ev) => acc + ev.totalCapacity, 0) ?? 0} cap`,
+      icon: Ticket,
+    },
+    {
+      id: "Transactions",
+      title: "Transactions",
+      value: summary ? summary.totalTransactionsCount.toLocaleString("id-ID") : "0",
+      change: `${summary?.pendingConfirmationsCount ?? 0} review`,
+      icon: Receipt,
+    },
+    {
+      id: "Events",
+      title: "Active Events",
+      value: summary ? String(summary.activeEventsCount) : "0",
+      change: `${summary?.totalEventsCount ?? 0} total`,
+      icon: CalendarCheck,
+    },
+  ];
+
   return (
     <DashboardCard className="flex flex-col gap-0! pb-0!">
       <CardHeader className="border-b border-border">
@@ -58,7 +77,9 @@ export default function TotalAssets() {
                   </span>
                 </div>
                 <div className="mt-3">
-                  <h6 className="text-xl font-bold tracking-tight text-foreground">{item.value}</h6>
+                  <h6 className="text-xl font-bold tracking-tight text-foreground">
+                    {isLoading ? "..." : item.value}
+                  </h6>
                   <p className="text-xs text-muted-foreground mt-0.5">{item.title}</p>
                 </div>
               </div>
