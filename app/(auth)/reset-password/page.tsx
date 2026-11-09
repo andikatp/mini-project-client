@@ -6,9 +6,9 @@ import { ResetPasswordForm } from "@/features/auth/components/reset-password-for
 import { Loader2 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Atur Ulang Kata Sandi | EventMgmt",
+  title: "Atur Ulang Kata Sandi | Ramein",
   description:
-    "Buat kata sandi baru untuk akun EventMgmt Anda setelah permintaan pemulihan kata sandi.",
+    "Buat kata sandi baru untuk akun Ramein Anda setelah permintaan pemulihan kata sandi.",
 };
 
 export default function ResetPasswordPage() {

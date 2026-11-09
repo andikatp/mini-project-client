@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Event MGMT",
-  description: "Dapatkan tiketmu disini",
+  title: "Ramein - Platform Tiket & Event",
+  description: "Dapatkan tiket event favoritmu dengan mudah di Ramein",
 };
 
 export default function RootLayout({

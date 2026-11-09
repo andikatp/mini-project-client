@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { authApi } from "../api/auth-api";
 import type { RegisterInput } from "../types";
@@ -46,7 +46,7 @@ export function useRegister() {
       if (typeof window !== "undefined") {
         sessionStorage.setItem("registered_email", input.email.trim());
       }
-      router.push(`/verify-email?email=${encodeURIComponent(input.email.trim())}`);
+      router.replace(`/verify-email?email=${encodeURIComponent(input.email.trim())}`);
 
       return true;
     } catch (err: unknown) {
@@ -58,10 +58,10 @@ export function useRegister() {
     }
   };
 
-  const clearMessages = () => {
+  const clearMessages = useCallback(() => {
     setErrorMsg(null);
     setSuccessMsg(null);
-  };
+  }, []);
 
   return {
     register,

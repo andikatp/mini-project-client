@@ -6,9 +6,9 @@ import { RegisterForm } from "@/features/auth/components/register-form";
 import { Loader2 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Daftar Akun Baru | EventMgmt",
+  title: "Daftar Akun Baru | Ramein",
   description:
-    "Daftar akun EventMgmt sekarang. Nikmati diskon referral 10% untuk Customer atau kelola event spektakuler Anda sebagai Organizer.",
+    "Daftar akun Ramein sekarang. Nikmati diskon referral 10% untuk Customer atau kelola event spektakuler Anda sebagai Organizer.",
 };
 
 export default function RegisterPage() {

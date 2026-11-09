@@ -35,7 +35,7 @@ function handleUnauthorized(message?: string): never {
     !window.location.pathname.startsWith("/forgot-password") &&
     !window.location.pathname.startsWith("/reset-password")
   ) {
-    localStorage.removeItem("eventmgmt_auth_session");
+    localStorage.removeItem("ramein_auth_session");
     window.location.href = "/login";
   }
   throw new Error(message || "Sesi Anda telah berakhir. Silakan masuk kembali.");

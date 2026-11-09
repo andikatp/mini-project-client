@@ -4,7 +4,7 @@ import { OrganizerLoginArtwork } from "@/features/auth/components/auth-artworks"
 import { OrganizerLoginForm } from "@/features/auth/components/organizer-login-form";
 
 export const metadata: Metadata = {
-  title: "Masuk sebagai Organizer | EventMgmt",
+  title: "Masuk sebagai Organizer | Ramein",
   description:
     "Masuk ke portal Event Organizer untuk mengelola penjualan tiket, rilis voucher promosi, dan monitor transaksi event Anda.",
 };

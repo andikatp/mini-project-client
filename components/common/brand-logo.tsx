@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Ticket } from "lucide-react";
+import { RameinIcon } from "./ramein-icon";
 
 interface BrandLogoProps {
   readonly className?: string;
@@ -19,29 +19,28 @@ export function BrandLogo({
   };
 
   const iconSizes = {
-    sm: "size-5",
-    default: "size-6",
-    lg: "size-7",
+    sm: 24,
+    default: 32,
+    lg: 40,
   };
 
   return (
     <Link
       href="/"
-      className={`inline-flex items-center gap-2 group transition-transform hover:scale-[1.02] ${className}`}
-      aria-label="EventMgmt Beranda"
+      className={`inline-flex items-center gap-2.5 group transition-transform hover:scale-[1.02] ${className}`}
+      aria-label="Ramein Beranda"
     >
-      <div className="relative flex items-center justify-center bg-blue-600 text-white rounded-xl p-1.5 shadow-sm group-hover:bg-blue-700 transition-colors">
-        <Ticket className={iconSizes[size]} />
+      <div className="relative flex items-center justify-center rounded-xl shadow-xs transition-transform group-hover:scale-105">
+        <RameinIcon size={iconSizes[size]} />
       </div>
       <div
         className={`flex items-baseline font-black tracking-tight ${inverted ? "text-white" : "text-foreground"}`}
       >
-        <span className={sizeClasses[size]}>EVENT</span>
-        <span className={`${sizeClasses[size]} ${inverted ? "text-blue-400" : "text-blue-600"}`}>
-          MGMT
-        </span>
-        <span className="ml-1 text-[10px] uppercase font-bold text-amber-500 bg-amber-500/10 border border-amber-500/20 rounded px-1 py-0.5 leading-none">
-          Live
+        <span className={sizeClasses[size]}>RAME</span>
+        <span
+          className={`${sizeClasses[size]} text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600`}
+        >
+          IN
         </span>
       </div>
     </Link>

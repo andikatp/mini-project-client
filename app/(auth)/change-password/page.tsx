@@ -4,9 +4,9 @@ import { ChangePasswordForm } from "@/features/auth/components/change-password-f
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Ganti Kata Sandi | EventMgmt",
+  title: "Ganti Kata Sandi | Ramein",
   description:
-    "Perbarui kata sandi akun EventMgmt Anda secara berkala untuk menjaga keamanan data dan transaksi.",
+    "Perbarui kata sandi akun Ramein Anda secara berkala untuk menjaga keamanan data dan transaksi.",
 };
 
 export default function ChangePasswordPage() {

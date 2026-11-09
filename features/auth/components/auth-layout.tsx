@@ -46,7 +46,7 @@ export function AuthLayout({ artwork, children, title, subtitle }: AuthLayoutPro
       {/* Simple Accessible Footer */}
       <footer className="w-full py-6 text-center text-xs text-muted-foreground">
         <div className="flex items-center justify-center gap-4">
-          <span>&copy; 2026 EventMgmt Platform</span>
+          <span>&copy; 2026 Ramein Platform</span>
           <span>&bull;</span>
           <span className="hover:text-foreground transition-colors">Aman &amp; Terverifikasi</span>
         </div>

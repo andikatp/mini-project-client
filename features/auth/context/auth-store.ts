@@ -71,7 +71,7 @@ export const useAuthStore = create<AuthState>()(
       },
     }),
     {
-      name: "eventmgmt_auth_session",
+      name: "ramein_auth_session",
       storage: createJSONStorage(() =>
         typeof window !== "undefined"
           ? window.localStorage

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { authApi } from "../api/auth-api";
 
@@ -38,7 +38,7 @@ export function useVerifyEmail() {
       );
       setIsVerified(true);
 
-      router.push("/login");
+      router.replace("/login");
 
       return true;
     } catch (err: unknown) {
@@ -77,10 +77,10 @@ export function useVerifyEmail() {
     }
   };
 
-  const clearMessages = () => {
+  const clearMessages = useCallback(() => {
     setErrorMsg(null);
     setSuccessMsg(null);
-  };
+  }, []);
 
   return {
     verify,

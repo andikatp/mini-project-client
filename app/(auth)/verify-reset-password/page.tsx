@@ -6,7 +6,7 @@ import { VerifyResetPasswordForm } from "@/features/auth/components/verify-reset
 import { Loader2 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Verifikasi Kode Pemulihan | EventMgmt",
+  title: "Verifikasi Kode Pemulihan | Ramein",
   description:
     "Masukkan kode OTP 6-digit yang telah dikirimkan ke email untuk melanjutkan proses atur ulang kata sandi.",
 };

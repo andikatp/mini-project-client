@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { authApi } from "../api/auth-api";
 
 export function useForgotPassword() {
@@ -39,15 +39,15 @@ export function useForgotPassword() {
     }
   };
 
-  const clearMessages = () => {
+  const clearMessages = useCallback(() => {
     setErrorMsg(null);
     setSuccessMsg(null);
-  };
+  }, []);
 
-  const reset = () => {
+  const reset = useCallback(() => {
     setIsSubmitted(false);
     clearMessages();
-  };
+  }, [clearMessages]);
 
   return {
     requestReset,

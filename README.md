@@ -1,6 +1,6 @@
 # Mini Project Client
 
-Frontend client application untuk platform manajemen & pemesanan tiket acara (**EventMgmt**) yang dibangun menggunakan **Next.js (App Router)**, **React 19**, **TypeScript**, **Tailwind CSS v4**, **shadcn/ui**, dan dijalankan dengan **Bun** serta didukung oleh **Vite+ (`vp`)**.
+Frontend client application untuk platform manajemen & pemesanan tiket acara (**Ramein**) yang dibangun menggunakan **Next.js (App Router)**, **React 19**, **TypeScript**, **Tailwind CSS v4**, **shadcn/ui**, dan dijalankan dengan **Bun** serta didukung oleh **Vite+ (`vp`)**.
 
 Template dashboard terintegrasi menggunakan komponen desain dari [**Shadcn Dashboard**](https://shadcndashboard.dev) (Base UI + Tailwind CSS v4 + Recharts).
 
