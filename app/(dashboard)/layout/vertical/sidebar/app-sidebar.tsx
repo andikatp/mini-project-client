@@ -1,13 +1,7 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarHeader,
-} from "@/components/ui/sidebar";
+import { Sidebar, SidebarContent, SidebarGroup, SidebarHeader } from "@/components/ui/sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuthStore } from "@/features/auth/context/auth-store";
 import * as React from "react";
@@ -15,7 +9,6 @@ import { Suspense } from "react";
 import SimpleBar from "simplebar-react";
 import FullLogo from "../../shared/logo/full-logo";
 import NavCollapse from "./nav-collapse";
-import { NavUser } from "./nav-user";
 import { getSidebarItems } from "./sidebaritems";
 
 function NavSkeleton() {
@@ -63,11 +56,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SimpleBar>
       </SidebarContent>
 
-      <SidebarFooter className="p-4 group-data-[collapsible=icon]:p-2 group-data-[collapsible=icon]:justify-center">
+      {/* <SidebarFooter className="p-4 group-data-[collapsible=icon]:p-2 group-data-[collapsible=icon]:justify-center">
         <div className="hide-menu flex flex-col gap-2">
           <NavUser />
         </div>
-      </SidebarFooter>
+      </SidebarFooter> */}
     </Sidebar>
   );
 }

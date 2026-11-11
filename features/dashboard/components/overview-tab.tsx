@@ -1,7 +1,5 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
-import { useAuthStore } from "@/features/auth/context/auth-store";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -10,14 +8,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CalendarDays, RefreshCcw, Download } from "lucide-react";
-
-export type TimeGrouping = "day" | "month" | "year";
+import { useAuthStore } from "@/features/auth/context/auth-store";
+import { RefreshCcw } from "lucide-react";
+import { useSyncExternalStore } from "react";
+import type { OrganizerDashboardSummary } from "../types";
 
 interface OverviewTabProps {
-  readonly grouping?: TimeGrouping;
-  readonly onGroupingChange?: (grouping: TimeGrouping) => void;
-  readonly onRefresh?: () => void;
+  summary?: OrganizerDashboardSummary | null;
+  selectedEventId?: string;
+  onEventChange?: (eventId: string | undefined) => void;
+  onRefresh?: () => void;
+  isLoading?: boolean;
 }
 
 const emptySubscribe = () => () => {};
@@ -31,13 +32,13 @@ function getGreetingText() {
 }
 
 export default function OverviewTab({
-  grouping = "month",
-  onGroupingChange,
+  summary,
+  selectedEventId,
+  onEventChange,
   onRefresh,
+  isLoading,
 }: OverviewTabProps) {
   const user = useAuthStore((s) => s.user);
-
-  // Safely resolve greeting on client without triggering unstable prerender warning
   const greeting = useSyncExternalStore(emptySubscribe, getGreetingText, () => "Welcome");
 
   return (
@@ -51,38 +52,50 @@ export default function OverviewTab({
         </p>
       </div>
 
-      <div className="flex items-center lg:flex-nowrap flex-wrap gap-2">
-        <Button
-          variant="outline"
-          onClick={onRefresh}
-          className="p-2.5 h-auto rounded-lg cursor-pointer hover:bg-muted/50"
-          title="Refresh Data"
-        >
-          <RefreshCcw size={16} />
-        </Button>
+      <div className="flex items-center gap-2">
+        {summary && summary.events.length > 0 && (
+          <Select
+            value={selectedEventId || "all"}
+            onValueChange={(val) => onEventChange?.(val === "all" || !val ? undefined : val)}
+          >
+            <SelectTrigger className="w-[200px] h-9 text-xs">
+              <SelectValue placeholder="All Events">
+                {(val) => {
+                  if (!val || val === "all") {
+                    return `All Events (${summary.events.length})`;
+                  }
+                  const ev = summary.events.find((e) => e.id === val);
+                  return ev ? ev.title : val;
+                }}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent alignItemWithTrigger={false} className="w-[280px]">
+              <SelectItem value="all" className="text-xs">
+                All Events ({summary.events.length})
+              </SelectItem>
+              {summary.events.map((ev) => (
+                <SelectItem key={ev.id} value={ev.id} className="text-xs">
+                  <span className="truncate block max-w-[230px]" title={ev.title}>
+                    {ev.title}
+                  </span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
 
-        <Select value={grouping} onValueChange={(val) => onGroupingChange?.(val as TimeGrouping)}>
-          <SelectTrigger className="w-fit h-auto! text-foreground cursor-pointer gap-2">
-            <CalendarDays size={16} />
-            <SelectValue placeholder="Group by" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="day" className="cursor-pointer">
-              Daily Grouping
-            </SelectItem>
-            <SelectItem value="month" className="cursor-pointer">
-              Monthly Grouping
-            </SelectItem>
-            <SelectItem value="year" className="cursor-pointer">
-              Yearly Grouping
-            </SelectItem>
-          </SelectContent>
-        </Select>
-
-        <Button className="flex items-center gap-1.5 h-auto px-4 py-2 rounded-lg cursor-pointer">
-          <Download size={16} />
-          <span className="text-sm font-medium">Export Report</span>
-        </Button>
+        {onRefresh && (
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-9 gap-1.5 text-xs"
+            onClick={onRefresh}
+            disabled={isLoading}
+          >
+            <RefreshCcw size={13} className={isLoading ? "animate-spin" : ""} />
+            <span>Refresh</span>
+          </Button>
+        )}
       </div>
     </div>
   );

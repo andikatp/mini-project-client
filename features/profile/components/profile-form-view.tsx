@@ -62,15 +62,6 @@ export default function ProfileFormView() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate size (server enforces 1MB limit in multer)
-    if (file.size > 1 * 1024 * 1024) {
-      setProfileMsg({
-        type: "error",
-        text: "Ukuran gambar maksimal 1MB.",
-      });
-      return;
-    }
-
     // Validate type (JPEG, PNG, WebP)
     const validTypes = ["image/jpeg", "image/png", "image/webp", "image/jpg"];
     if (!validTypes.includes(file.type)) {

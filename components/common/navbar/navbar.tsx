@@ -35,7 +35,7 @@ export function Navbar({ onSearch }: NavbarProps) {
           <Link
             href={
               isAuthenticated && user?.role === "EVENT_ORGANIZER"
-                ? "/organizer/dashboard"
+                ? "/dashboard"
                 : "/login/organizer"
             }
             className="hidden items-center gap-2 text-sm font-semibold text-foreground/80 transition-colors hover:text-blue-600 md:flex"
