@@ -1,5 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/features/auth/hooks/use-auth";
 import StyleAwareWrapper from "@/features/dashboard/components/StyleAwareWrapper";
 import StyleDivider from "@/features/dashboard/components/StyleDivider";
 import OverviewTab from "@/features/dashboard/components/overview-tab";
@@ -10,6 +13,8 @@ import TotalsAssets from "@/features/dashboard/components/totals-assets";
 import { useOrganizerDashboard } from "@/features/dashboard/hooks/use-organizer-dashboard";
 
 export default function DashboardPageContent() {
+  const router = useRouter();
+  const { user, isInitialized } = useAuth();
   const {
     summary,
     timeseries,
@@ -23,6 +28,16 @@ export default function DashboardPageContent() {
     acceptTransaction,
     rejectTransaction,
   } = useOrganizerDashboard();
+
+  useEffect(() => {
+    if (isInitialized && user?.role === "CUSTOMER") {
+      router.replace("/transactions");
+    }
+  }, [isInitialized, user?.role, router]);
+
+  if (user?.role === "CUSTOMER") {
+    return null;
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -53,7 +68,6 @@ export default function DashboardPageContent() {
 
         <StyleDivider wrapperClassName="col-span-12" />
 
-        {/* Recent Transactions & Attendees Table (8 Cols) */}
         <div className="lg:col-span-8 col-span-12">
           <ProjectsOrders
             transactions={transactions}
@@ -63,7 +77,6 @@ export default function DashboardPageContent() {
           />
         </div>
 
-        {/* Status Distribution Donut Chart (4 Cols) */}
         <div className="lg:col-span-4 col-span-12">
           <TotalsAssets transactions={transactions} isLoading={isLoading} />
         </div>

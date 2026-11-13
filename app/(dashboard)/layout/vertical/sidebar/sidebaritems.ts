@@ -5,8 +5,8 @@ import {
   Receipt,
   UserCircle,
   Ticket,
+  Star,
   Gift,
-  Compass,
 } from "lucide-react";
 import { UserRole } from "@/features/auth/types";
 
@@ -81,28 +81,22 @@ export function getSidebarItems(role?: UserRole): MenuItem[] {
     ];
   }
 
-  // Customer or default menu
+  // Customer menu: My Transactions (first), Reviews, Rewards, Profile
   return [
     {
       heading: "Customer Menu",
       items: [
         {
-          id: "cust-dashboard",
-          name: "Dashboard",
-          icon: LayoutDashboard,
-          url: "/dashboard",
-        },
-        {
-          id: "cust-events",
-          name: "Explore Events",
-          icon: Compass,
-          url: "/events",
-        },
-        {
           id: "cust-transactions",
           name: "My Transactions",
           icon: Ticket,
           url: "/transactions",
+        },
+        {
+          id: "cust-reviews",
+          name: "Reviews",
+          icon: Star,
+          url: "/reviews",
         },
         {
           id: "cust-rewards",

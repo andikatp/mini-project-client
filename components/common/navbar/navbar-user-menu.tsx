@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuthStore } from "@/features/auth/context/auth-store";
-import { HelpCircle, LayoutDashboard, LogOut, User } from "lucide-react";
+import { HelpCircle, LayoutDashboard, LogOut, Ticket, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -62,13 +62,23 @@ export function NavbarUserMenu() {
             </DropdownMenuGroup>
             <DropdownMenuSeparator className="my-1" />
             <DropdownMenuGroup>
-              <DropdownMenuItem
-                onClick={() => handleNavigate("/dashboard")}
-                className="flex cursor-pointer items-center gap-2.5 rounded-lg px-2 py-2"
-              >
-                <LayoutDashboard className="size-4 text-muted-foreground" />
-                <span>Dashboard</span>
-              </DropdownMenuItem>
+              {user.role === "EVENT_ORGANIZER" ? (
+                <DropdownMenuItem
+                  onClick={() => handleNavigate("/dashboard")}
+                  className="flex cursor-pointer items-center gap-2.5 rounded-lg px-2 py-2"
+                >
+                  <LayoutDashboard className="size-4 text-muted-foreground" />
+                  <span>Dashboard</span>
+                </DropdownMenuItem>
+              ) : (
+                <DropdownMenuItem
+                  onClick={() => handleNavigate("/transactions")}
+                  className="flex cursor-pointer items-center gap-2.5 rounded-lg px-2 py-2"
+                >
+                  <Ticket className="size-4 text-muted-foreground" />
+                  <span>Pesanan Saya</span>
+                </DropdownMenuItem>
+              )}
               <DropdownMenuItem
                 onClick={() => handleNavigate("/profile")}
                 className="flex cursor-pointer items-center gap-2.5 rounded-lg px-2 py-2"

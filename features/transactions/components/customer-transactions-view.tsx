@@ -1,0 +1,220 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import { Ticket, RefreshCw, AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Card } from "@/components/ui/card";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import { WriteReviewModal } from "@/features/reviews/components/write-review-modal";
+import { useCustomerTransactions } from "../hooks/use-customer-transactions";
+import { CustomerTransaction } from "../types";
+import { TransactionStatsCards } from "./transaction-stats-cards";
+import { TransactionSearchFilter } from "./transaction-search-filter";
+import { TransactionTable } from "./transaction-table";
+import { UploadProofModal } from "./upload-proof-modal";
+
+const ITEMS_PER_PAGE = 8;
+
+export function CustomerTransactionsView() {
+  const { transactions, isLoading, error, refresh, uploadProof, cancelTransaction } =
+    useCustomerTransactions();
+
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("ALL");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedTxForUpload, setSelectedTxForUpload] = useState<CustomerTransaction | null>(null);
+  const [selectedTxForReview, setSelectedTxForReview] = useState<CustomerTransaction | null>(null);
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
+
+  const filteredTransactions = useMemo(() => {
+    return transactions.filter((tx) => {
+      const matchesStatus = statusFilter === "ALL" || tx.status === statusFilter;
+      const term = search.toLowerCase().trim();
+      const matchesSearch =
+        !term ||
+        tx.code.toLowerCase().includes(term) ||
+        (tx.event?.title && tx.event.title.toLowerCase().includes(term));
+      return matchesStatus && matchesSearch;
+    });
+  }, [transactions, statusFilter, search]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredTransactions.length / ITEMS_PER_PAGE));
+  const safeCurrentPage = Math.min(currentPage, totalPages);
+
+  const paginatedTransactions = useMemo(() => {
+    const start = (safeCurrentPage - 1) * ITEMS_PER_PAGE;
+    return filteredTransactions.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredTransactions, safeCurrentPage]);
+
+  const handleFilterChange = (status: string) => {
+    setStatusFilter(status);
+    setCurrentPage(1);
+  };
+
+  const handleSearchChange = (term: string) => {
+    setSearch(term);
+    setCurrentPage(1);
+  };
+
+  const handleCancel = async (id: string) => {
+    if (!confirm("Are you sure you want to cancel this transaction?")) return;
+    try {
+      setCancellingId(id);
+      await cancelTransaction(id);
+    } finally {
+      setCancellingId(null);
+    }
+  };
+
+  return (
+    <Card className="p-6 flex flex-col gap-6">
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight text-foreground">My Transactions</h2>
+          <p className="text-sm text-muted-foreground">
+            Track your tickets, view status, and manage payment proofs.
+          </p>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={refresh}
+          disabled={isLoading}
+          className="border-border text-foreground hover:bg-muted"
+        >
+          <RefreshCw className={`size-4 mr-2 ${isLoading ? "animate-spin" : ""}`} />
+          Refresh
+        </Button>
+      </div>
+
+      <TransactionStatsCards
+        transactions={transactions}
+        activeFilter={statusFilter}
+        onFilterChange={handleFilterChange}
+      />
+
+      <TransactionSearchFilter
+        search={search}
+        onSearchChange={handleSearchChange}
+        statusFilter={statusFilter}
+        onStatusChange={handleFilterChange}
+      />
+
+      {error && (
+        <Alert variant="destructive">
+          <AlertCircle className="size-4" />
+          <AlertTitle>Failed to load transactions</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
+      {isLoading ? (
+        <div className="flex flex-col gap-2">
+          <Skeleton className="h-10 w-full rounded-md" />
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-14 w-full rounded-md" />
+          ))}
+        </div>
+      ) : filteredTransactions.length === 0 ? (
+        <div className="flex flex-col items-center justify-center p-12 border border-dashed rounded-xl text-center">
+          <div className="size-12 rounded-full bg-muted flex items-center justify-center text-muted-foreground mb-3">
+            <Ticket className="size-6" />
+          </div>
+          <h3 className="font-semibold text-foreground text-lg">No transactions found</h3>
+          <p className="text-sm text-muted-foreground max-w-sm mt-1">
+            {search || statusFilter !== "ALL"
+              ? "Try adjusting your search terms or filter selection."
+              : "You haven't purchased any tickets yet. Browse events to get tickets!"}
+          </p>
+        </div>
+      ) : (
+        <>
+          <TransactionTable
+            transactions={paginatedTransactions}
+            onOpenUpload={setSelectedTxForUpload}
+            onCancel={handleCancel}
+            onOpenReview={setSelectedTxForReview}
+            cancellingId={cancellingId}
+          />
+
+          <div className="flex items-center justify-between pt-2">
+            <span className="text-xs text-muted-foreground">
+              Showing {(safeCurrentPage - 1) * ITEMS_PER_PAGE + 1} to{" "}
+              {Math.min(safeCurrentPage * ITEMS_PER_PAGE, filteredTransactions.length)} of{" "}
+              {filteredTransactions.length} orders
+            </span>
+
+            <Pagination className="mx-0 w-auto">
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (safeCurrentPage > 1) setCurrentPage(safeCurrentPage - 1);
+                    }}
+                    className={safeCurrentPage <= 1 ? "pointer-events-none opacity-50" : ""}
+                  />
+                </PaginationItem>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <PaginationItem key={page}>
+                    <PaginationLink
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setCurrentPage(page);
+                      }}
+                      isActive={page === safeCurrentPage}
+                    >
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+
+                <PaginationItem>
+                  <PaginationNext
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (safeCurrentPage < totalPages) setCurrentPage(safeCurrentPage + 1);
+                    }}
+                    className={
+                      safeCurrentPage >= totalPages ? "pointer-events-none opacity-50" : ""
+                    }
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        </>
+      )}
+
+      <UploadProofModal
+        isOpen={Boolean(selectedTxForUpload)}
+        onClose={() => setSelectedTxForUpload(null)}
+        transaction={selectedTxForUpload}
+        onUpload={uploadProof}
+      />
+
+      {selectedTxForReview && (
+        <WriteReviewModal
+          isOpen={Boolean(selectedTxForReview)}
+          onClose={() => setSelectedTxForReview(null)}
+          eventId={selectedTxForReview.eventId}
+          eventTitle={selectedTxForReview.event?.title || "Event"}
+          onSuccess={refresh}
+        />
+      )}
+    </Card>
+  );
+}
