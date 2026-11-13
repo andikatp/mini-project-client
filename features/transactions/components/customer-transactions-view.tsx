@@ -5,15 +5,6 @@ import { Ticket, RefreshCw, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Card } from "@/components/ui/card";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
 import { WriteReviewModal } from "@/features/reviews/components/write-review-modal";
 import { reviewsApi } from "@/features/reviews/api/reviews-api";
 import type { EventReview } from "@/features/reviews/types";
@@ -22,6 +13,7 @@ import { CustomerTransaction } from "../types";
 import { TransactionStatsCards } from "./transaction-stats-cards";
 import { TransactionSearchFilter } from "./transaction-search-filter";
 import { TransactionTable } from "./transaction-table";
+import { TransactionPagination } from "./transaction-pagination";
 import { UploadProofModal } from "./upload-proof-modal";
 
 const ITEMS_PER_PAGE = 8;
@@ -53,7 +45,7 @@ export function CustomerTransactionsView() {
         setReviews(res.data);
       }
     } catch {
-      // Non-blocking for transactions view
+      // Non-blocking
     } finally {
       setIsReviewsLoading(false);
     }
@@ -140,10 +132,10 @@ export function CustomerTransactionsView() {
   const isLoading = isTxLoading || isReviewsLoading;
 
   return (
-    <Card className="p-6 flex flex-col gap-6">
+    <div className="p-6 flex flex-col gap-6 rounded-none bg-background">
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-foreground">My Transactions</h2>
+          <h2 className="text-xl font-bold tracking-tight text-foreground">My Transactions</h2>
           <p className="text-sm text-muted-foreground">
             Track your tickets, view status, and manage payment proofs.
           </p>
@@ -189,7 +181,7 @@ export function CustomerTransactionsView() {
           ))}
         </div>
       ) : filteredTransactions.length === 0 ? (
-        <div className="flex flex-col items-center justify-center p-12 border border-dashed rounded-xl text-center">
+        <div className="flex flex-col items-center justify-center p-12 border border-dashed rounded-md text-center">
           <div className="size-12 rounded-full bg-muted flex items-center justify-center text-muted-foreground mb-3">
             <Ticket className="size-6" />
           </div>
@@ -211,56 +203,13 @@ export function CustomerTransactionsView() {
             cancellingId={cancellingId}
           />
 
-          <div className="flex items-center justify-between pt-2">
-            <span className="text-xs text-muted-foreground">
-              Showing {(safeCurrentPage - 1) * ITEMS_PER_PAGE + 1} to{" "}
-              {Math.min(safeCurrentPage * ITEMS_PER_PAGE, filteredTransactions.length)} of{" "}
-              {filteredTransactions.length} orders
-            </span>
-
-            <Pagination className="mx-0 w-auto">
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      if (safeCurrentPage > 1) setCurrentPage(safeCurrentPage - 1);
-                    }}
-                    className={safeCurrentPage <= 1 ? "pointer-events-none opacity-50" : ""}
-                  />
-                </PaginationItem>
-
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <PaginationItem key={page}>
-                    <PaginationLink
-                      href="#"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setCurrentPage(page);
-                      }}
-                      isActive={page === safeCurrentPage}
-                    >
-                      {page}
-                    </PaginationLink>
-                  </PaginationItem>
-                ))}
-
-                <PaginationItem>
-                  <PaginationNext
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      if (safeCurrentPage < totalPages) setCurrentPage(safeCurrentPage + 1);
-                    }}
-                    className={
-                      safeCurrentPage >= totalPages ? "pointer-events-none opacity-50" : ""
-                    }
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
-          </div>
+          <TransactionPagination
+            currentPage={safeCurrentPage}
+            totalPages={totalPages}
+            totalItems={filteredTransactions.length}
+            itemsPerPage={ITEMS_PER_PAGE}
+            onPageChange={setCurrentPage}
+          />
         </>
       )}
 
@@ -280,6 +229,6 @@ export function CustomerTransactionsView() {
           onSuccess={refreshAll}
         />
       )}
-    </Card>
+    </div>
   );
 }

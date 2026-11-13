@@ -1,6 +1,6 @@
 "use client";
 
-import { Separator } from "@/components/ui/separator";
+import Divider from "@/components/shared-divider";
 
 interface Props {
   wrapperClassName?: string;
@@ -10,11 +10,11 @@ const StyleDivider = ({ wrapperClassName }: Props) => {
   if (wrapperClassName) {
     return (
       <div className={wrapperClassName}>
-        <Separator className="w-full my-1" />
+        <Divider noContainer />
       </div>
     );
   }
-  return <Separator className="w-full my-1" />;
+  return <Divider noContainer />;
 };
 
 export default StyleDivider;
