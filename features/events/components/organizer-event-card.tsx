@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CardContent, CardHeader } from "@/components/ui/card";
-import { DashboardCard } from "@/components/common/dashboard-card";
+import { CardContent } from "@/components/ui/card";
+import { DashboardCard } from "@/components/shared-dashboard-card";
 import { Calendar, MapPin, Users } from "lucide-react";
 import Image from "next/image";
 import type { EventStatus, OrganizerEvent } from "../types";
@@ -40,10 +40,10 @@ export function OrganizerEventCard({ event, onViewAttendees }: OrganizerEventCar
     event.totalCapacity > 0 ? Math.round((event.ticketsSold / event.totalCapacity) * 100) : 0;
 
   return (
-    <DashboardCard className="overflow-hidden flex flex-col justify-between">
+    <DashboardCard className="border border-border rounded-md overflow-hidden flex flex-col justify-between">
       <div>
         {event.bannerUrl && (
-          <div className="relative w-full h-36 bg-muted">
+          <div className="relative h-44 w-full bg-muted border-b border-border">
             <Image
               src={event.bannerUrl}
               alt={event.title}
@@ -51,54 +51,34 @@ export function OrganizerEventCard({ event, onViewAttendees }: OrganizerEventCar
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 50vw"
             />
-            <div className="absolute top-3 right-3">
-              <Badge
-                variant="secondary"
-                className={`${status.bg} ${status.text} border text-[11px] font-medium backdrop-blur-md`}
-              >
-                {status.label}
-              </Badge>
-            </div>
-            <div className="absolute bottom-3 left-3">
-              <Badge variant="outline" className="bg-background/80 backdrop-blur-md text-[10px]">
-                {event.category.name}
-              </Badge>
-            </div>
           </div>
         )}
 
-        <CardHeader className="p-4 pb-2">
-          <div className="flex items-start justify-between gap-2">
-            <h4
-              className="text-base font-semibold text-foreground line-clamp-1"
-              title={event.title}
-            >
-              {event.title}
-            </h4>
-            {!event.bannerUrl && (
-              <Badge
-                variant="secondary"
-                className={`${status.bg} ${status.text} border text-[11px]`}
-              >
-                {status.label}
-              </Badge>
-            )}
+        <div className="p-5 pb-3">
+          <div className="flex items-start justify-between gap-2 mb-2">
+            <Badge variant="outline" className="text-xs">
+              {event.category?.name || "General"}
+            </Badge>
+            <Badge className={`text-xs px-2 py-0.5 border ${status.bg} ${status.text}`}>
+              {status.label}
+            </Badge>
           </div>
-          {event.description && (
-            <p className="text-xs text-muted-foreground line-clamp-2 mt-1">{event.description}</p>
-          )}
-        </CardHeader>
 
-        <CardContent className="px-4 py-2 flex flex-col gap-3">
-          <div className="flex flex-col gap-1.5 text-xs text-muted-foreground">
+          <h3 className="font-semibold text-base line-clamp-1 text-foreground" title={event.title}>
+            {event.title}
+          </h3>
+        </div>
+
+        <CardContent className="px-5 pb-4 space-y-3">
+          <div className="space-y-1 text-xs text-muted-foreground">
             <div className="flex items-center gap-1.5">
-              <MapPin className="size-3.5 text-primary shrink-0" />
-              <span className="truncate">
+              <MapPin className="size-3.5 text-foreground shrink-0" />
+              <span className="line-clamp-1">
                 {event.location}, {event.city}
               </span>
             </div>
             <div className="flex items-center gap-1.5">
-              <Calendar className="size-3.5 text-primary shrink-0" />
+              <Calendar className="size-3.5 text-foreground shrink-0" />
               <span>
                 {new Date(event.startAt).toLocaleDateString("id-ID", {
                   weekday: "short",
@@ -110,16 +90,16 @@ export function OrganizerEventCard({ event, onViewAttendees }: OrganizerEventCar
             </div>
           </div>
 
-          <div className="p-3 bg-muted/30 rounded-lg border border-border/50">
+          <div className="p-3 bg-muted/30 rounded-md border border-border">
             <div className="flex justify-between items-center text-xs mb-1.5">
               <span className="font-medium text-foreground">Ticket Sales</span>
               <span className="text-muted-foreground font-semibold">
                 {event.ticketsSold} / {event.totalCapacity} ({percentage}%)
               </span>
             </div>
-            <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+            <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
               <div
-                className="h-full bg-primary transition-all duration-500 rounded-full"
+                className="h-full bg-primary transition-all duration-500"
                 style={{ width: `${Math.min(percentage, 100)}%` }}
               />
             </div>
@@ -134,10 +114,10 @@ export function OrganizerEventCard({ event, onViewAttendees }: OrganizerEventCar
         <Button
           size="sm"
           variant="outline"
-          className="h-8 gap-1.5 text-xs"
+          className="h-8 gap-1.5 text-xs rounded-md cursor-pointer"
           onClick={() => onViewAttendees(event.id)}
         >
-          <Users className="size-3.5 text-primary" />
+          <Users className="size-3.5 text-foreground" />
           <span>View Attendees</span>
         </Button>
       </div>
