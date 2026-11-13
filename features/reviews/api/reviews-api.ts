@@ -21,6 +21,12 @@ export const reviewsApi = {
     });
   },
 
+  async getMyReviews(): Promise<ApiResponse<EventReview[]>> {
+    return apiClient<EventReview[]>("/reviews/me", {
+      method: HttpMethod.GET,
+    });
+  },
+
   async getOrganizerReviews(organizerId: string): Promise<ApiResponse<EventReview[]>> {
     return apiClient<EventReview[]>(`/organizers/${organizerId}/reviews`, {
       method: HttpMethod.GET,

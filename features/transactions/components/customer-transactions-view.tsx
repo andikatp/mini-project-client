@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useCallback } from "react";
 import { Ticket, RefreshCw, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -15,6 +15,8 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { WriteReviewModal } from "@/features/reviews/components/write-review-modal";
+import { reviewsApi } from "@/features/reviews/api/reviews-api";
+import type { EventReview } from "@/features/reviews/types";
 import { useCustomerTransactions } from "../hooks/use-customer-transactions";
 import { CustomerTransaction } from "../types";
 import { TransactionStatsCards } from "./transaction-stats-cards";
@@ -25,15 +27,75 @@ import { UploadProofModal } from "./upload-proof-modal";
 const ITEMS_PER_PAGE = 8;
 
 export function CustomerTransactionsView() {
-  const { transactions, isLoading, error, refresh, uploadProof, cancelTransaction } =
-    useCustomerTransactions();
+  const {
+    transactions,
+    isLoading: isTxLoading,
+    error,
+    refresh: refreshTx,
+    uploadProof,
+    cancelTransaction,
+  } = useCustomerTransactions();
 
+  const [reviews, setReviews] = useState<EventReview[]>([]);
+  const [isReviewsLoading, setIsReviewsLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedTxForUpload, setSelectedTxForUpload] = useState<CustomerTransaction | null>(null);
   const [selectedTxForReview, setSelectedTxForReview] = useState<CustomerTransaction | null>(null);
   const [cancellingId, setCancellingId] = useState<string | null>(null);
+
+  const fetchMyReviews = useCallback(async () => {
+    setIsReviewsLoading(true);
+    try {
+      const res = await reviewsApi.getMyReviews();
+      if (res.data) {
+        setReviews(res.data);
+      }
+    } catch {
+      // Non-blocking for transactions view
+    } finally {
+      setIsReviewsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    let ignore = false;
+
+    async function load() {
+      try {
+        const res = await reviewsApi.getMyReviews();
+        if (!ignore && res.data) {
+          setReviews(res.data);
+        }
+      } catch {
+        // Non-blocking
+      } finally {
+        if (!ignore) {
+          setIsReviewsLoading(false);
+        }
+      }
+    }
+
+    void load();
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
+  const reviewsMap = useMemo(() => {
+    const map = new Map<string, EventReview>();
+    for (const r of reviews) {
+      map.set(r.eventId, r);
+    }
+    return map;
+  }, [reviews]);
+
+  const refreshAll = () => {
+    void refreshTx();
+    void fetchMyReviews();
+  };
 
   const filteredTransactions = useMemo(() => {
     return transactions.filter((tx) => {
@@ -75,6 +137,8 @@ export function CustomerTransactionsView() {
     }
   };
 
+  const isLoading = isTxLoading || isReviewsLoading;
+
   return (
     <Card className="p-6 flex flex-col gap-6">
       <div className="flex items-center justify-between flex-wrap gap-4">
@@ -87,7 +151,7 @@ export function CustomerTransactionsView() {
         <Button
           variant="outline"
           size="sm"
-          onClick={refresh}
+          onClick={refreshAll}
           disabled={isLoading}
           className="border-border text-foreground hover:bg-muted"
         >
@@ -140,6 +204,7 @@ export function CustomerTransactionsView() {
         <>
           <TransactionTable
             transactions={paginatedTransactions}
+            reviewsMap={reviewsMap}
             onOpenUpload={setSelectedTxForUpload}
             onCancel={handleCancel}
             onOpenReview={setSelectedTxForReview}
@@ -212,7 +277,7 @@ export function CustomerTransactionsView() {
           onClose={() => setSelectedTxForReview(null)}
           eventId={selectedTxForReview.eventId}
           eventTitle={selectedTxForReview.event?.title || "Event"}
-          onSuccess={refresh}
+          onSuccess={refreshAll}
         />
       )}
     </Card>

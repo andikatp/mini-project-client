@@ -10,11 +10,13 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import type { EventReview } from "@/features/reviews/types";
 import { CustomerTransaction } from "../types";
 import { STATUS_CONFIG } from "./transaction-status-config";
 
 interface TransactionTableProps {
   transactions: CustomerTransaction[];
+  reviewsMap?: Map<string, EventReview>;
   onOpenUpload: (transaction: CustomerTransaction) => void;
   onCancel: (transactionId: string) => void;
   onOpenReview?: (transaction: CustomerTransaction) => void;
@@ -23,6 +25,7 @@ interface TransactionTableProps {
 
 export function TransactionTable({
   transactions,
+  reviewsMap,
   onOpenUpload,
   onCancel,
   onOpenReview,
@@ -56,8 +59,9 @@ export function TransactionTable({
             const canCancel = tx.status === "WAITING_FOR_PAYMENT";
             const totalQty = tx.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
 
+            const existingReview = reviewsMap?.get(tx.eventId);
             const isEventEnded = Boolean(tx.event?.endAt);
-            const canReview = tx.status === "DONE" && isEventEnded;
+            const canReview = tx.status === "DONE" && isEventEnded && !existingReview;
 
             const formattedDate = tx.createdAt
               ? new Date(tx.createdAt).toLocaleDateString("en-US", {
@@ -154,6 +158,15 @@ export function TransactionTable({
                       </Button>
                     )}
 
+                    {existingReview && (
+                      <div className="flex items-center gap-1 text-amber-500 bg-amber-500/10 px-2 py-1 rounded">
+                        <Star className="size-3 fill-amber-400 text-amber-400" />
+                        <span className="text-xs font-semibold text-foreground">
+                          {existingReview.rating}/5
+                        </span>
+                      </div>
+                    )}
+
                     {canReview && onOpenReview && (
                       <Button
                         size="sm"
@@ -173,7 +186,7 @@ export function TransactionTable({
                       </span>
                     )}
 
-                    {tx.status === "DONE" && !canReview && (
+                    {tx.status === "DONE" && !canReview && !existingReview && (
                       <span className="inline-flex items-center gap-1 text-xs text-emerald-600 bg-emerald-500/10 px-2 py-1 rounded">
                         <CheckCircle2 className="size-3" />
                         Confirmed

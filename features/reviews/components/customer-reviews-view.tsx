@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { Star, Calendar, MapPin, RefreshCw, AlertCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -18,15 +18,83 @@ import {
 } from "@/components/ui/table";
 import { useCustomerTransactions } from "@/features/transactions/hooks/use-customer-transactions";
 import type { CustomerTransaction } from "@/features/transactions/types";
+import { reviewsApi } from "../api/reviews-api";
+import type { EventReview } from "../types";
 import { WriteReviewModal } from "./write-review-modal";
 
 export function CustomerReviewsView() {
-  const { transactions, isLoading, error, refresh } = useCustomerTransactions();
+  const {
+    transactions,
+    isLoading: isTxLoading,
+    error: txError,
+    refresh: refreshTx,
+  } = useCustomerTransactions();
+  const [reviews, setReviews] = useState<EventReview[]>([]);
+  const [isReviewsLoading, setIsReviewsLoading] = useState(true);
+  const [reviewError, setReviewError] = useState<string | null>(null);
   const [selectedTxForReview, setSelectedTxForReview] = useState<CustomerTransaction | null>(null);
+
+  const fetchMyReviews = useCallback(async () => {
+    setIsReviewsLoading(true);
+    setReviewError(null);
+    try {
+      const res = await reviewsApi.getMyReviews();
+      if (res.data) {
+        setReviews(res.data);
+      }
+    } catch (err: unknown) {
+      setReviewError(err instanceof Error ? err.message : "Failed to load reviews");
+    } finally {
+      setIsReviewsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    let ignore = false;
+
+    async function load() {
+      try {
+        const res = await reviewsApi.getMyReviews();
+        if (!ignore && res.data) {
+          setReviews(res.data);
+        }
+      } catch (err: unknown) {
+        if (!ignore) {
+          setReviewError(err instanceof Error ? err.message : "Failed to load reviews");
+        }
+      } finally {
+        if (!ignore) {
+          setIsReviewsLoading(false);
+        }
+      }
+    }
+
+    void load();
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
+  const handleRefreshAll = () => {
+    void refreshTx();
+    void fetchMyReviews();
+  };
+
+  const reviewsMap = useMemo(() => {
+    const map = new Map<string, EventReview>();
+    for (const r of reviews) {
+      map.set(r.eventId, r);
+    }
+    return map;
+  }, [reviews]);
 
   const eligibleTransactions = useMemo(() => {
     return transactions.filter((tx) => tx.status === "DONE" && Boolean(tx.event));
   }, [transactions]);
+
+  const isLoading = isTxLoading || isReviewsLoading;
+  const error = txError || reviewError;
 
   return (
     <Card className="p-6 flex flex-col gap-6">
@@ -34,13 +102,13 @@ export function CustomerReviewsView() {
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-foreground">My Reviews</h2>
           <p className="text-sm text-muted-foreground">
-            Review completed events you have attended and share your feedback.
+            Review completed events you have attended and view your past feedback.
           </p>
         </div>
         <Button
           variant="outline"
           size="sm"
-          onClick={refresh}
+          onClick={handleRefreshAll}
           disabled={isLoading}
           className="border-border text-foreground hover:bg-muted"
         >
@@ -52,7 +120,7 @@ export function CustomerReviewsView() {
       {error && (
         <Alert variant="destructive">
           <AlertCircle className="size-4" />
-          <AlertTitle>Failed to load events</AlertTitle>
+          <AlertTitle>Notice</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
@@ -92,11 +160,12 @@ export function CustomerReviewsView() {
                 <TableHead className="text-sm font-semibold py-3 whitespace-nowrap">
                   Status
                 </TableHead>
-                <TableHead className="text-sm font-semibold py-3 text-right">Action</TableHead>
+                <TableHead className="text-sm font-semibold py-3 text-right">Review</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody className="divide-y divide-border">
               {eligibleTransactions.map((tx) => {
+                const existingReview = reviewsMap.get(tx.eventId);
                 const formattedDate = tx.event?.startAt
                   ? new Date(tx.event.startAt).toLocaleDateString("en-US", {
                       day: "2-digit",
@@ -150,20 +219,58 @@ export function CustomerReviewsView() {
                     </TableCell>
 
                     <TableCell className="whitespace-nowrap">
-                      <Badge className="text-xs px-2.5 py-0.5 bg-emerald-500/10 text-emerald-600 border-emerald-500/20">
-                        Attended
-                      </Badge>
+                      {existingReview ? (
+                        <Badge className="text-xs px-2.5 py-0.5 bg-blue-500/10 text-blue-600 border-blue-500/20">
+                          {existingReview.status === "APPROVED"
+                            ? "Reviewed"
+                            : existingReview.status === "PENDING"
+                              ? "Review Pending"
+                              : "Review Rejected"}
+                        </Badge>
+                      ) : (
+                        <Badge className="text-xs px-2.5 py-0.5 bg-emerald-500/10 text-emerald-600 border-emerald-500/20">
+                          Attended
+                        </Badge>
+                      )}
                     </TableCell>
 
                     <TableCell className="whitespace-nowrap text-right">
-                      <Button
-                        size="sm"
-                        onClick={() => setSelectedTxForReview(tx)}
-                        className="h-8 px-3 text-xs bg-amber-500 hover:bg-amber-600 text-white font-medium"
-                      >
-                        <Star className="size-3.5 mr-1.5 fill-white" />
-                        Write Review
-                      </Button>
+                      {existingReview ? (
+                        <div className="flex flex-col items-end gap-1">
+                          <div className="flex items-center gap-1 text-amber-500">
+                            {Array.from({ length: 5 }, (_, i) => (
+                              <Star
+                                key={i}
+                                className={`size-3.5 ${
+                                  i < existingReview.rating
+                                    ? "fill-amber-400 text-amber-400"
+                                    : "text-muted-foreground/30"
+                                }`}
+                              />
+                            ))}
+                            <span className="text-xs font-semibold text-foreground ml-1">
+                              {existingReview.rating}/5
+                            </span>
+                          </div>
+                          {existingReview.comment && (
+                            <span
+                              className="text-[11px] text-muted-foreground max-w-48 truncate"
+                              title={existingReview.comment}
+                            >
+                              &quot;{existingReview.comment}&quot;
+                            </span>
+                          )}
+                        </div>
+                      ) : (
+                        <Button
+                          size="sm"
+                          onClick={() => setSelectedTxForReview(tx)}
+                          className="h-8 px-3 text-xs bg-amber-500 hover:bg-amber-600 text-white font-medium"
+                        >
+                          <Star className="size-3.5 mr-1.5 fill-white" />
+                          Write Review
+                        </Button>
+                      )}
                     </TableCell>
                   </TableRow>
                 );
@@ -179,7 +286,7 @@ export function CustomerReviewsView() {
           onClose={() => setSelectedTxForReview(null)}
           eventId={selectedTxForReview.eventId}
           eventTitle={selectedTxForReview.event?.title || "Event"}
-          onSuccess={refresh}
+          onSuccess={handleRefreshAll}
         />
       )}
     </Card>
