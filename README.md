@@ -6,22 +6,7 @@ Template dashboard terintegrasi menggunakan komponen desain dari [**Shadcn Dashb
 
 ---
 
-## 🎨 Template & UI Kit Info
-
-Proyek ini mengadopsi struktur UI dan layout dashboard dari open-source template:
-
-- **Nama Template**: [Shadcn Dashboard (Next.js)](https://shadcndashboard.dev)
-- **Live Demo Template**: [https://shadcndashboard-demo.vercel.app](https://shadcndashboard-demo.vercel.app)
-- **Dokumentasi UI**: [https://shadcndashboard.dev/docs](https://shadcndashboard.dev/docs)
-- **Komponen Utama yang Diadaptasi**:
-  - **Shared Dashboard Shell**: Sidebar collapsible responsif & Topbar navigasi di `app/(dashboard)/layout.tsx`
-  - **Organizer Analytics**: Komponen grafik berbasis **Recharts** (`TotalSales`, `TotalsAssets`) di `features/dashboard/components/`
-  - **Form & Profile Elements**: Layout form responsif dan hero header profil di `features/profile/components/`
-  - **UI Primitives**: Komponen dasar berbasis `shadcn/ui` + `@base-ui/react` di `components/ui/`
-
----
-
-## 🎨 Template & UI Kit Info
+## Template & UI Kit Info
 
 Proyek ini mengadopsi struktur UI dan layout dashboard dari open-source template:
 
@@ -37,7 +22,7 @@ Proyek ini mengadopsi struktur UI dan layout dashboard dari open-source template
 
 ---
 
-## 📋 Prasyarat (Prerequisites)
+## Prasyarat (Prerequisites)
 
 Pastikan kamu sudah menginstall [Bun](https://bun.sh/) di komputermu:
 
@@ -57,7 +42,7 @@ curl -fsSL https://bun.sh/install | bash
 
 ---
 
-## 🚀 Panduan Setup & Instalasi
+## Panduan Setup & Instalasi
 
 Ikuti langkah-langkah berikut setelah melakukan `git clone`:
 
@@ -94,11 +79,11 @@ BASE_URL="http://localhost:5000/api"
 bun dev
 ```
 
-Aplikasi frontend akan aktif di: **`http://localhost:3000`** 🚀
+Aplikasi frontend akan aktif di: **`http://localhost:3000`**
 
 ---
 
-## 🧩 Menambahkan Komponen UI (shadcn/ui)
+## Menambahkan Komponen UI (shadcn/ui)
 
 Proyek ini telah dikonfigurasi dengan **shadcn/ui** (Base UI + Tailwind CSS v4). Untuk menambahkan komponen UI baru, gunakan perintah:
 
@@ -118,7 +103,7 @@ Komponen akan otomatis ditambahkan ke direktori `@/components/ui/`.
 
 ---
 
-## 🛠️ Daftar Perintah Berguna (Cheatsheet)
+## Daftar Perintah Berguna (Cheatsheet)
 
 | Perintah         | Deskripsi                                                                         |
 | :--------------- | :-------------------------------------------------------------------------------- |
@@ -131,7 +116,7 @@ Komponen akan otomatis ditambahkan ke direktori `@/components/ui/`.
 
 ---
 
-## 📁 Struktur Direktori
+## Struktur Direktori
 
 Proyek ini menggunakan **Feature-Driven Architecture (Bulletproof React Pattern)** untuk memudahkan kolaborasi tim dan pemisahan fitur yang rapi:
 
@@ -175,7 +160,7 @@ Proyek ini menggunakan **Feature-Driven Architecture (Bulletproof React Pattern)
 
 ---
 
-## 🤝 Alur Kerja Kolaborasi (Workflow)
+## Alur Kerja Kolaborasi (Workflow)
 
 1. Sebelum mulai mengerjakan fitur baru, pastikan branch lokalmu up-to-date:
    ```bash

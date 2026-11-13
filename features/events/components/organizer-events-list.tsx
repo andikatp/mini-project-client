@@ -1,20 +1,20 @@
 "use client";
 
-import { Calendar } from "lucide-react";
 import { useMemo, useState } from "react";
-import { useOrganizerEvents } from "../hooks/use-organizer-events";
-import { EventAttendeesModal } from "./event-attendees-modal";
-import { EventSearchFilter } from "./event-search-filter";
+import { Calendar } from "lucide-react";
 import { EventStatsCards } from "./event-stats-cards";
+import { EventSearchFilter } from "./event-search-filter";
 import { OrganizerEventCard } from "./organizer-event-card";
+import { EventAttendeesModal } from "./event-attendees-modal";
+import { useOrganizerEvents } from "../hooks/use-organizer-events";
 
 export function OrganizerEventsList() {
   const {
     events,
     isLoading,
-    selectedEventId,
     attendeesData,
     isAttendeesLoading,
+    selectedEventId,
     attendeeSearch,
     openAttendees,
     closeAttendees,
@@ -22,21 +22,7 @@ export function OrganizerEventsList() {
   } = useOrganizerEvents();
 
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("ALL");
-
-  const filteredEvents = useMemo(() => {
-    return events.filter((ev) => {
-      const matchSearch =
-        ev.title.toLowerCase().includes(search.toLowerCase()) ||
-        ev.location?.toLowerCase().includes(search.toLowerCase()) ||
-        ev.city?.toLowerCase().includes(search.toLowerCase()) ||
-        ev.category.name.toLowerCase().includes(search.toLowerCase());
-
-      const matchStatus = statusFilter === "ALL" || ev.status === statusFilter;
-
-      return matchSearch && matchStatus;
-    });
-  }, [events, search, statusFilter]);
+  const [statusFilter, setStatusFilter] = useState("ALL");
 
   const counts = useMemo(() => {
     return {
@@ -46,8 +32,30 @@ export function OrganizerEventsList() {
     };
   }, [events]);
 
+  const filteredEvents = useMemo(() => {
+    return events.filter((event) => {
+      const matchesStatus = statusFilter === "ALL" || event.status === statusFilter;
+      const term = search.toLowerCase().trim();
+      const matchesSearch =
+        !term ||
+        event.title.toLowerCase().includes(term) ||
+        (event.city ? event.city.toLowerCase().includes(term) : false) ||
+        (event.location ? event.location.toLowerCase().includes(term) : false);
+      return matchesStatus && matchesSearch;
+    });
+  }, [events, statusFilter, search]);
+
   return (
-    <div className="flex flex-col gap-6">
+    <div className="p-6 flex flex-col gap-6 rounded-none bg-background">
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        <div>
+          <h2 className="text-xl font-bold tracking-tight text-foreground">My Events</h2>
+          <p className="text-sm text-muted-foreground">
+            Manage your organized events, check capacity, and track attendees.
+          </p>
+        </div>
+      </div>
+
       <EventStatsCards
         counts={counts}
         statusFilter={statusFilter}
@@ -67,7 +75,7 @@ export function OrganizerEventsList() {
           <span className="text-xs">Loading your events...</span>
         </div>
       ) : filteredEvents.length === 0 ? (
-        <div className="py-16 text-center border border-dashed rounded-xl bg-muted/10">
+        <div className="py-16 text-center border border-dashed rounded-md bg-muted/10">
           <Calendar className="size-8 text-muted-foreground mx-auto mb-2 opacity-50" />
           <h4 className="text-sm font-semibold text-foreground">No events found</h4>
           <p className="text-xs text-muted-foreground mt-1">
