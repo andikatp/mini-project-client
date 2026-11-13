@@ -9,6 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuthStore } from "@/features/auth/context/auth-store";
 import { HelpCircle, LayoutDashboard, LogOut, User } from "lucide-react";
 import Link from "next/link";
@@ -32,10 +33,15 @@ export function NavbarUserMenu() {
     router.push(path);
   };
 
+  const initial = user?.name ? user.name.charAt(0).toUpperCase() : "U";
+
   return (
     <DropdownMenu key={pathname} open={menuOpen} onOpenChange={setMenuOpen}>
-      <DropdownMenuTrigger className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-blue-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-blue-950">
-        <User className="size-4" />
+      <DropdownMenuTrigger className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-blue-900 py-1.5 pr-4 pl-1.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-blue-950">
+        <Avatar className="size-6">
+          {user?.avatarUrl && <AvatarImage src={user.avatarUrl} alt={user.name ?? "User"} />}
+          <AvatarFallback className="bg-blue-800 text-[10px] text-white">{initial}</AvatarFallback>
+        </Avatar>
         <span>{isAuthenticated && user?.name ? user.name.split(" ")[0] : "Akun"}</span>
       </DropdownMenuTrigger>
 

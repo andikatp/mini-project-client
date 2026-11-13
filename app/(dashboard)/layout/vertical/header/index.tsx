@@ -43,12 +43,6 @@ const Header = () => {
           </div>
 
           <div className="flex sm:gap-1 gap-0 items-center">
-            {/* Theme Toggle */}
-            <LightDark />
-            {/* Notifications Dropdown */}
-            <Notifications className="sm:block hidden" />
-
-            {/* Profile Dropdown */}
             <Profile />
           </div>
         </div>
