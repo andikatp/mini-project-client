@@ -1,4 +1,8 @@
-import { Ticket, Clock, CheckCircle2, AlertCircle } from "lucide-react";
+"use client";
+
+import { CardContent } from "@/components/ui/card";
+import { DashboardCard } from "@/components/shared-dashboard-card";
+import { Ticket, Clock, AlertCircle, CheckCircle2 } from "lucide-react";
 import type { CustomerTransaction } from "../types";
 
 interface TransactionStatsCardsProps {
@@ -22,58 +26,67 @@ export function TransactionStatsCards({
     {
       id: "ALL",
       title: "All Orders",
-      count: transactions.length,
+      value: transactions.length,
       icon: Ticket,
-      color: "text-primary",
-      activeBorder: "border-primary bg-primary/5",
+      desc: "Total tickets ordered",
     },
     {
       id: "WAITING_FOR_PAYMENT",
-      title: "Needs Payment",
-      count: waitingPayment,
+      title: "Pending Payment",
+      value: waitingPayment,
       icon: Clock,
-      color: "text-amber-500",
-      activeBorder: "border-amber-500 bg-amber-500/5",
+      desc: "Needs payment proof",
     },
     {
       id: "WAITING_FOR_ADMIN_CONFIRMATION",
-      title: "Waiting Confirmation",
-      count: waitingConfirm,
+      title: "Waiting Review",
+      value: waitingConfirm,
       icon: AlertCircle,
-      color: "text-blue-500",
-      activeBorder: "border-blue-500 bg-blue-500/5",
+      desc: "Organizer reviewing proof",
     },
     {
       id: "DONE",
       title: "Completed",
-      count: done,
+      value: done,
       icon: CheckCircle2,
-      color: "text-emerald-500",
-      activeBorder: "border-emerald-500 bg-emerald-500/5",
+      desc: "Confirmed and ready",
     },
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-border border border-border">
       {cards.map((c) => {
         const Icon = c.icon;
         const isActive = activeFilter === c.id;
+
         return (
           <button
             key={c.id}
             type="button"
+            aria-label={`Filter by ${c.title}`}
             onClick={() => onFilterChange(c.id)}
-            className={`p-4 rounded-xl border text-left cursor-pointer transition-all ${
+            className={`text-left cursor-pointer transition-colors relative bg-background ${
               isActive
-                ? `${c.activeBorder} shadow-xs`
-                : "bg-card border-border hover:border-border/80"
+                ? "after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-foreground"
+                : "hover:bg-muted/30"
             }`}
           >
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-muted-foreground">{c.title}</span>
-              <Icon className={`size-4 ${c.color}`} />
-            </div>
-            <h3 className="text-2xl font-bold mt-2 text-foreground">{c.count}</h3>
+            <DashboardCard className="py-6 bg-transparent">
+              <CardContent className="flex justify-between flex-row px-6">
+                <div className="flex flex-col items-start gap-4 w-full">
+                  <div className="flex items-center justify-between w-full">
+                    <div className="flex flex-col gap-1">
+                      <p className="text-sm font-normal text-muted-foreground">{c.title}</p>
+                      <h3 className="text-2xl font-semibold text-foreground">{c.value}</h3>
+                    </div>
+                    <div className="border border-border p-2.5 w-fit rounded-md text-foreground">
+                      <Icon size={16} />
+                    </div>
+                  </div>
+                  <div className="text-xs text-muted-foreground">{c.desc}</div>
+                </div>
+              </CardContent>
+            </DashboardCard>
           </button>
         );
       })}

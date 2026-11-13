@@ -7,7 +7,7 @@ interface BreadCrumbProps {
 
 const BreadcrumbComp = ({ title }: BreadCrumbProps) => {
   return (
-    <Card className="py-5 px-6 bg-background overflow-hidden rounded-xl border">
+    <Card className="py-5 px-6 bg-background overflow-hidden rounded-none border-0 shadow-none">
       <div className="flex items-center justify-between gap-6 relative">
         <h4 className="font-semibold text-xl text-foreground">{title}</h4>
         <ol className="flex items-center whitespace-nowrap" aria-label="Breadcrumb">
