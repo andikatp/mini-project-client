@@ -5,9 +5,7 @@ import Profile from "../../shared/header/profile";
 import FullLogo from "../../shared/logo/full-logo";
 import { useSidebar } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import Notifications from "../../shared/header/notifications";
 import { cn } from "@/lib/utils";
-import LightDark from "../../shared/header/light-dark";
 import { PanelLeft } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
@@ -43,12 +41,6 @@ const Header = () => {
           </div>
 
           <div className="flex sm:gap-1 gap-0 items-center">
-            {/* Theme Toggle */}
-            <LightDark />
-            {/* Notifications Dropdown */}
-            <Notifications className="sm:block hidden" />
-
-            {/* Profile Dropdown */}
             <Profile />
           </div>
         </div>

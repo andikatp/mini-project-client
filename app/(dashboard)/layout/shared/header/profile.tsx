@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetClose, SheetContent, SheetFooter, SheetTrigger } from "@/components/ui/sheet";
 import { useAuthStore } from "@/features/auth/context/auth-store";
@@ -27,6 +27,7 @@ export default function ProfileSheet() {
       {/* Trigger Button */}
       <SheetTrigger className="cursor-pointer hover:bg-primary/5 flex items-center justify-center rounded-full h-10 w-10">
         <Avatar className="h-8 w-8">
+          {user?.avatarUrl && <AvatarImage src={user.avatarUrl} alt={user.name ?? "User"} />}
           <AvatarFallback className="bg-primary text-primary-foreground font-semibold">
             {initial}
           </AvatarFallback>
@@ -47,6 +48,7 @@ export default function ProfileSheet() {
         <div className="p-6 py-6">
           <div className="flex flex-col gap-4 justify-center items-center pt-10">
             <Avatar className="h-16 w-16">
+              {user?.avatarUrl && <AvatarImage src={user.avatarUrl} alt={user.name ?? "User"} />}
               <AvatarFallback className="bg-primary text-primary-foreground text-xl font-bold">
                 {initial}
               </AvatarFallback>
