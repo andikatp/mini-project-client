@@ -20,47 +20,62 @@ performance from a shared, role-based dashboard.
 
 ## 2. Client stack
 
-| Layer     | Technology                                                                                                          |
-| --------- | ------------------------------------------------------------------------------------------------------------------- |
-| App       | Next.js 16 (App Router) + React 19 + Tailwind CSS 4 + shadcn/ui (TypeScript)                                        |
-| Toolchain | VitePlus + Bun (package manager)                                                                                    |
-| Routing   | Next.js App Router — public routes + one authenticated dashboard shell, role-based menus and role-protected layouts |
-| Data      | TanStack Query + Axios (server-state cache, mutations)                                                              |
-| Forms     | React Hook Form + Zod                                                                                               |
-| Hosting   | Vercel (decide with team)                                                                                           |
+| Layer     | Technology                                                                                                                                    |
+| --------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| App       | React 19 + Vite (SPA) + Tailwind CSS 4 + shadcn/ui (TypeScript)                                                                               |
+| Toolchain | Vite (dev server + build) + Bun (package manager)                                                                                             |
+| Routing   | React Router — public routes + one authenticated dashboard layout route (nested routes), role-based menus and route guards                    |
+| Data      | TanStack Query + Axios (server-state cache, mutations)                                                                                        |
+| Forms     | React Hook Form + Zod                                                                                                                         |
+| Hosting   | Static build (`dist/`) on Vercel / Netlify / Render Static (decide with team); the host must rewrite all paths to `index.html` (SPA fallback) |
 
-Env (client): `BASE_URL` (or `NEXT_PUBLIC_API_BASE_URL`). `.env.local` at repo root; commit `.env.example`.
+Env (client): `VITE_API_BASE_URL`, read via `import.meta.env`. Only
+`VITE_`-prefixed variables are exposed to the browser. `.env.local` at
+repo root; commit `.env.example`.
+
+The client is a pure SPA: no SSR, no server components, all rendering
+happens in the browser. The session cookie is sent on API calls via
+Axios `withCredentials: true`; the API's CORS must allow the client
+origin with credentials.
+
+Structure: `src/main.tsx` (entry) + `src/router.tsx` (route
+definitions); feature-based folders under `src/features/<feature>/`
+(components, api, hooks, types); shared shadcn/ui components in
+`src/components/ui`; shared clients (Axios instance, TanStack Query
+client) in `src/lib`.
 
 **Decided 2026-10-15:** no branding/design guidelines for MVP — clean,
 responsive UI only.
 
 ## 3. Routes & access
 
-Public: landing (`/`), event list + detail (`/events`, `/events/[id]`),
+Public: landing (`/`), event list + detail (`/events`, `/events/:id`),
 signin/signup, forgot/reset password.
 
 Protected (role guards + redirect):
 
 - Shared (any signed-in role): `/dashboard`, `/profile`.
-- Customer: `/checkout`, `/transactions`, `/transactions/[id]`,
+- Customer: `/checkout`, `/transactions`, `/transactions/:id`,
   `/rewards`.
-- Organizer: `/organizer/events`, `/organizer/events/[id]/edit`,
+- Organizer: `/organizer/events`, `/organizer/events/:id/edit`,
   `/organizer/transactions`.
 
 Dashboard routing rules:
 
 - `/dashboard` is the organizer's post-login landing page; customers are
   redirected to the home page (`/`) after sign-in. The page itself serves
-  both roles: the server session selects the customer or organizer
-  dashboard content, and the role must never be taken from a query
-  parameter or client-only state.
+  both roles: on app load the client restores the session via
+  `GET /auth/me` and stores the user + role in the auth context; that
+  session role selects the customer or organizer dashboard content, and
+  the role must never be taken from a query parameter or editable
+  client-only state.
 - `/organizer` and `/organizer/dashboard` are not separate pages: both
-  redirect to `/dashboard`.
+  are redirect routes (`<Navigate to="/dashboard" replace />`).
 - Authenticated customer and organizer pages share one dashboard shell
-  (sidebar + topbar). Sidebar menu items are generated from the session
-  role.
-- Wrong-role access to a role-specific route is blocked and redirected to
-  `/dashboard`.
+  (sidebar + topbar) rendered by a single layout route. Sidebar menu
+  items are generated from the session role.
+- Wrong-role access to a role-specific route is blocked by the route
+  guard and redirected to `/dashboard`.
 
 Guards improve UX only — the server re-checks every action.
 
@@ -192,9 +207,10 @@ a transaction detail should refresh after upload/accept/reject.
 
 1. Payment: manual bank transfer + proof upload. No gateway for MVP.
 2. Email: Resend (backend concern; FE only triggers flows).
-3. Reviews need organizer approval (PENDING → APPROVED/REJECTED).
-4. Stacking allowed: voucher + coupon + points in one checkout.
-5. No design/branding guidelines for MVP — clean, responsive UI only.
+3. Email: Resend (backend concern; FE only triggers flows).
+4. Reviews need organizer approval (PENDING → APPROVED/REJECTED).
+5. Stacking allowed: voucher + coupon + points in one checkout.
+6. No design/branding guidelines for MVP — clean, responsive UI only.
 
 **Decided 2026-10-28:** one shared `/dashboard` for both roles — the server
 session selects the sidebar menu and the dashboard content. Post-login
@@ -208,6 +224,13 @@ single-use, expire within 10 minutes, and allow at most 5 verification
 attempts. Password reset is a 3-step flow: request the code, verify it
 on its own page (the server returns a one-time reset token), then set
 the new password on a page with password fields only.
+
+**Decided 2026-11-14 (client stack):** the client is plain React +
+Vite (SPA with React Router), NOT Next.js. The bootcamp rules require
+regular React, so the earlier Next.js App Router choice is superseded.
+Nothing else changes: same routes, same session-cookie auth (restored
+via `GET /auth/me`), same API contract. shadcn/ui components are plain
+React + Tailwind and carry over unchanged.
 
 ## 8. MVP demo checklist (frontend)
 
