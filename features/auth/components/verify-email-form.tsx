@@ -13,8 +13,7 @@ import {
   RefreshCw,
   ShieldCheck,
 } from "lucide-react";
-import Link from "@/lib/router-compat";
-import { useSearchParams } from "@/lib/router-compat";
+import Link, { useSearchParams } from "@/lib/router-compat";
 import React, { useEffect, useState } from "react";
 import { useVerifyEmail } from "../hooks/use-verify-email";
 import { maskEmail } from "../utils/mask-email";

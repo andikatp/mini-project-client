@@ -6,8 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
-import Link from "@/lib/router-compat";
-import { useRouter, useSearchParams } from "@/lib/router-compat";
+import Link, { useRouter, useSearchParams } from "@/lib/router-compat";
 import React, { useState } from "react";
 import { useRegister } from "../hooks/use-register";
 import type { UserRole } from "../types";

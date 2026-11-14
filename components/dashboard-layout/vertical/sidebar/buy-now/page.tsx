@@ -1,5 +1,4 @@
-import { Image } from "@/lib/router-compat";
-import Link from "@/lib/router-compat";
+import Link, { Image } from "@/lib/router-compat";
 import { Button } from "@/components/ui/button";
 
 const BuyNowCard = () => {

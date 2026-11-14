@@ -6,8 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Field, FieldError, FieldGroup, FieldLabel, FieldSeparator } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { AlertCircle, Building2, CheckCircle2, Loader2, User } from "lucide-react";
-import Link from "@/lib/router-compat";
-import { useRouter } from "@/lib/router-compat";
+import Link, { useRouter } from "@/lib/router-compat";
 import React, { useEffect, useState } from "react";
 import { useLogin } from "../hooks/use-login";
 import { PasswordInputGroup } from "./password-input-group";

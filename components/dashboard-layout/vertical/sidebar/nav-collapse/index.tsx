@@ -1,9 +1,8 @@
 "use client";
 
-import Link from "@/lib/router-compat";
+import Link, { usePathname } from "@/lib/router-compat";
 import NavItem from "../nav-items/index";
 import { cn } from "@/lib/utils";
-import { usePathname } from "@/lib/router-compat";
 import { useSidebar } from "@/components/ui/sidebar";
 import type { MenuItem, ChildItem } from "../sidebaritems";
 

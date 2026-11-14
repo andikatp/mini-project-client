@@ -6,8 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetClose, SheetContent, SheetFooter, SheetTrigger } from "@/components/ui/sheet";
 import { useAuthStore } from "@/features/auth/context/auth-store";
 import { LogOut, Mailbox, UserCircle, X } from "lucide-react";
-import Link from "@/lib/router-compat";
-import { useRouter } from "@/lib/router-compat";
+import Link, { useRouter } from "@/lib/router-compat";
 
 export default function ProfileSheet() {
   const router = useRouter();

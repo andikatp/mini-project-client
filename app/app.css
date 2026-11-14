@@ -137,6 +137,6 @@
   }
 
   [data-collapsible="icon"][data-state="collapsed"] .hide-menu {
-    display: none !important;
+    display: none;
   }
 }
