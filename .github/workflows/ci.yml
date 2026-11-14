@@ -36,10 +36,10 @@ jobs:
         run: bun run react-router typegen
 
       - name: Code quality check (Format, Lint & Typecheck)
-        run: bunx vp check
+        run: bun run check
 
       - name: Run unit tests
-        run: bunx vp test
+        run: bun run test
 
       - name: Build SPA application
         run: bun run build
