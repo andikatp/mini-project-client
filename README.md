@@ -58,22 +58,7 @@ cd mini-project-client
 bun install
 ```
 
-### 3. Konfigurasi Environment Variable (`.env.local`)
-
-Salin file `.env.example` menjadi file `.env.local`:
-
-```bash
-cp .env.example .env.local
-```
-
-Buka file `.env.local` dan sesuaikan URL backend API server jika diperlukan:
-
-```env
-# URL Backend Express API
-BASE_URL="http://localhost:5000/api"
-```
-
-### 4. Jalankan Development Server
+### 3. Jalankan Development Server
 
 ```bash
 bun dev

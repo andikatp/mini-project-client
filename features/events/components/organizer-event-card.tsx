@@ -1,9 +1,9 @@
+import { DashboardCard } from "@/components/shared-dashboard-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CardContent } from "@/components/ui/card";
-import { DashboardCard } from "@/components/shared-dashboard-card";
+import { Image } from "@/lib/router-compat";
 import { Calendar, MapPin, Users } from "lucide-react";
-import Image from "next/image";
 import type { EventStatus, OrganizerEvent } from "../types";
 
 const statusConfig: Record<EventStatus, { label: string; bg: string; text: string }> = {
@@ -40,10 +40,10 @@ export function OrganizerEventCard({ event, onViewAttendees }: OrganizerEventCar
     event.totalCapacity > 0 ? Math.round((event.ticketsSold / event.totalCapacity) * 100) : 0;
 
   return (
-    <DashboardCard className="border border-border rounded-md overflow-hidden flex flex-col justify-between">
+    <DashboardCard className="border border-border rounded-md overflow-hidden flex flex-col justify-between p-0 gap-0">
       <div>
         {event.bannerUrl && (
-          <div className="relative h-44 w-full bg-muted border-b border-border">
+          <div className="relative h-44 w-full bg-muted border-b border-border overflow-hidden">
             <Image
               src={event.bannerUrl}
               alt={event.title}
@@ -107,7 +107,7 @@ export function OrganizerEventCard({ event, onViewAttendees }: OrganizerEventCar
         </CardContent>
       </div>
 
-      <div className="p-4 pt-2 border-t border-border flex items-center justify-between">
+      <div className="p-2 border-t border-border flex items-center justify-between">
         <div className="text-[11px] text-muted-foreground">
           {event.ticketTypes.length} ticket tiers
         </div>

@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/lib/router-compat";
 import { authApi } from "../api/auth-api";
 import type { RegisterInput } from "../types";
 

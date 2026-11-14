@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { Image } from "@/lib/router-compat";
 
 interface ArtworkProps {
   readonly className?: string;

@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { UserProfile } from "@/features/profile/types";
+import type { UserProfile } from "@/features/profile/types";
 import { Camera, Check, Copy, Loader2, Mail, Save, Sparkles, User as UserIcon } from "lucide-react";
 
 interface ProfilePersonalFormProps {
@@ -39,9 +39,7 @@ export function ProfilePersonalForm({
       await navigator.clipboard.writeText(profile.referralCode);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // Ignore
-    }
+    } catch {}
   };
 
   return (
@@ -56,7 +54,6 @@ export function ProfilePersonalForm({
         </Badge>
       </div>
 
-      {/* Avatar Section */}
       <div className="flex items-center gap-4 py-6 border-b border-border">
         <div className="relative group">
           <Avatar className="h-20 w-20 border border-border">
@@ -95,7 +92,6 @@ export function ProfilePersonalForm({
         </div>
       </div>
 
-      {/* Profile Edit Form */}
       <form onSubmit={onSubmit} className="mt-6 flex flex-col gap-4">
         <div className="flex flex-col gap-2">
           <Label htmlFor="profile-name" className="text-sm">

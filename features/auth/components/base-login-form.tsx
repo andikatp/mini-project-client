@@ -6,8 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Field, FieldError, FieldGroup, FieldLabel, FieldSeparator } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { AlertCircle, Building2, CheckCircle2, Loader2, User } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import Link from "@/lib/router-compat";
+import { useRouter } from "@/lib/router-compat";
 import React, { useEffect, useState } from "react";
 import { useLogin } from "../hooks/use-login";
 import { PasswordInputGroup } from "./password-input-group";
@@ -22,7 +22,6 @@ export function BaseLoginForm({ variant }: BaseLoginFormProps) {
   const [password, setPassword] = useState("");
   const { login, isLoading, errorMsg, successMsg, clearMessages } = useLogin();
 
-  // Reset messages when unmounting or switching variant
   useEffect(() => {
     clearMessages();
     return () => {

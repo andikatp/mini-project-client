@@ -3,7 +3,7 @@
 import { BrandLogo } from "@/components/common/brand-logo";
 import { useAuthStore } from "@/features/auth/context/auth-store";
 import { CircleFadingPlusIcon, Compass } from "lucide-react";
-import Link from "next/link";
+import Link from "@/lib/router-compat";
 import { NavbarSearch } from "./navbar-search";
 import { NavbarUserMenu } from "./navbar-user-menu";
 

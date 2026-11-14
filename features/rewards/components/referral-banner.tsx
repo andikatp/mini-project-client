@@ -19,9 +19,7 @@ export function ReferralBanner({ referralCode }: ReferralBannerProps) {
       await navigator.clipboard.writeText(code);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // Fallback
-    }
+    } catch {}
   };
 
   return (

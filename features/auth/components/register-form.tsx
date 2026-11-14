@@ -6,8 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import Link from "@/lib/router-compat";
+import { useRouter, useSearchParams } from "@/lib/router-compat";
 import React, { useState } from "react";
 import { useRegister } from "../hooks/use-register";
 import type { UserRole } from "../types";
@@ -71,7 +71,6 @@ export function RegisterForm({ initialRole = "CUSTOMER" }: RegisterFormProps) {
       </CardHeader>
 
       <CardContent>
-        {/* Role Selection Tabs */}
         <RegisterRoleTabs role={role} onSelectRole={handleSelectRole} disabled={isLoading} />
 
         {errorMsg && (
@@ -152,7 +151,6 @@ export function RegisterForm({ initialRole = "CUSTOMER" }: RegisterFormProps) {
               </Field>
             </div>
 
-            {/* Optional Referral Code field */}
             <RegisterReferralField
               value={referralCode}
               onChange={setReferralCode}

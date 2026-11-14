@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/lib/router-compat";
 import { authApi } from "../api/auth-api";
 import type { ResetPasswordInput } from "../types";
 
@@ -37,7 +37,6 @@ export function useResetPassword() {
         response.message || "Kata sandi berhasil diatur ulang! Mengalihkan ke halaman masuk...",
       );
 
-      // Clean up token from sessionStorage
       if (typeof window !== "undefined") {
         sessionStorage.removeItem("reset_password_token");
       }

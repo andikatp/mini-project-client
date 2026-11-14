@@ -9,7 +9,7 @@ import { WriteReviewModal } from "@/features/reviews/components/write-review-mod
 import { reviewsApi } from "@/features/reviews/api/reviews-api";
 import type { EventReview } from "@/features/reviews/types";
 import { useCustomerTransactions } from "../hooks/use-customer-transactions";
-import { CustomerTransaction } from "../types";
+import type { CustomerTransaction } from "../types";
 import { TransactionStatsCards } from "./transaction-stats-cards";
 import { TransactionSearchFilter } from "./transaction-search-filter";
 import { TransactionTable } from "./transaction-table";
@@ -45,7 +45,6 @@ export function CustomerTransactionsView() {
         setReviews(res.data);
       }
     } catch {
-      // Non-blocking
     } finally {
       setIsReviewsLoading(false);
     }
@@ -61,7 +60,6 @@ export function CustomerTransactionsView() {
           setReviews(res.data);
         }
       } catch {
-        // Non-blocking
       } finally {
         if (!ignore) {
           setIsReviewsLoading(false);

@@ -28,7 +28,6 @@ export function RewardsTables({ pointsData, couponsData, isLoading }: RewardsTab
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      {/* Points History */}
       <div className="flex flex-col gap-3">
         <div className="flex items-center gap-2">
           <Coins className="size-4 text-amber-500" />
@@ -89,7 +88,6 @@ export function RewardsTables({ pointsData, couponsData, isLoading }: RewardsTab
         </div>
       </div>
 
-      {/* Coupons */}
       <div className="flex flex-col gap-3">
         <div className="flex items-center gap-2">
           <Tag className="size-4 text-primary" />

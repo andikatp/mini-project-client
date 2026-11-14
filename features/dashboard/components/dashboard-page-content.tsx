@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/lib/router-compat";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import StyleAwareWrapper from "@/features/dashboard/components/StyleAwareWrapper";
 import StyleDivider from "@/features/dashboard/components/StyleDivider";
@@ -15,6 +15,8 @@ import { useOrganizerDashboard } from "@/features/dashboard/hooks/use-organizer-
 export default function DashboardPageContent() {
   const router = useRouter();
   const { user, isInitialized } = useAuth();
+  const isOrganizer = user?.role === "EVENT_ORGANIZER";
+
   const {
     summary,
     timeseries,
@@ -27,7 +29,7 @@ export default function DashboardPageContent() {
     refresh,
     acceptTransaction,
     rejectTransaction,
-  } = useOrganizerDashboard();
+  } = useOrganizerDashboard({ enabled: isOrganizer });
 
   useEffect(() => {
     if (isInitialized && user?.role === "CUSTOMER") {

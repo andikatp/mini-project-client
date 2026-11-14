@@ -43,13 +43,10 @@ export function CustomerRewardsView() {
         </Alert>
       )}
 
-      {/* Referral Code Banner */}
       <ReferralBanner referralCode={user?.referralCode} />
 
-      {/* Points & Coupons Overview */}
       <RewardsStatsCards pointsData={pointsData} couponsData={couponsData} />
 
-      {/* Tables: Points Breakdown & Coupons */}
       <RewardsTables pointsData={pointsData} couponsData={couponsData} isLoading={isLoading} />
     </Card>
   );

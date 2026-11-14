@@ -13,8 +13,8 @@ import {
   RefreshCw,
   ShieldCheck,
 } from "lucide-react";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import Link from "@/lib/router-compat";
+import { useSearchParams } from "@/lib/router-compat";
 import React, { useEffect, useState } from "react";
 import { useVerifyEmail } from "../hooks/use-verify-email";
 import { maskEmail } from "../utils/mask-email";
@@ -38,7 +38,6 @@ export function VerifyEmailForm() {
   const { verify, resendVerification, isLoading, isResending, errorMsg, successMsg, isVerified } =
     useVerifyEmail();
 
-  // Handle countdown for resend button
   useEffect(() => {
     if (resendCooldown <= 0) return;
     const interval = setInterval(() => {
@@ -47,7 +46,6 @@ export function VerifyEmailForm() {
     return () => clearInterval(interval);
   }, [resendCooldown]);
 
-  // UX Improvement: Auto-verify once 6-digit OTP is typed
   useEffect(() => {
     if (otp.length === 6 && email && !isLoading && !isVerified) {
       void verify(email.trim(), otp.trim());

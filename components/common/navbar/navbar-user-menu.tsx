@@ -12,8 +12,8 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuthStore } from "@/features/auth/context/auth-store";
 import { HelpCircle, LayoutDashboard, LogOut, Ticket, User } from "lucide-react";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import Link from "@/lib/router-compat";
+import { usePathname, useRouter } from "@/lib/router-compat";
 import { useState } from "react";
 
 export function NavbarUserMenu() {
