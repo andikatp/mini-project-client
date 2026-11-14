@@ -207,9 +207,10 @@ a transaction detail should refresh after upload/accept/reject.
 
 1. Payment: manual bank transfer + proof upload. No gateway for MVP.
 2. Email: Resend (backend concern; FE only triggers flows).
-3. Reviews need organizer approval (PENDING → APPROVED/REJECTED).
-4. Stacking allowed: voucher + coupon + points in one checkout.
-5. No design/branding guidelines for MVP — clean, responsive UI only.
+3. Email: Resend (backend concern; FE only triggers flows).
+4. Reviews need organizer approval (PENDING → APPROVED/REJECTED).
+5. Stacking allowed: voucher + coupon + points in one checkout.
+6. No design/branding guidelines for MVP — clean, responsive UI only.
 
 **Decided 2026-10-28:** one shared `/dashboard` for both roles — the server
 session selects the sidebar menu and the dashboard content. Post-login
