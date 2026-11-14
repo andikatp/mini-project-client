@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { Image } from "@/lib/router-compat";
 import { Upload, XCircle, Clock, CheckCircle2, Star } from "lucide-react";
 import {
   Table,
@@ -11,7 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { EventReview } from "@/features/reviews/types";
-import { CustomerTransaction } from "../types";
+import type { CustomerTransaction } from "../types";
 import { STATUS_CONFIG } from "./transaction-status-config";
 
 interface TransactionTableProps {

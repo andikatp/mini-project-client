@@ -1,4 +1,4 @@
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/lib/router-compat";
 import { useCallback, useState } from "react";
 import { authApi } from "../api/auth-api";
 import { useAuthStore } from "../context/auth-store";

@@ -2,7 +2,8 @@
 
 import { DashboardCard } from "@/components/common/dashboard-card";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChartConfig, ChartContainer, ChartTooltip } from "@/components/ui/chart";
+import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
+import type { ChartConfig } from "@/components/ui/chart";
 import {
   Select,
   SelectContent,

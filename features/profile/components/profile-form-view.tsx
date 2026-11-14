@@ -1,6 +1,6 @@
 "use client";
 
-import BreadcrumbComp from "@/app/(dashboard)/layout/shared/breadcrumb/breadcrumb-comp";
+import BreadcrumbComp from "@/components/dashboard-layout/shared/breadcrumb/breadcrumb-comp";
 import StyleAwareWrapper from "@/features/dashboard/components/StyleAwareWrapper";
 import StyleDivider from "@/features/dashboard/components/StyleDivider";
 import { Button } from "@/components/ui/button";

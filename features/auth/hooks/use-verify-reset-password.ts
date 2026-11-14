@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/lib/router-compat";
 import { authApi } from "../api/auth-api";
 
 export function useVerifyResetPassword() {
@@ -45,7 +45,6 @@ export function useVerifyResetPassword() {
       setIsSuccess(true);
       setSuccessMsg("Kode OTP terverifikasi! Mengalihkan...");
 
-      // Save token in sessionStorage as fallback
       if (typeof window !== "undefined") {
         sessionStorage.setItem("reset_password_token", token);
       }

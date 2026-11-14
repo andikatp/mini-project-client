@@ -1,9 +1,9 @@
 import { Calendar, MapPin, Upload, XCircle, Clock, CheckCircle2 } from "lucide-react";
-import Image from "next/image";
+import { Image } from "@/lib/router-compat";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { CustomerTransaction } from "../types";
+import type { CustomerTransaction } from "../types";
 import { STATUS_CONFIG } from "./transaction-status-config";
 
 interface TransactionCardProps {

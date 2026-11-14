@@ -10,10 +10,8 @@ interface AuthLayoutProps {
 export function AuthLayout({ artwork, children, title, subtitle }: AuthLayoutProps) {
   return (
     <div className="min-h-screen flex flex-col bg-background font-sans selection:bg-blue-100 selection:text-blue-900">
-      {/* Main Container */}
       <main className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8">
         <div className="w-full max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 items-center">
-          {/* Left Column: Artwork & Catchy Copy (Hidden on mobile to eliminate scrolling) */}
           <section
             aria-label="Informasi Fitur"
             className="hidden lg:flex flex-col items-center justify-center w-full"
@@ -21,7 +19,6 @@ export function AuthLayout({ artwork, children, title, subtitle }: AuthLayoutPro
             {artwork}
           </section>
 
-          {/* Right Column: Form Container Card */}
           <section
             aria-label="Formulir Otentikasi"
             className="w-full flex flex-col items-center justify-center"
@@ -43,7 +40,6 @@ export function AuthLayout({ artwork, children, title, subtitle }: AuthLayoutPro
         </div>
       </main>
 
-      {/* Simple Accessible Footer */}
       <footer className="w-full py-6 text-center text-xs text-muted-foreground">
         <div className="flex items-center justify-center gap-4">
           <span>&copy; 2026 Ramein Platform</span>

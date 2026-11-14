@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { AlertCircle, ArrowLeft, CheckCircle2, Loader2, ShieldCheck } from "lucide-react";
-import Link from "next/link";
+import Link from "@/lib/router-compat";
 import React, { useState } from "react";
 import { useChangePassword } from "../hooks/use-change-password";
 import { PasswordInputGroup } from "./password-input-group";

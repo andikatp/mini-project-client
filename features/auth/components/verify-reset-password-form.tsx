@@ -13,8 +13,7 @@ import {
   RefreshCw,
   ShieldCheck,
 } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import Link, { useRouter } from "@/lib/router-compat";
 import React, { useEffect, useState } from "react";
 import { useVerifyResetPassword } from "../hooks/use-verify-reset-password";
 import { maskEmail } from "../utils/mask-email";

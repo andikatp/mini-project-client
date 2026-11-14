@@ -32,11 +32,14 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile --ignore-scripts
 
+      - name: Generate route types
+        run: bun run react-router typegen
+
       - name: Code quality check (Format, Lint & Typecheck)
         run: bun run check
 
       - name: Run unit tests
-        run: bun test
+        run: bun run test
 
-      - name: Build Next.js application
+      - name: Build SPA application
         run: bun run build

@@ -12,7 +12,6 @@ export async function compressClientImage(
   const { maxWidth = 1080, maxHeight = 1080, quality = 0.8, mimeType = "image/webp" } = options;
 
   return new Promise((resolve, reject) => {
-    // If not an image, return original
     if (!file.type.startsWith("image/")) {
       return resolve(file);
     }

@@ -16,7 +16,6 @@ export function RewardsStatsCards({ pointsData, couponsData }: RewardsStatsCards
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-border border border-border">
-      {/* 1. Active Points */}
       <DashboardCard className="py-6">
         <CardContent className="flex justify-between flex-row px-6">
           <div className="flex flex-col items-start gap-4 w-full">
@@ -37,7 +36,6 @@ export function RewardsStatsCards({ pointsData, couponsData }: RewardsStatsCards
         </CardContent>
       </DashboardCard>
 
-      {/* 2. Available Coupons */}
       <DashboardCard className="py-6">
         <CardContent className="flex justify-between flex-row px-6">
           <div className="flex flex-col items-start gap-4 w-full">
@@ -58,7 +56,6 @@ export function RewardsStatsCards({ pointsData, couponsData }: RewardsStatsCards
         </CardContent>
       </DashboardCard>
 
-      {/* 3. Validity */}
       <DashboardCard className="py-6">
         <CardContent className="flex justify-between flex-row px-6">
           <div className="flex flex-col items-start gap-4 w-full">

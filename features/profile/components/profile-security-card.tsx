@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Lock, ShieldAlert, ShieldCheck } from "lucide-react";
-import Link from "next/link";
+import Link from "@/lib/router-compat";
 
 export function ProfileSecurityCard() {
   return (

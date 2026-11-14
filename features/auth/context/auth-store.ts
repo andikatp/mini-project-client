@@ -41,6 +41,10 @@ export const useAuthStore = create<AuthState>()(
       },
 
       fetchCurrentUser: async () => {
+        if (get().isLoading) {
+          return get().user;
+        }
+
         set({ isLoading: true });
         try {
           const res = await authApi.getMe();
@@ -64,7 +68,6 @@ export const useAuthStore = create<AuthState>()(
         try {
           await authApi.logout();
         } catch {
-          // ignore network failure on logout
         } finally {
           get().clearSession();
         }

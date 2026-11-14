@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/lib/router-compat";
 import { RameinIcon } from "./ramein-icon";
 
 interface BrandLogoProps {
@@ -38,7 +38,7 @@ export function BrandLogo({
       >
         <span className={sizeClasses[size]}>RAME</span>
         <span
-          className={`${sizeClasses[size]} text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600`}
+          className={`${sizeClasses[size]} text-transparent bg-clip-text bg-gradient-to-r from-blue-900 to-blue-600`}
         >
           IN
         </span>

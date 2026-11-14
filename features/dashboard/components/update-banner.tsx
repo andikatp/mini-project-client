@@ -4,7 +4,7 @@ import { DashboardCard } from "@/components/common/dashboard-card";
 import { Button } from "@/components/ui/button";
 import { CardContent } from "@/components/ui/card";
 import { ArrowRight, Ticket } from "lucide-react";
-import Link from "next/link";
+import Link from "@/lib/router-compat";
 
 export default function UpdateBanner() {
   return (

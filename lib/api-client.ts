@@ -36,7 +36,9 @@ function handleUnauthorized(message?: string): never {
     !window.location.pathname.startsWith("/reset-password")
   ) {
     localStorage.removeItem("ramein_auth_session");
-    window.location.href = "/login";
+    if (!window.location.pathname.startsWith("/login")) {
+      window.location.replace("/login");
+    }
   }
   throw new Error(message || "Sesi Anda telah berakhir. Silakan masuk kembali.");
 }
@@ -45,6 +47,7 @@ async function executeFetch<T>(
   url: string,
   fetchOptions: RequestInit,
   timeoutMs: number,
+  isAuthProbe = false,
 ): Promise<ApiResponse<T>> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
@@ -62,7 +65,10 @@ async function executeFetch<T>(
     }));
 
     if (res.status === 401) {
-      handleUnauthorized(data.message);
+      if (!isAuthProbe) {
+        handleUnauthorized(data.message);
+      }
+      throw new Error(data.message || "Unauthorized");
     }
 
     if (!res.ok || data.status === "error") {
@@ -88,6 +94,7 @@ export async function apiClient<T>(
 ): Promise<ApiResponse<T>> {
   const { retries = 1, timeoutMs = 15000, ...fetchOptions } = options;
   const url = `${API_BASE_URL}${endpoint}`;
+  const isAuthProbe = endpoint === "/auth/me";
 
   const headers = new Headers(fetchOptions.headers);
   if (!headers.has("Content-Type") && !(fetchOptions.body instanceof FormData)) {
@@ -98,7 +105,7 @@ export async function apiClient<T>(
 
   const runWithRetry = async (attempt: number): Promise<ApiResponse<T>> => {
     try {
-      return await executeFetch<T>(url, fetchOptions, timeoutMs);
+      return await executeFetch<T>(url, fetchOptions, timeoutMs, isAuthProbe);
     } catch (err: unknown) {
       if (isRetryableError(err) && attempt < retries) {
         await new Promise((resolve) => setTimeout(resolve, 1000 * (attempt + 1)));

@@ -7,16 +7,17 @@ import type {
   OrganizerTransaction,
 } from "../types";
 
-export function useOrganizerDashboard() {
+export function useOrganizerDashboard({ enabled = true }: { enabled?: boolean } = {}) {
   const [summary, setSummary] = useState<OrganizerDashboardSummary | null>(null);
   const [timeseries, setTimeseries] = useState<DashboardTimeseriesPoint[]>([]);
   const [transactions, setTransactions] = useState<OrganizerTransaction[]>([]);
   const [granularity, setGranularity] = useState<Granularity>("month");
   const [selectedEventId, setSelectedEventId] = useState<string | undefined>(undefined);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(enabled);
   const [error, setError] = useState<string | null>(null);
 
   const fetchDashboardData = useCallback(async () => {
+    if (!enabled) return;
     setIsLoading(true);
     setError(null);
     try {
@@ -44,9 +45,10 @@ export function useOrganizerDashboard() {
     } finally {
       setIsLoading(false);
     }
-  }, [granularity, selectedEventId]);
+  }, [enabled, granularity, selectedEventId]);
 
   useEffect(() => {
+    if (!enabled) return;
     let ignore = false;
 
     async function load() {
@@ -78,7 +80,7 @@ export function useOrganizerDashboard() {
     return () => {
       ignore = true;
     };
-  }, [granularity, selectedEventId]);
+  }, [enabled, granularity, selectedEventId]);
 
   const handleAcceptTransaction = async (transactionId: string) => {
     await organizerDashboardApi.acceptTransactionProof(transactionId);
