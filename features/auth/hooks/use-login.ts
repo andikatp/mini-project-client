@@ -41,6 +41,18 @@ export function useLogin() {
         err instanceof Error
           ? err.message
           : "Gagal masuk. Periksa kembali email dan kata sandi Anda.";
+
+      if (
+        message.toLowerCase().includes("verify your email") ||
+        message.toLowerCase().includes("verifikasi email")
+      ) {
+        if (typeof window !== "undefined") {
+          sessionStorage.setItem("registered_email", email.trim());
+        }
+        router.push(`/verify-email?email=${encodeURIComponent(email.trim())}`);
+        return false;
+      }
+
       setErrorMsg(message);
       return false;
     } finally {
