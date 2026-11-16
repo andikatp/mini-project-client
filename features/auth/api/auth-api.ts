@@ -112,8 +112,8 @@ export const authApi = {
   },
 
   async changePassword(input: ChangePasswordInput): Promise<ApiResponse<null>> {
-    return apiClient<null>("/users/me/password", {
-      method: HttpMethod.PATCH,
+    return apiClient<null>("/auth/change-password", {
+      method: HttpMethod.POST,
       body: JSON.stringify({
         currentPassword: input.currentPassword,
         newPassword: input.newPassword,
