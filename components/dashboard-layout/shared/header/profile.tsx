@@ -13,9 +13,9 @@ export default function ProfileSheet() {
   const { user, logout } = useAuthStore();
   const [open, setOpen] = useState(false);
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     setOpen(false);
-    await logout();
+    void logout();
     router.replace("/");
   };
 

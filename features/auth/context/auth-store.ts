@@ -64,13 +64,10 @@ export const useAuthStore = create<AuthState>()(
       },
 
       logout: async () => {
-        set({ isLoading: true });
+        get().clearSession();
         try {
           await authApi.logout();
-        } catch {
-        } finally {
-          get().clearSession();
-        }
+        } catch {}
       },
     }),
     {
