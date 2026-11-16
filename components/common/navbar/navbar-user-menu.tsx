@@ -21,9 +21,9 @@ export function NavbarUserMenu() {
   const { user, isAuthenticated, logout } = useAuthStore();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     setMenuOpen(false);
-    await logout();
+    void logout();
     router.refresh();
   };
 
