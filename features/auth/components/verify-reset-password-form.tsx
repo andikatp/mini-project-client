@@ -51,13 +51,7 @@ export function VerifyResetPasswordForm() {
   }, [resendCooldown]);
 
   useEffect(() => {
-    if (
-      otp.length === 6 &&
-      email &&
-      !isLoading &&
-      !isSuccess &&
-      attemptedOtpRef.current !== otp
-    ) {
+    if (otp.length === 6 && email && !isLoading && !isSuccess && attemptedOtpRef.current !== otp) {
       attemptedOtpRef.current = otp;
       void verifyOtp(email.trim(), otp.trim());
     }

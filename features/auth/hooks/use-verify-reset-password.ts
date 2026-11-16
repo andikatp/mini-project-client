@@ -64,32 +64,29 @@ export function useVerifyResetPassword() {
     [isLoading, isSuccess, router],
   );
 
-  const resendOtp = useCallback(
-    async (email: string) => {
-      setErrorMsg(null);
-      setSuccessMsg(null);
+  const resendOtp = useCallback(async (email: string) => {
+    setErrorMsg(null);
+    setSuccessMsg(null);
 
-      if (!email.trim()) {
-        setErrorMsg("Alamat email tidak valid.");
-        return false;
-      }
+    if (!email.trim()) {
+      setErrorMsg("Alamat email tidak valid.");
+      return false;
+    }
 
-      setIsResending(true);
-      try {
-        const response = await authApi.forgotPassword({ email: email.trim() });
-        setSuccessMsg(response.message || "Kode OTP pemulihan baru telah dikirimkan ke email Anda.");
-        return true;
-      } catch (err: unknown) {
-        const message =
-          err instanceof Error ? err.message : "Gagal mengirim ulang kode OTP pemulihan.";
-        setErrorMsg(message);
-        return false;
-      } finally {
-        setIsResending(false);
-      }
-    },
-    [],
-  );
+    setIsResending(true);
+    try {
+      const response = await authApi.forgotPassword({ email: email.trim() });
+      setSuccessMsg(response.message || "Kode OTP pemulihan baru telah dikirimkan ke email Anda.");
+      return true;
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Gagal mengirim ulang kode OTP pemulihan.";
+      setErrorMsg(message);
+      return false;
+    } finally {
+      setIsResending(false);
+    }
+  }, []);
 
   const clearMessages = useCallback(() => {
     setErrorMsg(null);

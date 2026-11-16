@@ -56,32 +56,29 @@ export function useVerifyEmail() {
     [isLoading, isVerified, router],
   );
 
-  const resendVerification = useCallback(
-    async (email?: string) => {
-      setErrorMsg(null);
-      setSuccessMsg(null);
+  const resendVerification = useCallback(async (email?: string) => {
+    setErrorMsg(null);
+    setSuccessMsg(null);
 
-      if (!email?.trim()) {
-        setErrorMsg("Email tidak ditemukan. Silakan masukkan email terlebih dahulu.");
-        return false;
-      }
+    if (!email?.trim()) {
+      setErrorMsg("Email tidak ditemukan. Silakan masukkan email terlebih dahulu.");
+      return false;
+    }
 
-      setIsResending(true);
-      try {
-        const response = await authApi.resendVerification({ email: email.trim() });
-        setSuccessMsg(response.message || "Kode OTP verifikasi baru telah dikirimkan ke email Anda.");
-        return true;
-      } catch (err: unknown) {
-        const message =
-          err instanceof Error ? err.message : "Gagal mengirim ulang kode OTP. Coba lagi.";
-        setErrorMsg(message);
-        return false;
-      } finally {
-        setIsResending(false);
-      }
-    },
-    [],
-  );
+    setIsResending(true);
+    try {
+      const response = await authApi.resendVerification({ email: email.trim() });
+      setSuccessMsg(response.message || "Kode OTP verifikasi baru telah dikirimkan ke email Anda.");
+      return true;
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Gagal mengirim ulang kode OTP. Coba lagi.";
+      setErrorMsg(message);
+      return false;
+    } finally {
+      setIsResending(false);
+    }
+  }, []);
 
   const clearMessages = useCallback(() => {
     setErrorMsg(null);

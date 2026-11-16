@@ -47,13 +47,7 @@ export function VerifyEmailForm() {
   }, [resendCooldown]);
 
   useEffect(() => {
-    if (
-      otp.length === 6 &&
-      email &&
-      !isLoading &&
-      !isVerified &&
-      attemptedOtpRef.current !== otp
-    ) {
+    if (otp.length === 6 && email && !isLoading && !isVerified && attemptedOtpRef.current !== otp) {
       attemptedOtpRef.current = otp;
       void verify(email.trim(), otp.trim());
     }
