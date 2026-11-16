@@ -10,80 +10,86 @@ export function useVerifyResetPassword() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
-  const verifyOtp = async (email: string, otp: string) => {
-    if (isLoading || isSuccess) return null;
-    setErrorMsg(null);
-    setSuccessMsg(null);
+  const verifyOtp = useCallback(
+    async (email: string, otp: string) => {
+      if (isLoading || isSuccess) return null;
+      setErrorMsg(null);
+      setSuccessMsg(null);
 
-    if (!email.trim()) {
-      setErrorMsg("Alamat email tidak valid.");
-      return null;
-    }
-
-    if (!otp.trim() || otp.trim().length !== 6 || !/^\d{6}$/.test(otp.trim())) {
-      setErrorMsg("Harap masukkan 6 digit kode OTP verifikasi.");
-      return null;
-    }
-
-    setIsLoading(true);
-
-    try {
-      const response = await authApi.verifyResetPassword({
-        email: email.trim(),
-        otp: otp.trim(),
-      });
-
-      const token =
-        response.data?.resetToken ||
-        response.data?.token ||
-        (typeof response.data === "string" ? response.data : null);
-
-      if (!token) {
-        throw new Error("Token pemulihan tidak diterima dari server.");
+      if (!email.trim()) {
+        setErrorMsg("Alamat email tidak valid.");
+        return null;
       }
 
-      setIsSuccess(true);
-      setSuccessMsg("Kode OTP terverifikasi! Mengalihkan...");
-
-      if (typeof window !== "undefined") {
-        sessionStorage.setItem("reset_password_token", token);
+      if (!otp.trim() || otp.trim().length !== 6 || !/^\d{6}$/.test(otp.trim())) {
+        setErrorMsg("Harap masukkan 6 digit kode OTP verifikasi.");
+        return null;
       }
 
-      router.replace(`/reset-password?token=${encodeURIComponent(token)}`);
-      return token;
-    } catch (err: unknown) {
-      const message =
-        err instanceof Error ? err.message : "Kode OTP tidak valid atau telah kedaluwarsa.";
-      setErrorMsg(message);
-      return null;
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      setIsLoading(true);
 
-  const resendOtp = async (email: string) => {
-    setErrorMsg(null);
-    setSuccessMsg(null);
+      try {
+        const response = await authApi.verifyResetPassword({
+          email: email.trim(),
+          otp: otp.trim(),
+        });
 
-    if (!email.trim()) {
-      setErrorMsg("Alamat email tidak valid.");
-      return false;
-    }
+        const token =
+          response.data?.resetToken ||
+          response.data?.token ||
+          (typeof response.data === "string" ? response.data : null);
 
-    setIsResending(true);
-    try {
-      const response = await authApi.forgotPassword({ email: email.trim() });
-      setSuccessMsg(response.message || "Kode OTP pemulihan baru telah dikirimkan ke email Anda.");
-      return true;
-    } catch (err: unknown) {
-      const message =
-        err instanceof Error ? err.message : "Gagal mengirim ulang kode OTP pemulihan.";
-      setErrorMsg(message);
-      return false;
-    } finally {
-      setIsResending(false);
-    }
-  };
+        if (!token) {
+          throw new Error("Token pemulihan tidak diterima dari server.");
+        }
+
+        setIsSuccess(true);
+        setSuccessMsg("Kode OTP terverifikasi! Mengalihkan...");
+
+        if (typeof window !== "undefined") {
+          sessionStorage.setItem("reset_password_token", token);
+        }
+
+        router.replace(`/reset-password?token=${encodeURIComponent(token)}`);
+        return token;
+      } catch (err: unknown) {
+        const message =
+          err instanceof Error ? err.message : "Kode OTP tidak valid atau telah kedaluwarsa.";
+        setErrorMsg(message);
+        return null;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [isLoading, isSuccess, router],
+  );
+
+  const resendOtp = useCallback(
+    async (email: string) => {
+      setErrorMsg(null);
+      setSuccessMsg(null);
+
+      if (!email.trim()) {
+        setErrorMsg("Alamat email tidak valid.");
+        return false;
+      }
+
+      setIsResending(true);
+      try {
+        const response = await authApi.forgotPassword({ email: email.trim() });
+        setSuccessMsg(response.message || "Kode OTP pemulihan baru telah dikirimkan ke email Anda.");
+        return true;
+      } catch (err: unknown) {
+        const message =
+          err instanceof Error ? err.message : "Gagal mengirim ulang kode OTP pemulihan.";
+        setErrorMsg(message);
+        return false;
+      } finally {
+        setIsResending(false);
+      }
+    },
+    [],
+  );
 
   const clearMessages = useCallback(() => {
     setErrorMsg(null);
