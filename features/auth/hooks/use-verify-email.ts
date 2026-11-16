@@ -10,50 +10,53 @@ export function useVerifyEmail() {
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [isVerified, setIsVerified] = useState(false);
 
-  const verify = async (email: string, otp: string) => {
-    if (isLoading || isVerified) return false;
-    setErrorMsg(null);
-    setSuccessMsg(null);
+  const verify = useCallback(
+    async (email: string, otp: string) => {
+      if (isLoading || isVerified) return false;
+      setErrorMsg(null);
+      setSuccessMsg(null);
 
-    if (!email.trim()) {
-      setErrorMsg("Email akun wajib diisi.");
-      return false;
-    }
+      if (!email.trim()) {
+        setErrorMsg("Email akun wajib diisi.");
+        return false;
+      }
 
-    if (!otp.trim() || otp.trim().length !== 6 || !/^\d{6}$/.test(otp.trim())) {
-      setErrorMsg("Harap masukkan 6 digit angka kode OTP.");
-      return false;
-    }
+      if (!otp.trim() || otp.trim().length !== 6 || !/^\d{6}$/.test(otp.trim())) {
+        setErrorMsg("Harap masukkan 6 digit angka kode OTP.");
+        return false;
+      }
 
-    setIsLoading(true);
+      setIsLoading(true);
 
-    try {
-      const response = await authApi.verifyEmail({
-        email: email.trim(),
-        otp: otp.trim(),
-      });
+      try {
+        const response = await authApi.verifyEmail({
+          email: email.trim(),
+          otp: otp.trim(),
+        });
 
-      setSuccessMsg(
-        response.message || "Email Anda berhasil diverifikasi! Mengalihkan ke halaman masuk...",
-      );
-      setIsVerified(true);
+        setSuccessMsg(
+          response.message || "Email Anda berhasil diverifikasi! Mengalihkan ke halaman masuk...",
+        );
+        setIsVerified(true);
 
-      router.replace("/login");
+        router.replace("/login");
 
-      return true;
-    } catch (err: unknown) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : "Gagal memverifikasi email. Kode OTP tidak valid atau sudah kedaluwarsa.";
-      setErrorMsg(message);
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
-  };
+        return true;
+      } catch (err: unknown) {
+        const message =
+          err instanceof Error
+            ? err.message
+            : "Gagal memverifikasi email. Kode OTP tidak valid atau sudah kedaluwarsa.";
+        setErrorMsg(message);
+        return false;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [isLoading, isVerified, router],
+  );
 
-  const resendVerification = async (email?: string) => {
+  const resendVerification = useCallback(async (email?: string) => {
     setErrorMsg(null);
     setSuccessMsg(null);
 
@@ -75,7 +78,7 @@ export function useVerifyEmail() {
     } finally {
       setIsResending(false);
     }
-  };
+  }, []);
 
   const clearMessages = useCallback(() => {
     setErrorMsg(null);

@@ -9,52 +9,55 @@ export function useResetPassword() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
-  const resetPassword = async (input: ResetPasswordInput) => {
-    setErrorMsg(null);
-    setSuccessMsg(null);
+  const resetPassword = useCallback(
+    async (input: ResetPasswordInput) => {
+      setErrorMsg(null);
+      setSuccessMsg(null);
 
-    if (!input.resetToken && (!input.email || !input.otp)) {
-      setErrorMsg("Sesi atau token pemulihan tidak ditemukan. Harap ulangi proses pemulihan.");
-      return false;
-    }
-
-    if (!input.password || input.password.length < 6) {
-      setErrorMsg("Kata sandi baru minimal 6 karakter.");
-      return false;
-    }
-
-    if (input.confirmPassword && input.password !== input.confirmPassword) {
-      setErrorMsg("Konfirmasi kata sandi baru tidak sesuai.");
-      return false;
-    }
-
-    setIsLoading(true);
-
-    try {
-      const response = await authApi.resetPassword(input);
-
-      setSuccessMsg(
-        response.message || "Kata sandi berhasil diatur ulang! Mengalihkan ke halaman masuk...",
-      );
-
-      if (typeof window !== "undefined") {
-        sessionStorage.removeItem("reset_password_token");
+      if (!input.resetToken && (!input.email || !input.otp)) {
+        setErrorMsg("Sesi atau token pemulihan tidak ditemukan. Harap ulangi proses pemulihan.");
+        return false;
       }
 
-      router.replace("/login");
+      if (!input.password || input.password.length < 6) {
+        setErrorMsg("Kata sandi baru minimal 6 karakter.");
+        return false;
+      }
 
-      return true;
-    } catch (err: unknown) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : "Gagal mengatur ulang kata sandi. Token pemulihan mungkin tidak valid atau sudah kedaluwarsa.";
-      setErrorMsg(message);
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      if (input.confirmPassword && input.password !== input.confirmPassword) {
+        setErrorMsg("Konfirmasi kata sandi baru tidak sesuai.");
+        return false;
+      }
+
+      setIsLoading(true);
+
+      try {
+        const response = await authApi.resetPassword(input);
+
+        setSuccessMsg(
+          response.message || "Kata sandi berhasil diatur ulang! Mengalihkan ke halaman masuk...",
+        );
+
+        if (typeof window !== "undefined") {
+          sessionStorage.removeItem("reset_password_token");
+        }
+
+        router.replace("/login");
+
+        return true;
+      } catch (err: unknown) {
+        const message =
+          err instanceof Error
+            ? err.message
+            : "Gagal mengatur ulang kata sandi. Token pemulihan mungkin tidak valid atau sudah kedaluwarsa.";
+        setErrorMsg(message);
+        return false;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [router],
+  );
 
   const clearMessages = useCallback(() => {
     setErrorMsg(null);

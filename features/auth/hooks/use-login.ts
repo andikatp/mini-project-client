@@ -11,54 +11,57 @@ export function useLogin() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
-  const login = async (email: string, password: string) => {
-    setErrorMsg(null);
-    setSuccessMsg(null);
+  const login = useCallback(
+    async (email: string, password: string) => {
+      setErrorMsg(null);
+      setSuccessMsg(null);
 
-    if (!email.trim() || !password) {
-      setErrorMsg("Harap masukkan email dan kata sandi Anda.");
-      return false;
-    }
-
-    setIsLoading(true);
-
-    try {
-      const response = await authApi.login(email, password);
-      const user = response.data?.user;
-
-      if (user) {
-        setSession(user);
-      }
-
-      setSuccessMsg("Berhasil masuk! Mengalihkan ke beranda...");
-
-      const destination = user?.role === "EVENT_ORGANIZER" ? "/dashboard" : "/";
-      router.replace(destination);
-
-      return true;
-    } catch (err: unknown) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : "Gagal masuk. Periksa kembali email dan kata sandi Anda.";
-
-      if (
-        message.toLowerCase().includes("verify your email") ||
-        message.toLowerCase().includes("verifikasi email")
-      ) {
-        if (typeof window !== "undefined") {
-          sessionStorage.setItem("registered_email", email.trim());
-        }
-        router.push(`/verify-email?email=${encodeURIComponent(email.trim())}`);
+      if (!email.trim() || !password) {
+        setErrorMsg("Harap masukkan email dan kata sandi Anda.");
         return false;
       }
 
-      setErrorMsg(message);
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      setIsLoading(true);
+
+      try {
+        const response = await authApi.login(email, password);
+        const user = response.data?.user;
+
+        if (user) {
+          setSession(user);
+        }
+
+        setSuccessMsg("Berhasil masuk! Mengalihkan ke beranda...");
+
+        const destination = user?.role === "EVENT_ORGANIZER" ? "/dashboard" : "/";
+        router.replace(destination);
+
+        return true;
+      } catch (err: unknown) {
+        const message =
+          err instanceof Error
+            ? err.message
+            : "Gagal masuk. Periksa kembali email dan kata sandi Anda.";
+
+        if (
+          message.toLowerCase().includes("verify your email") ||
+          message.toLowerCase().includes("verifikasi email")
+        ) {
+          if (typeof window !== "undefined") {
+            sessionStorage.setItem("registered_email", email.trim());
+          }
+          router.push(`/verify-email?email=${encodeURIComponent(email.trim())}`);
+          return false;
+        }
+
+        setErrorMsg(message);
+        return false;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [router, setSession],
+  );
 
   const clearMessages = useCallback(() => {
     setErrorMsg(null);

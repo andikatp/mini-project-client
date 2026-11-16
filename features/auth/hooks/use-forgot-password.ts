@@ -7,7 +7,7 @@ export function useForgotPassword() {
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const requestReset = async (email: string) => {
+  const requestReset = useCallback(async (email: string) => {
     setErrorMsg(null);
     setSuccessMsg(null);
 
@@ -37,7 +37,7 @@ export function useForgotPassword() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   const clearMessages = useCallback(() => {
     setErrorMsg(null);
