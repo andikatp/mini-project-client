@@ -53,7 +53,8 @@ export function useRegister() {
 
         return true;
       } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : "Gagal mendaftar. Silakan coba kembali.";
+        const message =
+          err instanceof Error ? err.message : "Gagal mendaftar. Silakan coba kembali.";
         setErrorMsg(message);
         return false;
       } finally {
