@@ -15,7 +15,7 @@ Proyek ini mengadopsi struktur UI dan layout dashboard dari open-source template
 - **Live Demo Template**: [https://shadcndashboard-demo.vercel.app](https://shadcndashboard-demo.vercel.app)
 - **Dokumentasi UI**: [https://shadcndashboard.dev/docs](https://shadcndashboard.dev/docs)
 - **Komponen Utama yang Diadaptasi**:
-  - **Shared Dashboard Shell**: Sidebar collapsible responsif & Topbar navigasi di `app/(dashboard)/layout.tsx`
+  - **Shared Dashboard Shell**: Sidebar collapsible responsif & Topbar navigasi di `app/routes/dashboard/layout.tsx`
   - **Organizer Analytics**: Komponen grafik berbasis **Recharts** (`TotalSales`, `TotalsAssets`) di `features/dashboard/components/`
   - **Form & Profile Elements**: Layout form responsif dan hero header profil di `features/profile/components/`
   - **UI Primitives**: Komponen dasar berbasis `shadcn/ui` + `@base-ui/react` di `components/ui/`
@@ -121,6 +121,7 @@ Proyek ini menggunakan **Feature-Driven Architecture (Bulletproof React Pattern)
 │   ├── profile/                # Modul profil, avatar upload, & referral copy
 │   ├── dashboard/              # Modul visualisasi data (Recharts timeseries & status distribution)
 │   ├── events/                 # Modul discovery, katalog event, & manajemen event
+│   ├── checkout/               # Modul pemesanan tiket, voucher, kupon, & poin
 │   ├── transactions/           # Modul countdown pembayaran, upload bukti, & verifikasi
 │   ├── rewards/                # Modul kode referral, saldo poin, & kupon
 │   └── reviews/                # Modul ulasan rating bintang & moderasi
@@ -138,6 +139,7 @@ Proyek ini menggunakan **Feature-Driven Architecture (Bulletproof React Pattern)
 ├── types/                      # Global type definitions (ApiResponse<T>, Pagination, dll)
 ├── constants/                  # Konstanta aplikasi (route paths, API_BASE_URL, dll)
 ├── public/                     # Aset publik statis (favicon, icons, gambar)
+├── test/                       # Unit tests & test helpers (Vitest / Bun test)
 ├── package.json
 ├── vite.config.ts              # Konfigurasi Vite & Proxy API
 └── tsconfig.json
