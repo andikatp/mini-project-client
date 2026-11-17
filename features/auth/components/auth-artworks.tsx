@@ -1,5 +1,3 @@
-import { Image } from "@/lib/router-compat";
-
 interface ArtworkProps {
   readonly className?: string;
 }
@@ -26,12 +24,12 @@ function BaseArtwork({
     >
       <div className="relative w-full max-w-[350px] h-[230px] sm:h-[240px] flex items-center justify-center">
         <div className={`absolute inset-0 rounded-3xl ${bgGlowClass} -z-10`} />
-        <Image
+        <img
           src={svgSrc}
           alt={alt}
           width={360}
           height={250}
-          priority
+          loading="eager"
           className="w-full h-full object-contain drop-shadow-sm select-none p-2"
         />
       </div>

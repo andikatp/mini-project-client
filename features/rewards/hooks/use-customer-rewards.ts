@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useEffect, useState } from "react";
 import { rewardsApi } from "../api/rewards-api";
 import type { PointsResponse, CouponsResponse } from "../types";

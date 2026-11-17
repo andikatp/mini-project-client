@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Search } from "lucide-react";
-import Link from "@/lib/router-compat";
+import { Link } from "react-router-dom";
 
 interface EventSearchFilterProps {
   search: string;
@@ -22,7 +22,7 @@ export function EventSearchFilter({
     <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
       <div className="flex items-center gap-3 flex-1">
         <Link
-          href="/organizer/events/create"
+          to="/organizer/events/create"
           className="inline-flex items-center justify-center rounded-lg bg-primary text-primary-foreground h-9 px-3 gap-1.5 text-xs font-medium hover:bg-primary/90 transition-colors shrink-0"
         >
           <Plus className="size-4" />

@@ -1,4 +1,3 @@
-import { Image } from "@/lib/router-compat";
 import { Upload, XCircle, Clock, CheckCircle2, Star } from "lucide-react";
 import {
   Table,
@@ -82,12 +81,10 @@ export function TransactionTable({
                   <div className="flex items-center gap-3">
                     <div className="relative size-10 rounded-md overflow-hidden shrink-0 bg-muted border">
                       {tx.event?.bannerUrl ? (
-                        <Image
+                        <img
                           src={tx.event.bannerUrl}
                           alt={tx.event.title || "Event banner"}
-                          fill
-                          className="object-cover"
-                          sizes="40px"
+                          className="absolute inset-0 size-full object-cover"
                         />
                       ) : (
                         <div className="flex size-full items-center justify-center text-[10px] text-muted-foreground">

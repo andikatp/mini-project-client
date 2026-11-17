@@ -1,10 +1,10 @@
-import { useCallback, useState } from "react";
-import { useRouter } from "@/lib/router-compat";
+import { useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { authApi } from "../api/auth-api";
 import type { RegisterInput } from "../types";
 
 export function useRegister() {
-  const router = useRouter();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
@@ -47,7 +47,9 @@ export function useRegister() {
         if (typeof window !== "undefined") {
           sessionStorage.setItem("registered_email", input.email.trim());
         }
-        router.replace(`/verify-email?email=${encodeURIComponent(input.email.trim())}`);
+        void navigate(`/verify-email?email=${encodeURIComponent(input.email.trim())}`, {
+          replace: true,
+        });
 
         return true;
       } catch (err: unknown) {
@@ -59,7 +61,7 @@ export function useRegister() {
         setIsLoading(false);
       }
     },
-    [router],
+    [navigate],
   );
 
   const clearMessages = useCallback(() => {

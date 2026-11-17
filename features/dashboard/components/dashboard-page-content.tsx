@@ -1,7 +1,5 @@
-"use client";
-
 import { useEffect } from "react";
-import { useRouter } from "@/lib/router-compat";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import StyleAwareWrapper from "@/features/dashboard/components/StyleAwareWrapper";
 import StyleDivider from "@/features/dashboard/components/StyleDivider";
@@ -13,7 +11,7 @@ import TotalsAssets from "@/features/dashboard/components/totals-assets";
 import { useOrganizerDashboard } from "@/features/dashboard/hooks/use-organizer-dashboard";
 
 export default function DashboardPageContent() {
-  const router = useRouter();
+  const navigate = useNavigate();
   const { user, isInitialized } = useAuth();
   const isOrganizer = user?.role === "EVENT_ORGANIZER";
 
@@ -33,9 +31,9 @@ export default function DashboardPageContent() {
 
   useEffect(() => {
     if (isInitialized && user?.role === "CUSTOMER") {
-      router.replace("/transactions");
+      void navigate("/transactions", { replace: true });
     }
-  }, [isInitialized, user?.role, router]);
+  }, [isInitialized, user?.role, navigate]);
 
   if (user?.role === "CUSTOMER") {
     return null;

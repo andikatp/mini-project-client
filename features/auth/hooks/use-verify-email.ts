@@ -1,9 +1,9 @@
-import { useCallback, useState } from "react";
-import { useRouter } from "@/lib/router-compat";
+import { useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { authApi } from "../api/auth-api";
 
 export function useVerifyEmail() {
-  const router = useRouter();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -39,7 +39,7 @@ export function useVerifyEmail() {
         );
         setIsVerified(true);
 
-        router.replace("/login");
+        void navigate("/login", { replace: true });
 
         return true;
       } catch (err: unknown) {
@@ -53,26 +53,32 @@ export function useVerifyEmail() {
         setIsLoading(false);
       }
     },
-    [isLoading, isVerified, router],
+    [isLoading, isVerified, navigate],
   );
 
   const resendVerification = useCallback(async (email?: string) => {
     setErrorMsg(null);
     setSuccessMsg(null);
 
-    if (!email?.trim()) {
-      setErrorMsg("Email tidak ditemukan. Silakan masukkan email terlebih dahulu.");
+    let targetEmail = email;
+    if (!targetEmail && typeof window !== "undefined") {
+      targetEmail = sessionStorage.getItem("registered_email") || undefined;
+    }
+
+    if (!targetEmail?.trim()) {
+      setErrorMsg("Alamat email tidak ditemukan. Silakan masukkan ulang email.");
       return false;
     }
 
     setIsResending(true);
+
     try {
-      const response = await authApi.resendVerification({ email: email.trim() });
+      const response = await authApi.resendVerification({ email: targetEmail.trim() });
       setSuccessMsg(response.message || "Kode OTP verifikasi baru telah dikirimkan ke email Anda.");
       return true;
     } catch (err: unknown) {
       const message =
-        err instanceof Error ? err.message : "Gagal mengirim ulang kode OTP. Coba lagi.";
+        err instanceof Error ? err.message : "Gagal mengirim ulang kode OTP verifikasi.";
       setErrorMsg(message);
       return false;
     } finally {
@@ -90,9 +96,9 @@ export function useVerifyEmail() {
     resendVerification,
     isLoading,
     isResending,
+    isVerified,
     errorMsg,
     successMsg,
-    isVerified,
     clearMessages,
   };
 }

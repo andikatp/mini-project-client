@@ -1,5 +1,3 @@
-"use client";
-
 import { FilterableStatGrid, type FilterStatCardItem } from "@/components/shared-stat-filter-grid";
 import { AlertCircle, CheckCircle2, Clock, Ticket } from "lucide-react";
 import type { CustomerTransaction } from "../types";

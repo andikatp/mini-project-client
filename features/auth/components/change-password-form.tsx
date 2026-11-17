@@ -1,11 +1,9 @@
-"use client";
-
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { AlertCircle, ArrowLeft, CheckCircle2, Loader2, ShieldCheck } from "lucide-react";
-import Link from "@/lib/router-compat";
+import { Link } from "react-router-dom";
 import React, { useState } from "react";
 import { useChangePassword } from "../hooks/use-change-password";
 import { PasswordInputGroup } from "./password-input-group";
@@ -127,13 +125,13 @@ export function ChangePasswordForm() {
 
         <div className="mt-6 pt-4 border-t border-border flex items-center justify-between text-sm">
           <Link
-            href="/"
+            to="/"
             className="inline-flex items-center gap-1.5 font-semibold text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft className="size-4" />
             Kembali ke Beranda
           </Link>
-          <Link href="/forgot-password" className="text-xs text-blue-600 hover:underline">
+          <Link to="/forgot-password" className="text-xs text-blue-600 hover:underline">
             Lupa kata sandi saat ini?
           </Link>
         </div>

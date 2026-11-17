@@ -1,10 +1,10 @@
 import { useCallback, useState } from "react";
-import { useRouter } from "@/lib/router-compat";
+import { useNavigate } from "react-router-dom";
 import { authApi } from "../api/auth-api";
 import type { ChangePasswordInput } from "../types";
 
 export function useChangePassword() {
-  const router = useRouter();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
@@ -39,7 +39,7 @@ export function useChangePassword() {
             "Kata sandi berhasil diubah! Silakan gunakan kata sandi baru untuk sesi berikutnya.",
         );
 
-        router.replace("/profile");
+        void navigate("/profile", { replace: true });
 
         return true;
       } catch (err: unknown) {
@@ -53,7 +53,7 @@ export function useChangePassword() {
         setIsLoading(false);
       }
     },
-    [router],
+    [navigate],
   );
 
   const clearMessages = useCallback(() => {

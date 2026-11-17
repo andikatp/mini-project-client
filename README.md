@@ -1,6 +1,6 @@
 # Mini Project Client
 
-Frontend client application untuk platform manajemen & pemesanan tiket acara (**Ramein**) yang dibangun menggunakan **Next.js (App Router)**, **React 19**, **TypeScript**, **Tailwind CSS v4**, **shadcn/ui**, dan dijalankan dengan **Bun** serta didukung oleh **Vite+ (`vp`)**.
+Frontend client application untuk platform manajemen & pemesanan tiket acara (**Ramein**) yang dibangun menggunakan **React 19 (SPA)**, **TypeScript**, **Tailwind CSS v4**, **shadcn/ui**, dan dijalankan dengan **Bun** serta didukung oleh **Vite+ (`vp`)**.
 
 Template dashboard terintegrasi menggunakan komponen desain dari [**Shadcn Dashboard**](https://shadcndashboard.dev) (Base UI + Tailwind CSS v4 + Recharts).
 
@@ -10,7 +10,7 @@ Template dashboard terintegrasi menggunakan komponen desain dari [**Shadcn Dashb
 
 Proyek ini mengadopsi struktur UI dan layout dashboard dari open-source template:
 
-- **Nama Template**: [Shadcn Dashboard (Next.js)](https://shadcndashboard.dev)
+- **Nama Template**: Shadcn Dashboard
 - **Repository GitHub**: [https://github.com/shadcndashboard/next-shadcn-dashboard](https://github.com/shadcndashboard/next-shadcn-dashboard)
 - **Live Demo Template**: [https://shadcndashboard-demo.vercel.app](https://shadcndashboard-demo.vercel.app)
 - **Dokumentasi UI**: [https://shadcndashboard.dev/docs](https://shadcndashboard.dev/docs)
@@ -64,7 +64,7 @@ bun install
 bun dev
 ```
 
-Aplikasi frontend akan aktif di: **`http://localhost:3000`**
+Aplikasi frontend akan aktif di: **`http://localhost:5001`**
 
 ---
 
@@ -90,14 +90,14 @@ Komponen akan otomatis ditambahkan ke direktori `@/components/ui/`.
 
 ## Daftar Perintah Berguna (Cheatsheet)
 
-| Perintah         | Deskripsi                                                                         |
-| :--------------- | :-------------------------------------------------------------------------------- |
-| `bun dev`        | Menjalankan Next.js development server dengan Hot Reload (port `3000`)            |
-| `bun run build`  | Melakukan build bundle aplikasi untuk tahap produksi                              |
-| `bun run start`  | Menjalankan server aplikasi Next.js hasil build production                        |
-| `bun test`       | Menjalankan unit test dengan Bun Test runner                                      |
-| `vp check`       | Menjalankan validasi menyeluruh: format check (Oxfmt), lint (Oxlint), & typecheck |
-| `vp check --fix` | Memperbaiki formatting kode dan lint error yang dapat diperbaiki otomatis         |
+| Perintah          | Deskripsi                                                                         |
+| :---------------- | :-------------------------------------------------------------------------------- |
+| `bun dev`         | Menjalankan development server dengan Hot Reload (port `5001`)                    |
+| `bun run build`   | Melakukan build bundle SPA aplikasi untuk tahap produksi                          |
+| `bun run preview` | Preview lokal hasil build production                                              |
+| `bun test`        | Menjalankan unit test dengan Bun Test runner                                      |
+| `vp check`        | Menjalankan validasi menyeluruh: format check (Oxfmt), lint (Oxlint), & typecheck |
+| `vp check --fix`  | Memperbaiki formatting kode dan lint error yang dapat diperbaiki otomatis         |
 
 ---
 
@@ -106,22 +106,21 @@ Komponen akan otomatis ditambahkan ke direktori `@/components/ui/`.
 Proyek ini menggunakan **Feature-Driven Architecture (Bulletproof React Pattern)** untuk memudahkan kolaborasi tim dan pemisahan fitur yang rapi:
 
 ```text
-├── app/                        # Next.js App Router (Routing & Layouts)
-│   ├── (auth)/                 # Route otentikasi (/login, /register, /change-password, dll)
-│   ├── (public)/               # Route publik (/events, /events/[id], dll)
-│   ├── (dashboard)/            # Shared Dashboard Shell (Organizer & Customer)
-│   │   ├── dashboard/          # Halaman utama /dashboard (Role-based metrics & analytics)
-│   │   ├── profile/            # Halaman user profile & referral settings (/profile)
-│   │   └── layout.tsx          # Shared layout shell (Sidebar + Header + Breadcrumb)
-│   ├── organizer/dashboard/    # Redirect otomatis ke /dashboard (sesuai spesifikasi PRD)
-│   ├── layout.tsx              # Root Layout
-│   └── page.tsx                # Landing Page
+├── index.html                  # HTML entry point aplikasi
+├── src/                        # Entry Point & Router
+│   ├── main.tsx                # ReactDOM createRoot & entry script
+│   └── App.tsx                 # BrowserRouter & deklarasi Route
+├── app/                        # Pages & Layouts
+│   ├── routes/
+│   │   ├── auth/               # Route otentikasi (/login, /register, /change-password, dll)
+│   │   ├── dashboard/          # Shared Dashboard Shell & Halaman (/dashboard, /profile, dll)
+│   │   └── landing.tsx         # Landing Page (/)
+│   └── app.css                 # Global CSS & Tailwind imports
 ├── features/                   # Modul bisnis independen (Feature Modules)
 │   ├── auth/                   # Modul autentikasi, store session, form login & register
 │   ├── profile/                # Modul profil, avatar upload, & referral copy
 │   ├── dashboard/              # Modul visualisasi data (Recharts timeseries & status distribution)
 │   ├── events/                 # Modul discovery, katalog event, & manajemen event
-│   ├── checkout/               # Modul pemesanan tiket, voucher, kupon, & poin
 │   ├── transactions/           # Modul countdown pembayaran, upload bukti, & verifikasi
 │   ├── rewards/                # Modul kode referral, saldo poin, & kupon
 │   └── reviews/                # Modul ulasan rating bintang & moderasi
@@ -132,14 +131,15 @@ Proyek ini menggunakan **Feature-Driven Architecture (Bulletproof React Pattern)
 │       └── types/              # Interface TypeScript & skema validasi Zod
 ├── components/                 # Komponen UI global & dapat dipakai ulang
 │   ├── ui/                     # Primitif shadcn/ui (Button, Dialog, Sheet, Chart, dll)
-│   └── common/                 # Komponen umum bersama (DashboardCard, ConfirmDialog, dll)
-├── hooks/                      # Custom hooks umum (use-mobile, useDebounce, dll)
-├── lib/                        # Konfigurasi library pihak ketiga (axios.ts, utils.ts)
+│   ├── common/                 # Komponen umum bersama (BrandLogo, Navbar, dll)
+│   └── dashboard-layout/       # Komponen layout dashboard (Sidebar, Topbar, Header)
+├── hooks/                      # Custom hooks umum (use-mobile, dll)
+├── lib/                        # Konfigurasi library pihak ketiga (api-client.ts, utils.ts)
 ├── types/                      # Global type definitions (ApiResponse<T>, Pagination, dll)
-├── constants/                  # Konstanta aplikasi (route paths, query keys, storage keys)
-├── public/                     # Aset publik statis (gambar, icon, svg)
-├── .env.example                # Template environment variables
+├── constants/                  # Konstanta aplikasi (route paths, API_BASE_URL, dll)
+├── public/                     # Aset publik statis (favicon, icons, gambar)
 ├── package.json
+├── vite.config.ts              # Konfigurasi Vite & Proxy API
 └── tsconfig.json
 ```
 

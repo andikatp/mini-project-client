@@ -1,12 +1,10 @@
-"use client";
-
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
-import Link, { useRouter, useSearchParams } from "@/lib/router-compat";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import React, { useState } from "react";
 import { useRegister } from "../hooks/use-register";
 import type { UserRole } from "../types";
@@ -19,8 +17,8 @@ interface RegisterFormProps {
 }
 
 export function RegisterForm({ initialRole = "CUSTOMER" }: RegisterFormProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const queryRole = searchParams.get("role");
   const [userSelectedRole, setUserSelectedRole] = useState<UserRole | null>(null);
   const role: UserRole =
@@ -40,7 +38,7 @@ export function RegisterForm({ initialRole = "CUSTOMER" }: RegisterFormProps) {
     setUserSelectedRole(newRole);
     const params = new URLSearchParams(searchParams.toString());
     params.set("role", newRole === "EVENT_ORGANIZER" ? "organizer" : "customer");
-    router.replace(`/register?${params.toString()}`, { scroll: false });
+    void navigate(`/register?${params.toString()}`, { replace: true });
   };
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
@@ -180,7 +178,7 @@ export function RegisterForm({ initialRole = "CUSTOMER" }: RegisterFormProps) {
         <div className="mt-6 pt-4 border-t border-border text-center text-sm text-muted-foreground">
           Sudah punya akun?{" "}
           <Link
-            href={role === "EVENT_ORGANIZER" ? "/login/organizer" : "/login"}
+            to={role === "EVENT_ORGANIZER" ? "/login/organizer" : "/login"}
             className="font-semibold text-blue-600 hover:underline"
           >
             Masuk di sini

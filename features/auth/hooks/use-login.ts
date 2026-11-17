@@ -1,11 +1,11 @@
-import { useRouter } from "@/lib/router-compat";
-import { useCallback, useState } from "react";
+import { useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { authApi } from "../api/auth-api";
 import { useAuthStore } from "../context/auth-store";
 
 export function useLogin() {
-  const router = useRouter();
-  const setSession = useAuthStore((s) => s.setSession);
+  const navigate = useNavigate();
+  const setSession = useAuthStore((state) => state.setSession);
 
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -34,7 +34,7 @@ export function useLogin() {
         setSuccessMsg("Berhasil masuk! Mengalihkan ke beranda...");
 
         const destination = user?.role === "EVENT_ORGANIZER" ? "/dashboard" : "/";
-        router.replace(destination);
+        void navigate(destination, { replace: true });
 
         return true;
       } catch (err: unknown) {
@@ -50,7 +50,7 @@ export function useLogin() {
           if (typeof window !== "undefined") {
             sessionStorage.setItem("registered_email", email.trim());
           }
-          router.push(`/verify-email?email=${encodeURIComponent(email.trim())}`);
+          void navigate(`/verify-email?email=${encodeURIComponent(email.trim())}`);
           return false;
         }
 
@@ -60,7 +60,7 @@ export function useLogin() {
         setIsLoading(false);
       }
     },
-    [router, setSession],
+    [navigate, setSession],
   );
 
   const clearMessages = useCallback(() => {

@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import Link from "@/lib/router-compat";
+import { Link } from "react-router-dom";
 
 interface BreadCrumbProps {
   readonly title: string;
@@ -12,7 +12,7 @@ const BreadcrumbComp = ({ title }: BreadCrumbProps) => {
         <h4 className="font-semibold text-xl text-foreground">{title}</h4>
         <ol className="flex items-center whitespace-nowrap" aria-label="Breadcrumb">
           <li className="flex items-center">
-            <Link className="text-foreground text-sm leading-none" href="/">
+            <Link className="text-foreground text-sm leading-none" to="/">
               Home
             </Link>
           </li>

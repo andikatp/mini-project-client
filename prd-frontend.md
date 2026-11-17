@@ -226,8 +226,8 @@ on its own page (the server returns a one-time reset token), then set
 the new password on a page with password fields only.
 
 **Decided 2026-11-14 (client stack):** the client is plain React +
-Vite (SPA with React Router), NOT Next.js. The bootcamp rules require
-regular React, so the earlier Next.js App Router choice is superseded.
+Vite (SPA with react-router-dom BrowserRouter). The bootcamp rules require
+regular React SPA.
 Nothing else changes: same routes, same session-cookie auth (restored
 via `GET /auth/me`), same API contract. shadcn/ui components are plain
 React + Tailwind and carry over unchanged.

@@ -1,10 +1,10 @@
-import { useCallback, useState } from "react";
-import { useRouter } from "@/lib/router-compat";
+import { useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { authApi } from "../api/auth-api";
 import type { ResetPasswordInput } from "../types";
 
 export function useResetPassword() {
-  const router = useRouter();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
@@ -42,7 +42,7 @@ export function useResetPassword() {
           sessionStorage.removeItem("reset_password_token");
         }
 
-        router.replace("/login");
+        void navigate("/login", { replace: true });
 
         return true;
       } catch (err: unknown) {
@@ -56,7 +56,7 @@ export function useResetPassword() {
         setIsLoading(false);
       }
     },
-    [router],
+    [navigate],
   );
 
   const clearMessages = useCallback(() => {

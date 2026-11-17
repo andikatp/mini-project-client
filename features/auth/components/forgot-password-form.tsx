@@ -1,17 +1,15 @@
-"use client";
-
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { AlertCircle, ArrowLeft, Loader2, Mail } from "lucide-react";
-import Link, { useRouter } from "@/lib/router-compat";
+import { Link, useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import { useForgotPassword } from "../hooks/use-forgot-password";
 
 export function ForgotPasswordForm() {
-  const router = useRouter();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const { requestReset, isLoading, errorMsg } = useForgotPassword();
 
@@ -25,7 +23,7 @@ export function ForgotPasswordForm() {
       if (typeof window !== "undefined") {
         sessionStorage.setItem("reset_email", cleanEmail);
       }
-      router.push("/verify-reset-password");
+      void navigate("/verify-reset-password");
     }
   };
 
@@ -95,8 +93,7 @@ export function ForgotPasswordForm() {
 
         <div className="mt-6 pt-4 border-t border-border text-center text-sm">
           <Link
-            href="/login"
-            prefetch={false}
+            to="/login"
             className="inline-flex items-center gap-1.5 font-semibold text-blue-600 hover:underline"
           >
             <ArrowLeft className="size-4" />
