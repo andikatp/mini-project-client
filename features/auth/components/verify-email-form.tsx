@@ -31,6 +31,7 @@ export function VerifyEmailForm() {
 
   const [otp, setOtp] = useState("");
   const [resendCooldown, setResendCooldown] = useState(0);
+  const attemptedOtpRef = React.useRef<string>("");
 
   const { verify, resendVerification, isLoading, isResending, errorMsg, successMsg, isVerified } =
     useVerifyEmail();
@@ -44,13 +45,22 @@ export function VerifyEmailForm() {
   }, [resendCooldown]);
 
   useEffect(() => {
-    if (otp.length === 6 && email && !isLoading && !isVerified) {
+    if (otp.length === 6 && email && !isLoading && !isVerified && attemptedOtpRef.current !== otp) {
+      attemptedOtpRef.current = otp;
       void verify(email.trim(), otp.trim());
     }
   }, [otp, email, isLoading, isVerified, verify]);
 
+  const handleOtpChange = (val: string) => {
+    setOtp(val);
+    if (val !== attemptedOtpRef.current) {
+      attemptedOtpRef.current = "";
+    }
+  };
+
   const handleResend = async () => {
     if (!email.trim() || resendCooldown > 0 || isResending || isVerified) return;
+    attemptedOtpRef.current = "";
     const success = await resendVerification(email.trim());
     if (success) {
       setResendCooldown(60);
@@ -59,7 +69,8 @@ export function VerifyEmailForm() {
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!email.trim() || otp.length !== 6) return;
+    if (!email.trim() || otp.length !== 6 || isLoading || isVerified) return;
+    attemptedOtpRef.current = otp;
     await verify(email.trim(), otp.trim());
   };
 
@@ -123,7 +134,7 @@ export function VerifyEmailForm() {
             <OtpInputSection
               id="verify-email-otp"
               value={otp}
-              onChange={setOtp}
+              onChange={handleOtpChange}
               disabled={isLoading || isVerified}
               hasError={!!errorMsg}
             />

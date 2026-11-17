@@ -29,6 +29,7 @@ export function VerifyResetPasswordForm() {
 
   const [otp, setOtp] = useState("");
   const [resendCooldown, setResendCooldown] = useState(0);
+  const attemptedOtpRef = React.useRef<string>("");
 
   const { verifyOtp, resendOtp, isLoading, isResending, isSuccess, errorMsg, successMsg } =
     useVerifyResetPassword();
@@ -48,13 +49,22 @@ export function VerifyResetPasswordForm() {
   }, [resendCooldown]);
 
   useEffect(() => {
-    if (otp.length === 6 && email && !isLoading && !isSuccess) {
+    if (otp.length === 6 && email && !isLoading && !isSuccess && attemptedOtpRef.current !== otp) {
+      attemptedOtpRef.current = otp;
       void verifyOtp(email.trim(), otp.trim());
     }
   }, [otp, email, isLoading, isSuccess, verifyOtp]);
 
+  const handleOtpChange = (val: string) => {
+    setOtp(val);
+    if (val !== attemptedOtpRef.current) {
+      attemptedOtpRef.current = "";
+    }
+  };
+
   const handleResend = async () => {
     if (!email.trim() || resendCooldown > 0 || isResending) return;
+    attemptedOtpRef.current = "";
     const ok = await resendOtp(email.trim());
     if (ok) {
       setResendCooldown(60);
@@ -63,7 +73,8 @@ export function VerifyResetPasswordForm() {
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!email.trim() || otp.length !== 6) return;
+    if (!email.trim() || otp.length !== 6 || isLoading || isSuccess) return;
+    attemptedOtpRef.current = otp;
     await verifyOtp(email.trim(), otp.trim());
   };
 
@@ -108,7 +119,7 @@ export function VerifyResetPasswordForm() {
             <OtpInputSection
               id="reset-verify-otp"
               value={otp}
-              onChange={setOtp}
+              onChange={handleOtpChange}
               disabled={isLoading}
               hasError={!!errorMsg}
             />

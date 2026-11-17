@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { authApi } from "../api/auth-api";
 import type { RegisterInput } from "../types";
@@ -9,56 +9,59 @@ export function useRegister() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
-  const register = async (input: RegisterInput) => {
-    setErrorMsg(null);
-    setSuccessMsg(null);
+  const register = useCallback(
+    async (input: RegisterInput) => {
+      setErrorMsg(null);
+      setSuccessMsg(null);
 
-    if (!input.name.trim()) {
-      setErrorMsg("Nama lengkap wajib diisi.");
-      return false;
-    }
-
-    if (!input.email.trim()) {
-      setErrorMsg("Email wajib diisi.");
-      return false;
-    }
-
-    if (input.password.length < 6) {
-      setErrorMsg("Kata sandi minimal 6 karakter.");
-      return false;
-    }
-
-    if (input.confirmPassword && input.password !== input.confirmPassword) {
-      setErrorMsg("Konfirmasi kata sandi tidak cocok.");
-      return false;
-    }
-
-    setIsLoading(true);
-
-    try {
-      const response = await authApi.register(input);
-
-      setSuccessMsg(
-        response.message ||
-          "Pendaftaran berhasil! Kode OTP verifikasi 6-digit telah dikirimkan ke email Anda.",
-      );
-
-      if (typeof window !== "undefined") {
-        sessionStorage.setItem("registered_email", input.email.trim());
+      if (!input.name.trim()) {
+        setErrorMsg("Nama lengkap wajib diisi.");
+        return false;
       }
-      void navigate(`/verify-email?email=${encodeURIComponent(input.email.trim())}`, {
-        replace: true,
-      });
 
-      return true;
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Gagal mendaftar. Silakan coba kembali.";
-      setErrorMsg(message);
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      if (!input.email.trim()) {
+        setErrorMsg("Email wajib diisi.");
+        return false;
+      }
+
+      if (input.password.length < 6) {
+        setErrorMsg("Kata sandi minimal 6 karakter.");
+        return false;
+      }
+
+      if (input.confirmPassword && input.password !== input.confirmPassword) {
+        setErrorMsg("Konfirmasi kata sandi tidak cocok.");
+        return false;
+      }
+
+      setIsLoading(true);
+
+      try {
+        const response = await authApi.register(input);
+
+        setSuccessMsg(
+          response.message ||
+            "Pendaftaran berhasil! Kode OTP verifikasi 6-digit telah dikirimkan ke email Anda.",
+        );
+
+        if (typeof window !== "undefined") {
+          sessionStorage.setItem("registered_email", input.email.trim());
+        }
+        void navigate(`/verify-email?email=${encodeURIComponent(input.email.trim())}`, {
+          replace: true,
+        });
+
+        return true;
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "Gagal mendaftar. Silakan coba kembali.";
+        setErrorMsg(message);
+        return false;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [navigate],
+  );
 
   const clearMessages = useCallback(() => {
     setErrorMsg(null);

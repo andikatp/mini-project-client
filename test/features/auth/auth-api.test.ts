@@ -238,7 +238,7 @@ describe("authApi (Infrastructure / HTTP Layer)", () => {
     });
   });
 
-  it("should send PATCH request for changePassword", async () => {
+  it("should send POST request for changePassword", async () => {
     mockSuccessFetch({
       status: "success",
       message: "Password updated",
@@ -249,8 +249,8 @@ describe("authApi (Infrastructure / HTTP Layer)", () => {
       newPassword: "new-pwd",
     });
 
-    expect(lastFetchUrl).toContain("/users/me/password");
-    expect(lastFetchOptions?.method).toBe("PATCH");
+    expect(lastFetchUrl).toContain("/auth/change-password");
+    expect(lastFetchOptions?.method).toBe("POST");
     expect(JSON.parse(lastFetchOptions?.body as string)).toEqual({
       currentPassword: "old-pwd",
       newPassword: "new-pwd",
