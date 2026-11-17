@@ -1,5 +1,3 @@
-"use client";
-
 import { DashboardCard } from "@/components/common/dashboard-card";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";

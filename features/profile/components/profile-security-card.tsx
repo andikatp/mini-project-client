@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Lock, ShieldAlert, ShieldCheck } from "lucide-react";
-import Link from "@/lib/router-compat";
+import { Link } from "react-router-dom";
 
 export function ProfileSecurityCard() {
   return (
@@ -33,7 +33,7 @@ export function ProfileSecurityCard() {
 
           <div className="flex flex-col gap-3">
             <span className="text-xs font-medium text-foreground">Aksi Keamanan</span>
-            <Link href="/change-password">
+            <Link to="/change-password">
               <Button
                 variant="outline"
                 className="w-full justify-between h-auto py-3 px-4 cursor-pointer hover:border-primary/50 group"

@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo, useState } from "react";
 import { Calendar } from "lucide-react";
 import { EventStatsCards } from "./event-stats-cards";

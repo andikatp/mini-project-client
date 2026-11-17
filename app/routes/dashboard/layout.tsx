@@ -3,15 +3,15 @@ import Header from "@/components/dashboard-layout/vertical/header";
 import { AppSidebar } from "@/components/dashboard-layout/vertical/sidebar/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { useAuthStore } from "@/features/auth/context/auth-store";
-import { useRouter } from "@/lib/router-compat";
+import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 import * as React from "react";
 import { useEffect, useState } from "react";
-import { Outlet } from "react-router";
+import { Outlet } from "react-router-dom";
 
 export default function DashboardLayout() {
-  const router = useRouter();
+  const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
   const isInitialized = useAuthStore((s) => s.isInitialized);
   const fetchCurrentUser = useAuthStore((s) => s.fetchCurrentUser);
@@ -28,7 +28,7 @@ export default function DashboardLayout() {
     if (isInitialized && !user) {
       if (isMounted) {
         setIsVerifying(false);
-        router.replace("/login");
+        void navigate("/login", { replace: true });
       }
       return;
     }
@@ -37,11 +37,11 @@ export default function DashboardLayout() {
       try {
         const currentUser = await fetchCurrentUser();
         if (!currentUser && isMounted) {
-          router.replace("/login");
+          void navigate("/login", { replace: true });
         }
       } catch {
         if (isMounted) {
-          router.replace("/login");
+          void navigate("/login", { replace: true });
         }
       } finally {
         if (isMounted) {
@@ -55,7 +55,7 @@ export default function DashboardLayout() {
     return () => {
       isMounted = false;
     };
-  }, [fetchCurrentUser, isInitialized, router, user]);
+  }, [fetchCurrentUser, isInitialized, navigate, user]);
 
   if (isVerifying && !user) {
     return (

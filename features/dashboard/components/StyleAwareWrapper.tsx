@@ -1,5 +1,3 @@
-"use client";
-
 interface Props {
   readonly children: React.ReactNode;
   readonly lyraClassName?: string;

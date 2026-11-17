@@ -1,6 +1,4 @@
-"use client";
-
-import Link from "@/lib/router-compat";
+import { Link } from "react-router-dom";
 
 type SearchType = {
   title: string;
@@ -21,7 +19,7 @@ export default function Footer() {
         {searchSugg.map((item) => (
           <Link
             key={item.title}
-            href={item.href}
+            to={item.href}
             className="text-sm hover:text-primary text-muted-foreground"
           >
             {item.title}

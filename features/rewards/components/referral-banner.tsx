@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { Copy, Check, Sparkles } from "lucide-react";
 import { DashboardCard } from "@/components/shared-dashboard-card";

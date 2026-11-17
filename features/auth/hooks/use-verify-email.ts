@@ -1,9 +1,9 @@
 import { useCallback, useState } from "react";
-import { useRouter } from "@/lib/router-compat";
+import { useNavigate } from "react-router-dom";
 import { authApi } from "../api/auth-api";
 
 export function useVerifyEmail() {
-  const router = useRouter();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -38,7 +38,7 @@ export function useVerifyEmail() {
       );
       setIsVerified(true);
 
-      router.replace("/login");
+      void navigate("/login", { replace: true });
 
       return true;
     } catch (err: unknown) {

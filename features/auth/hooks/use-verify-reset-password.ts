@@ -1,9 +1,9 @@
 import { useCallback, useState } from "react";
-import { useRouter } from "@/lib/router-compat";
+import { useNavigate } from "react-router-dom";
 import { authApi } from "../api/auth-api";
 
 export function useVerifyResetPassword() {
-  const router = useRouter();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -49,7 +49,7 @@ export function useVerifyResetPassword() {
         sessionStorage.setItem("reset_password_token", token);
       }
 
-      router.replace(`/reset-password?token=${encodeURIComponent(token)}`);
+      void navigate(`/reset-password?token=${encodeURIComponent(token)}`, { replace: true });
       return token;
     } catch (err: unknown) {
       const message =

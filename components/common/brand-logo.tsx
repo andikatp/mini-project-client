@@ -1,4 +1,4 @@
-import Link from "@/lib/router-compat";
+import { Link } from "react-router-dom";
 import { RameinIcon } from "./ramein-icon";
 
 interface BrandLogoProps {
@@ -26,7 +26,7 @@ export function BrandLogo({
 
   return (
     <Link
-      href="/"
+      to="/"
       className={`inline-flex items-center gap-2.5 group transition-transform hover:scale-[1.02] ${className}`}
       aria-label="Ramein Beranda"
     >

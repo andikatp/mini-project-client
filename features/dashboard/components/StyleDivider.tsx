@@ -1,5 +1,3 @@
-"use client";
-
 import Divider from "@/components/shared-divider";
 
 interface Props {

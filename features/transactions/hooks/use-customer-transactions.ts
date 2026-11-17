@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useEffect, useState } from "react";
 import { customerTransactionsApi } from "../api/transactions-api";
 import type { CustomerTransaction } from "../types";

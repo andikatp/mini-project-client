@@ -1,6 +1,4 @@
-"use client";
-
-import Link, { usePathname } from "@/lib/router-compat";
+import { Link, useLocation } from "react-router-dom";
 import NavItem from "../nav-items/index";
 import { cn } from "@/lib/utils";
 import { useSidebar } from "@/components/ui/sidebar";
@@ -12,7 +10,7 @@ interface NavCollapseProps {
 }
 
 export default function NavCollapse({ menu, className }: NavCollapseProps) {
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
   const { state } = useSidebar();
   const isCollapse = state === "collapsed";
 
@@ -46,7 +44,7 @@ export default function NavCollapse({ menu, className }: NavCollapseProps) {
               return (
                 <Link
                   key={itemKey}
-                  href={item.url || "#"}
+                  to={item.url || "#"}
                   target={item.external ? "_blank" : undefined}
                   className={cn(
                     "flex items-center gap-3 rounded-md transition-all duration-200 ease-in-out",
@@ -76,7 +74,7 @@ export default function NavCollapse({ menu, className }: NavCollapseProps) {
                     ) : (
                       <Link
                         key={subKey}
-                        href={sub.url || "#"}
+                        to={sub.url || "#"}
                         target={sub.external ? "_blank" : undefined}
                         className={cn(
                           "block rounded-md transition-all duration-200 ease-in-out",

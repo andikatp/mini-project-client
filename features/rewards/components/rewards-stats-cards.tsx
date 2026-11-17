@@ -1,5 +1,3 @@
-"use client";
-
 import { CardContent } from "@/components/ui/card";
 import { DashboardCard } from "@/components/shared-dashboard-card";
 import { Coins, Tag, Clock } from "lucide-react";

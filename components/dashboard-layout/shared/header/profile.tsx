@@ -1,22 +1,20 @@
-"use client";
-
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetClose, SheetContent, SheetFooter, SheetTrigger } from "@/components/ui/sheet";
 import { useAuthStore } from "@/features/auth/context/auth-store";
 import { LogOut, Mailbox, UserCircle, X } from "lucide-react";
-import Link, { useRouter } from "@/lib/router-compat";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function ProfileSheet() {
-  const router = useRouter();
+  const navigate = useNavigate();
   const { user, logout } = useAuthStore();
   const [open, setOpen] = useState(false);
 
   const handleLogout = async () => {
     setOpen(false);
     await logout();
-    router.replace("/");
+    void navigate("/", { replace: true });
   };
 
   const initial = user?.name ? user.name.charAt(0).toUpperCase() : "U";
@@ -70,7 +68,7 @@ export default function ProfileSheet() {
           <ul className="flex flex-col gap-2 p-6">
             <li>
               <Link
-                href="/profile"
+                to="/profile"
                 onClick={() => setOpen(false)}
                 className="flex items-center gap-3 py-2 px-3 rounded-md hover:bg-primary/5 text-muted-foreground hover:text-primary transition-colors cursor-pointer"
               >

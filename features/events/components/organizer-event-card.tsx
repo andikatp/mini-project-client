@@ -2,7 +2,6 @@ import { DashboardCard } from "@/components/shared-dashboard-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CardContent } from "@/components/ui/card";
-import { Image } from "@/lib/router-compat";
 import { Calendar, MapPin, Users } from "lucide-react";
 import type { EventStatus, OrganizerEvent } from "../types";
 
@@ -44,12 +43,10 @@ export function OrganizerEventCard({ event, onViewAttendees }: OrganizerEventCar
       <div>
         {event.bannerUrl && (
           <div className="relative h-44 w-full bg-muted border-b border-border overflow-hidden">
-            <Image
+            <img
               src={event.bannerUrl}
               alt={event.title}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 50vw"
+              className="absolute inset-0 size-full object-cover"
             />
           </div>
         )}

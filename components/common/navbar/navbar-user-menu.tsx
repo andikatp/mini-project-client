@@ -1,5 +1,3 @@
-"use client";
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,24 +10,24 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuthStore } from "@/features/auth/context/auth-store";
 import { HelpCircle, LayoutDashboard, LogOut, Ticket, User } from "lucide-react";
-import Link, { usePathname, useRouter } from "@/lib/router-compat";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 export function NavbarUserMenu() {
-  const router = useRouter();
-  const pathname = usePathname();
+  const navigate = useNavigate();
+  const pathname = useLocation().pathname;
   const { user, isAuthenticated, logout } = useAuthStore();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = async () => {
     setMenuOpen(false);
     await logout();
-    router.refresh();
+    window.location.reload();
   };
 
   const handleNavigate = (path: string) => {
     setMenuOpen(false);
-    router.push(path);
+    void navigate(path);
   };
 
   const initial = user?.name ? user.name.charAt(0).toUpperCase() : "U";
@@ -100,14 +98,14 @@ export function NavbarUserMenu() {
           <>
             <div className="flex flex-col gap-2 p-1">
               <Link
-                href="/register"
+                to="/register"
                 onClick={() => setMenuOpen(false)}
                 className="flex h-9 w-full items-center justify-center rounded-lg border border-blue-900 text-sm font-semibold text-blue-900 transition-colors hover:bg-blue-50 hover:text-blue-700"
               >
                 Daftar
               </Link>
               <Link
-                href="/login"
+                to="/login"
                 onClick={() => setMenuOpen(false)}
                 className="flex h-9 w-full items-center justify-center rounded-lg bg-blue-900 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-blue-700"
               >

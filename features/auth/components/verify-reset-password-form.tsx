@@ -1,5 +1,3 @@
-"use client";
-
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,14 +11,14 @@ import {
   RefreshCw,
   ShieldCheck,
 } from "lucide-react";
-import Link, { useRouter } from "@/lib/router-compat";
+import { Link, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { useVerifyResetPassword } from "../hooks/use-verify-reset-password";
 import { maskEmail } from "../utils/mask-email";
 import { OtpInputSection } from "./otp-input-section";
 
 export function VerifyResetPasswordForm() {
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const [email] = useState<string>(() => {
     if (typeof window !== "undefined") {
@@ -37,9 +35,9 @@ export function VerifyResetPasswordForm() {
 
   useEffect(() => {
     if (!email) {
-      router.replace("/forgot-password");
+      void navigate("/forgot-password", { replace: true });
     }
-  }, [email, router]);
+  }, [email, navigate]);
 
   useEffect(() => {
     if (resendCooldown <= 0) return;
@@ -137,7 +135,7 @@ export function VerifyResetPasswordForm() {
 
         <div className="mt-5 pt-4 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
           <Link
-            href="/forgot-password"
+            to="/forgot-password"
             className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
           >
             <Edit2 className="size-3" />
@@ -163,8 +161,7 @@ export function VerifyResetPasswordForm() {
 
         <div className="mt-4 pt-3 border-t border-border text-center text-sm">
           <Link
-            href="/login"
-            prefetch={false}
+            to="/login"
             className="inline-flex items-center gap-1.5 font-semibold text-blue-600 hover:underline"
           >
             <ArrowLeft className="size-4" />

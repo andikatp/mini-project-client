@@ -1,17 +1,15 @@
-"use client";
-
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { AlertCircle, ArrowLeft, CheckCircle2, KeyRound, Loader2 } from "lucide-react";
-import Link, { useSearchParams } from "@/lib/router-compat";
+import { Link, useSearchParams } from "react-router-dom";
 import React, { useState } from "react";
 import { useResetPassword } from "../hooks/use-reset-password";
 import { PasswordInputGroup } from "./password-input-group";
 
 export function ResetPasswordForm() {
-  const searchParams = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [token] = useState<string>(() => {
     const queryToken = searchParams.get("token");
     if (queryToken) return queryToken;
@@ -75,7 +73,7 @@ export function ResetPasswordForm() {
               </AlertDescription>
             </Alert>
             <Link
-              href="/forgot-password"
+              to="/forgot-password"
               className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 text-sm shadow-sm transition-all"
             >
               Mulai Ulang Pemulihan Kata Sandi
@@ -138,7 +136,7 @@ export function ResetPasswordForm() {
 
         <div className="mt-6 pt-4 border-t border-border text-center text-sm">
           <Link
-            href="/login"
+            to="/login"
             className="inline-flex items-center gap-1.5 font-semibold text-blue-600 hover:underline"
           >
             <ArrowLeft className="size-4" />

@@ -1,9 +1,7 @@
-"use client";
-
 import { BrandLogo } from "@/components/common/brand-logo";
 import { useAuthStore } from "@/features/auth/context/auth-store";
 import { CircleFadingPlusIcon, Compass } from "lucide-react";
-import Link from "@/lib/router-compat";
+import { Link } from "react-router-dom";
 import { NavbarSearch } from "./navbar-search";
 import { NavbarUserMenu } from "./navbar-user-menu";
 
@@ -21,7 +19,7 @@ export function Navbar({ onSearch }: NavbarProps) {
           <BrandLogo size="default" />
 
           <Link
-            href="/events"
+            to="/events"
             className="hidden items-center gap-2 text-sm font-semibold text-foreground/80 transition-colors hover:text-blue-600 sm:flex"
           >
             <Compass className="size-4 text-muted-foreground" />
@@ -33,7 +31,7 @@ export function Navbar({ onSearch }: NavbarProps) {
 
         <div className="flex items-center gap-8">
           <Link
-            href={
+            to={
               isAuthenticated && user?.role === "EVENT_ORGANIZER"
                 ? "/dashboard"
                 : "/login/organizer"

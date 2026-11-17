@@ -11,12 +11,9 @@ max_findings: 7
 
 # Files and paths to ignore during review
 ignore:
-  # Next.js build outputs & generated files
-  - ".next/**"
-  - "out/**"
+  # Build outputs & generated files
   - "dist/**"
   - "coverage/**"
-  - "next-env.d.ts"
   - "**/.gitkeep"
   - "**/components/ui/**"
   - "**/tests/**"
@@ -54,13 +51,13 @@ ignore:
   - "**/*.ico"
   - "**/*.webp"
 
-# Token-optimized instructions tailored for Next.js / React client with Vite+ (vp)
+# Token-optimized instructions tailored for React SPA client with Vite+ (vp)
 instructions: |
-  You are an expert Next.js, React, and Vite+ (vp) code reviewer. Be concise, direct, and actionable:
+  You are an expert React SPA and Vite+ (vp) code reviewer. Be concise, direct, and actionable:
   - Focus STRICTLY on:
     1. Critical logic bugs, unhandled async/mutation errors, race conditions, and missing error/empty states
     2. Client security & auth (safe token storage, role-based route protection, XSS vulnerabilities, leaked secrets)
-    3. React/Next.js performance (excessive re-renders, missing TanStack Query keys, hydration mismatches, uncleaned effects)
+    3. React SPA performance (excessive re-renders, missing TanStack Query keys, uncleaned effects)
     4. Core UX requirements (400ms search debounce, 2-hour server-driven payment countdown, confirmation dialogs for destructive actions)
   - DO NOT output conversational filler, praise, or compliments.
   - DO NOT comment on purely cosmetic formatting, syntax, or styling choices (strictly handled by Vite+ `vp check` via Oxlint/Oxfmt and Tailwind).

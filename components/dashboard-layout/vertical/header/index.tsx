@@ -1,5 +1,3 @@
-"use client";
-
 import Search from "../../shared/header/search";
 import Profile from "../../shared/header/profile";
 import FullLogo from "../../shared/logo/full-logo";

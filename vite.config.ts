@@ -1,5 +1,5 @@
-import { reactRouter } from "@react-router/dev/vite";
 import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react";
 import { defineConfig, lazyPlugins } from "vite-plus";
 
 export default defineConfig({
@@ -14,15 +14,15 @@ export default defineConfig({
     },
   },
   fmt: {
-    ignorePatterns: [".react-router/**", ".agents/**", "build/**"],
+    ignorePatterns: [".agents/**", "build/**", "dist/**"],
   },
   lint: {
-    ignorePatterns: [".react-router/**", ".agents/**", "build/**"],
+    ignorePatterns: [".agents/**", "build/**", "dist/**"],
     jsPlugins: [{ name: "vite-plus", specifier: "vite-plus/oxlint-plugin" }],
     rules: { "vite-plus/prefer-vite-plus-imports": "error" },
     options: { typeAware: true, typeCheck: true },
   },
-  plugins: lazyPlugins(() => [tailwindcss(), reactRouter()]),
+  plugins: lazyPlugins(() => [tailwindcss(), react()]),
   resolve: {
     tsconfigPaths: true,
   },

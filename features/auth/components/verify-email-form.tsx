@@ -1,5 +1,3 @@
-"use client";
-
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,14 +11,14 @@ import {
   RefreshCw,
   ShieldCheck,
 } from "lucide-react";
-import Link, { useSearchParams } from "@/lib/router-compat";
+import { Link, useSearchParams } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { useVerifyEmail } from "../hooks/use-verify-email";
 import { maskEmail } from "../utils/mask-email";
 import { OtpInputSection } from "./otp-input-section";
 
 export function VerifyEmailForm() {
-  const searchParams = useSearchParams();
+  const [searchParams] = useSearchParams();
   const initialEmail = searchParams.get("email") || "";
 
   const [email, setEmail] = useState<string>(() => {
@@ -172,8 +170,7 @@ export function VerifyEmailForm() {
         <div className="mt-4 pt-3 border-t border-border text-center text-sm text-muted-foreground">
           Sudah berhasil diverifikasi?{" "}
           <Link
-            href="/login"
-            prefetch={false}
+            to="/login"
             className="font-semibold text-blue-600 hover:underline inline-flex items-center gap-1"
           >
             Lanjut ke Halaman Masuk

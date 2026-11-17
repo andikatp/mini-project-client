@@ -1,9 +1,7 @@
-"use client";
-
 import { useAuthStore } from "@/features/auth/context/auth-store";
 import { Input } from "@/components/ui/input";
 import { Component, Search as SearchIcon } from "lucide-react";
-import Link from "@/lib/router-compat";
+import { Link } from "react-router-dom";
 import { useMemo, useState } from "react";
 import SimpleBar from "simplebar-react";
 import { getSidebarItems } from "../../vertical/sidebar/sidebaritems";
@@ -77,7 +75,7 @@ function Search() {
             results.map((item) => (
               <Link
                 key={item.path}
-                href={item.url}
+                to={item.url}
                 onClick={() => setQuery("")}
                 className="p-2 mb-1.5 last:mb-0 flex items-center bg-input/30 gap-2 text-sm font-medium rounded-md hover:bg-primary/5 hover:text-primary w-full overflow-hidden"
               >

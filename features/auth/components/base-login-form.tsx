@@ -1,12 +1,10 @@
-"use client";
-
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldError, FieldGroup, FieldLabel, FieldSeparator } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { AlertCircle, Building2, CheckCircle2, Loader2, User } from "lucide-react";
-import Link, { useRouter } from "@/lib/router-compat";
+import { Link, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { useLogin } from "../hooks/use-login";
 import { PasswordInputGroup } from "./password-input-group";
@@ -16,7 +14,7 @@ interface BaseLoginFormProps {
 }
 
 export function BaseLoginForm({ variant }: BaseLoginFormProps) {
-  const router = useRouter();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login, isLoading, errorMsg, successMsg, clearMessages } = useLogin();
@@ -113,7 +111,7 @@ export function BaseLoginForm({ variant }: BaseLoginFormProps) {
               <div className="flex items-center justify-between">
                 <FieldLabel htmlFor={`${variant}-password`}>Kata Sandi</FieldLabel>
                 <Link
-                  href="/forgot-password"
+                  to="/forgot-password"
                   className={`text-xs ${config.linkColor} hover:underline font-medium`}
                   tabIndex={0}
                 >
@@ -155,7 +153,7 @@ export function BaseLoginForm({ variant }: BaseLoginFormProps) {
               className="w-full border-border text-foreground hover:bg-muted"
               onClick={() => {
                 clearMessages();
-                router.push(config.switchRoute);
+                void navigate(config.switchRoute);
               }}
             >
               {isCustomer ? (
@@ -171,7 +169,7 @@ export function BaseLoginForm({ variant }: BaseLoginFormProps) {
         <div className="mt-6 pt-4 border-t border-border text-center text-sm text-muted-foreground">
           {config.registerPrompt}
           <Link
-            href={config.registerHref}
+            to={config.registerHref}
             className={`font-semibold ${config.linkColor} hover:underline`}
           >
             {config.registerLinkText}
